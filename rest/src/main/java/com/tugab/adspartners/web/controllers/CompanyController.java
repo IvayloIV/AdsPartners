@@ -1,0 +1,31 @@
+package com.tugab.adspartners.web.controllers;
+
+import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
+import com.tugab.adspartners.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin(origins = "*", maxAge = 3600)
+@RestController
+@RequestMapping("/company")
+public class CompanyController {
+
+    private final UserService userService;
+
+    @Autowired
+    public CompanyController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerCompany(@ModelAttribute RegisterCompanyBindingModel registerCompanyBindingModel) {
+        return this.userService.registerCompany(registerCompanyBindingModel);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginCompany(@RequestBody LoginCompanyBindingModel loginCompanyBindingModel) {
+        return this.userService.loginCompany(loginCompanyBindingModel);
+    }
+}

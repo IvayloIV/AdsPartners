@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: dburl
+    username: dbuser
+    password: dbpass
+  jpa:
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate.ddl-auto: update
+  mail:
+    username: youremail
+    password: yourpass
+    host: smtp.gmail.com
+    port: 587
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: googleClientId
+            client-secret: googleSecret
+            scope:
+              - profile
+              - email
+              - https://www.googleapis.com/auth/youtube.readonly
+
+# JWT configuration
+jwt:
+  app:
+    secret: jwtSecret
+    expidationMs: 86400000
+
+# Default admin user
+default:
+  admin:
+    name: defaultAdminName
+    email: defaultAdminEmail
+    password: defaultAdminPass
+
+# Cloudinary settings
+cloudinary:
+  name: cloudinaryName
+  key: cloudinaryKey
+  secret: cloudinarySecret
