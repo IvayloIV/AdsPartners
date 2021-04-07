@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-                .antMatchers("/company/register", "/company/login", "/api/test/**", "/admin/login").permitAll()
+                .antMatchers("/company/register", "/company/login", "/api/test/**", "/admin/login", "/ad/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .oauth2Login()

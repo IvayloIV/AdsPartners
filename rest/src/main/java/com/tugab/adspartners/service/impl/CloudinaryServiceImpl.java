@@ -53,38 +53,43 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             byte[] imageBytes = image.getBytes();
             String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
             String imageString = String.format("data:%s;base64,%s", image.getContentType(), imageBase64);
-
-            FormInserter<String> formInserter = this.createBody(null);
-            formInserter = formInserter.with("file", imageString);
-
-            WebClient.RequestHeadersSpec<?> requestHeadersSpec = this.webClient
-                    .method(HttpMethod.POST)
-                    .uri(CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload")
-                    .body(formInserter);
-
-            String responseBody = requestHeadersSpec.exchangeToMono(e -> e.bodyToMono(String.class)).block();
-            JsonObject jsonData = this.jsonParser.parse(responseBody).getAsJsonObject();
-
-            if (jsonData.has("asset_id")) {
-                Instant createdAtInstant = Instant.parse(jsonData.get("created_at").getAsString());
-
-                CloudinaryResource cloudinaryResource = new CloudinaryResource();
-                cloudinaryResource.setId(jsonData.get("public_id").getAsString());
-                cloudinaryResource.setSize(jsonData.get("bytes").getAsLong());
-                cloudinaryResource.setFormat(jsonData.get("format").getAsString());
-                cloudinaryResource.setResourceType(jsonData.get("resource_type").getAsString());
-                cloudinaryResource.setCreatedAt(new Date(createdAtInstant.toEpochMilli()));
-                cloudinaryResource.setUrl(jsonData.get("url").getAsString());
-
-                this.cloudinaryRepository.save(cloudinaryResource);
-                return cloudinaryResource;
-            }
-
-            return null;
+            return this.uploadImage(imageString);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return null;
+    }
+
+    @Override
+    public CloudinaryResource uploadImage(String imageBase64) {
+        FormInserter<String> formInserter = this.createBody(null);
+        formInserter = formInserter.with("file", imageBase64);
+
+        WebClient.RequestHeadersSpec<?> requestHeadersSpec = this.webClient
+                .method(HttpMethod.POST)
+                .uri(CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload")
+                .body(formInserter);
+
+        String responseBody = requestHeadersSpec.exchangeToMono(e -> e.bodyToMono(String.class)).block();
+        JsonObject jsonData = this.jsonParser.parse(responseBody).getAsJsonObject();
+
+        if (jsonData.has("asset_id")) {
+            Instant createdAtInstant = Instant.parse(jsonData.get("created_at").getAsString());
+
+            CloudinaryResource cloudinaryResource = new CloudinaryResource();
+            cloudinaryResource.setId(jsonData.get("public_id").getAsString());
+            cloudinaryResource.setSize(jsonData.get("bytes").getAsLong());
+            cloudinaryResource.setFormat(jsonData.get("format").getAsString());
+            cloudinaryResource.setResourceType(jsonData.get("resource_type").getAsString());
+            cloudinaryResource.setCreatedAt(new Date(createdAtInstant.toEpochMilli()));
+            cloudinaryResource.setUrl(jsonData.get("url").getAsString());
+
+            this.cloudinaryRepository.save(cloudinaryResource);
+            return cloudinaryResource;
+        }
+
+        return null;
     }
 
     @Override
@@ -111,6 +116,18 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
     }
 
+    @Override
+    public CloudinaryResource updateImage(CloudinaryResource oldImage, String base64Image) {
+        CloudinaryResource newCloudinaryResource = this.uploadImage(base64Image);
+        if (newCloudinaryResource != null) {
+            this.deleteImage(oldImage);
+            return newCloudinaryResource;
+        }
+
+        return oldImage;
+    }
+
+    @Override
     public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage) {
         CloudinaryResource newCloudinaryResource = this.uploadImage(newImage);
         if (newCloudinaryResource != null) {
