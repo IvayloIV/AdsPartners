@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+header {
+	padding: 1rem;
+	background-color: rgb(155, 160, 165);
+}
+
+header a {
+	text-decoration: none;
+	color: white;
+	padding: 1rem;
+}
+
+.active {
+	background-color: rgb(102, 104, 105);
+}
+
+.container {
+	text-align: center;
+}
+
+form label {
+	display: block;
+}
+
+form input {
+	border: 1px solid black;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    outline: none;
+}
+
+form input[type="submit"] {
+	border: none;
+    color: white;
+    background: #9dbdba;
+    padding: 0.6rem 2rem;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+	cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background: #6b8f8b;
+}
+
+form input::placeholder {
+	text-transform: capitalize;
+}
+
+header h2 {
+	display: inline;
+    font-size: 1.4rem;
+    color: #fff7f5;
+    margin-right: 1rem;
+}
+
+.slider-boxes {
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-button-left {
+    position: absolute;
+    left: 0;
+    z-index: 1;
+    height: 222px;
+    top: 0;
+    background-color: rgba(0, 0, 0, .1);
+    border: none;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.slider-button-left:hover {
+    background-color: rgba(0, 0, 0, .3);
+}
+
+.slider-button-right {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    height: 222px;
+    top: 0;
+    background-color: rgba(0, 0, 0, .1);
+    border: none;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.slider-button-right:hover {
+    background-color: rgba(0, 0, 0, .3);
+}
+
+.boxes-wrapper {
+    width: 230px;
+    height: 222px;
+    margin: 0 auto;
+    bottom: -117px;
+}
+
+.boxes {
+    display: flex;
+    position: absolute;
+    transition: transform 300ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.box {
+    flex: 1;
+    padding: 100px 0;
+    min-width: 200px;
+    border: 2px solid blue;
+    margin: 0 15px;
+    transform: scale(.8);
+    opacity: 0.5;
+    transition: transform 300ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+.box-active {
+    transform: scale(1);
+    opacity: 1;
+}
