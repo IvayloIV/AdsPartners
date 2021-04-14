@@ -14,3 +14,7 @@ export async function registerCompany(email, password, name, workersCount, logo)
 export async function loginCompany(email, password) {
     return await requester('/company/login', 'POST', false, { email, password });
 }
+
+export async function getAllCompanies() {
+    return await requester('/company/list', 'GET', true);
+}

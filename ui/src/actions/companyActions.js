@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS } from '../actions/actionTypes';
-import { registerCompany, loginCompany } from '../services/companyService';
+import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES } from '../actions/actionTypes';
+import { registerCompany, loginCompany, getAllCompanies } from '../services/companyService';
 
 function registerCompanyAction(email, password, name, workersCount, logo) {
     return (dispatch) => {
@@ -36,4 +36,15 @@ function logoutAction() {
     };
 }
 
-export { registerCompanyAction, loginCompanyAction, logoutAction };
+function getAllCompaniesAction(params) {
+    return (dispatch) => {
+        return getAllCompanies(params)
+            .then(json => {
+                console.log(json);
+                dispatch({ type: GET_ALL_COMPANIES, data: json });
+                return json;
+            });
+    };
+}
+
+export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction };

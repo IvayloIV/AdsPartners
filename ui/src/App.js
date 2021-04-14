@@ -12,6 +12,7 @@ import OAuth2RedirectHandler from './components/Youtube/OAuth2RedirectHandler';
 import CompanyPage from './components/Company/CompanyPage';
 import HomePage from './components/HomePage/HomePage';
 import Profile from './components/Youtube/Profile';
+import ListAd from './components/Ad/ListAd';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
 
@@ -40,6 +41,7 @@ class App extends Component {
                     <Route path="/admin/login" component={LoginAdmin} />
                     <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/youtube/profile" component={Profile} />
+                    <PrivateRoute authorities={["YOUTUBER"]} path="/ad/list" component={ListAd} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/company/page" component={CompanyPage} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/ad/create" component={CreateAd} />
                 </Switch>

@@ -130,3 +130,8 @@ header h2 {
     transform: scale(1);
     opacity: 1;
 }
+
+.slider-container {
+    width: 300px;
+    padding: 20px;
+}

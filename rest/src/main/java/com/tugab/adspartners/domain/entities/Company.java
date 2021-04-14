@@ -3,6 +3,7 @@ package com.tugab.adspartners.domain.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Table
@@ -22,6 +23,12 @@ public class Company {
     @OneToOne(targetEntity = User.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "company", targetEntity = Ad.class)
+    private List<Ad> ads;
+
+    @Transient
+    private Integer adsCount = 0;
 
     //TODO: more fields here...
 }

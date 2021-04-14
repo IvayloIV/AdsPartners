@@ -19,6 +19,7 @@ export default class Header extends Component {
                 {!loggedIn && <NavLink to="/admin/login" activeClassName="active">Login Admin</NavLink>}
                 {isYoutuber && <NavLink to="/youtube/profile" activeClassName="active">Profile</NavLink>}
                 {(isAdmin || isEmployer) && <NavLink to="/company/page" activeClassName="active">Company Page</NavLink>}
+                {isYoutuber && <NavLink to="/ad/list" activeClassName="active">List ads</NavLink>}
                 {(isAdmin || isEmployer) && <NavLink to="/ad/create" activeClassName="active">Create Ad</NavLink>}
                 {!loggedIn && <a href={googleUrl}>Login Youtube</a>}
                 {loggedIn && <a href="javascript:void(0)" onClick={onLogout}>Logout</a>}

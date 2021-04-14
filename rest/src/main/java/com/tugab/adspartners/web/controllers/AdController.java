@@ -1,21 +1,27 @@
 package com.tugab.adspartners.web.controllers;
 
-import com.tugab.adspartners.domain.entities.Ad;
+import com.tugab.adspartners.domain.entities.AdRating;
 import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.User;
-import com.tugab.adspartners.domain.entities.UserInfo;
-import com.tugab.adspartners.domain.models.binding.Ad.CreateAdBindingModel;
+import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.models.binding.ad.AdFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.CreateAdBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.FiltersBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
+import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
+import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/ad")
@@ -29,11 +35,29 @@ public class AdController {
         this.adService = adService;
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel) {
+        return this.adService.adsList(adFilterBindingModel);
+    }
+
+    @GetMapping("/filters")
+    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel) {
+        return this.adService.getFilters(filtersBindingModel);
+    }
+
     @PostMapping(path = "/create")
     public ResponseEntity createAd(@Valid @RequestBody CreateAdBindingModel createAdBindingModel,
                                     Errors errors,
                                     Authentication authentication) {
-        createAdBindingModel.setCompany((User) authentication.getPrincipal());
+        createAdBindingModel.setCompany((Company) authentication.getPrincipal());
         return this.adService.createAd(createAdBindingModel, errors);
+    }
+
+    @PostMapping(path = "/vote/{id}")
+    public ResponseEntity<CreateRatingResponse> vote(@PathVariable("id") Long adId,
+                                                     @RequestBody RatingBindingModel ratingBindingModel,
+                                                     Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.adService.vote(adId, ratingBindingModel, youtuber);
     }
 }

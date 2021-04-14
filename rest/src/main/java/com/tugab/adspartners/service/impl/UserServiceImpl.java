@@ -8,8 +8,10 @@ import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.repository.CompanyRepository;
 import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.UserRepository;
@@ -125,9 +127,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<List<CompanyListResponse>> getCompanyList() {
+        List<Company> companies = this.companyRepository.findAllByOrderByUserName();
+        List<CompanyListResponse> companyResponse = companies
+                .stream()
+                .map(c -> this.modelMapper.map(c, CompanyListResponse.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(companyResponse);
+    }
+
+    @Override
+    public ResponseEntity<CompanyResponse> getCompanyById(Long id) {
+        Company company = this.companyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Incorrect company id."));
+
+        CompanyResponse companyResponse = this.modelMapper.map(company, CompanyResponse.class);
+        companyResponse.setAdsCount(company.getAds().size());
+        return ResponseEntity.ok(companyResponse);
+    }
+
+    @Override
     public User findByEmail(String email) {
         return this.userRepository.findByEmail(email) //TODO: repeated with other method...
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
+    }
+
+    @Override
+    public Company findCompanyByEmail(String email) {
+        return this.companyRepository.findByUserEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Company Not Found with email: " + email));
     }
 
     @Override

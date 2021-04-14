@@ -1,11 +1,14 @@
 package com.tugab.adspartners.security.jwt;
 
+import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.User;
 import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.service.UserService;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -49,7 +52,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     authentication = new UsernamePasswordAuthenticationToken(youtuber, null, youtuber.getAuthorities());
                 } else {
                     User user = this.userService.findByEmail(email);
-                    authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    if (user.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals(Authority.EMPLOYER.name()))) {
+                        Company company = this.userService.findCompanyByEmail(email);
+                        authentication = new UsernamePasswordAuthenticationToken(company, null, user.getAuthorities());
+                    } else {
+                        authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    }
                 }
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -1,6 +1,36 @@
 import { toast } from 'react-toastify';
-import { CREATE_AD } from '../actions/actionTypes';
-import { createAd } from '../services/adService';
+import { AD_LIST, CREATE_AD, AD_FILTERS } from '../actions/actionTypes';
+import { createAd, getAds, getFilters, voteForAd } from '../services/adService';
+
+function getAllAdsAction(params) {
+    return (dispatch) => {
+        return getAds(params)
+            .then(json => {
+                console.log(json);
+                dispatch({ type: AD_LIST, data: json });
+            });
+    };
+}
+
+function getAdsFiltersAction(params) {
+    return (dispatch) => {
+        return getFilters(params)
+            .then(json => {
+                console.log(json);
+                dispatch({ type: AD_FILTERS, data: json });
+            });
+    };
+}
+
+function voteForAdAction(adId, rating) {
+    return (dispatch) => {
+        return voteForAd(adId, rating)
+            .then(json => {
+                // dispatch({ type: CREATE_AD, data: json });
+                toast.success(`You vote for add successfully.`);
+            });
+    };
+}
 
 function createAdAction(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
     return (dispatch) => {
@@ -14,4 +44,4 @@ function createAdAction(title, shortDescription, reward, validTo, minVideos, min
     };
 }
 
-export { createAdAction };
+export { getAllAdsAction, getAdsFiltersAction, createAdAction, voteForAdAction };

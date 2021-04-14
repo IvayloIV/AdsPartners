@@ -47,9 +47,9 @@ public class Ad {
     @Column(name = "is_blocked")
     private Boolean isBlocked;
 
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(targetEntity = Company.class)
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
-    private User company;
+    private Company company;
 
     @ManyToOne(targetEntity = CloudinaryResource.class)
     @JoinColumn(name = "picture_id", referencedColumnName = "id")
@@ -58,4 +58,10 @@ public class Ad {
 
     @OneToMany(mappedBy = "ad", targetEntity = Characteristic.class, cascade = CascadeType.ALL)
     private List<Characteristic> characteristics;
+
+    @OneToMany(mappedBy = "id.ad", targetEntity = AdRating.class, cascade = CascadeType.ALL)
+    private List<AdRating> ratingList;
+
+    @Transient
+    private Double averageRating = 0.0;
 }

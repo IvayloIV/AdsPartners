@@ -1,15 +1,11 @@
-package com.tugab.adspartners.domain.models.binding.Ad;
+package com.tugab.adspartners.domain.models.binding.ad;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tugab.adspartners.domain.entities.Characteristic;
 import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.User;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +35,7 @@ public class CreateAdBindingModel {
     @NotNull(message = "Picture is required.")
     private String pictureBase64;
 
-    private User company;
+    private Company company;
 
     private List<Characteristic> characteristics;
 }
