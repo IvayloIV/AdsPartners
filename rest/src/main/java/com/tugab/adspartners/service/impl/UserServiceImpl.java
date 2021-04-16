@@ -1,9 +1,6 @@
 package com.tugab.adspartners.service.impl;
 
-import com.tugab.adspartners.domain.entities.CloudinaryResource;
-import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.Role;
-import com.tugab.adspartners.domain.entities.User;
+import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
@@ -11,9 +8,11 @@ import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.repository.CompanyRepository;
 import com.tugab.adspartners.repository.RoleRepository;
+import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.repository.UserRepository;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
@@ -41,6 +40,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CompanyRepository companyRepository;
+    private final SubscriptionRepository subscriptionRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
 
@@ -55,12 +55,14 @@ public class UserServiceImpl implements UserService {
                            UserRepository userRepository,
                            RoleRepository roleRepository,
                            CompanyRepository companyRepository,
+                           SubscriptionRepository subscriptionRepository,
                            ModelMapper modelMapper,
                            JwtUtils jwtUtils) {
         this.cloudinaryService = cloudinaryService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.companyRepository = companyRepository;
+        this.subscriptionRepository = subscriptionRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
     }
@@ -144,6 +146,17 @@ public class UserServiceImpl implements UserService {
         CompanyResponse companyResponse = this.modelMapper.map(company, CompanyResponse.class);
         companyResponse.setAdsCount(company.getAds().size());
         return ResponseEntity.ok(companyResponse);
+    }
+
+    @Override
+    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company, Long id) {
+        List<Subscription> subscriptions = this.subscriptionRepository.findById_Ad_CompanyAndId_Ad_Id(company, id);
+        List<SubscriptionInfoResponse> subscriptionInfoResponses = subscriptions
+                .stream()
+                .map(s -> this.modelMapper.map(s, SubscriptionInfoResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(subscriptionInfoResponses);
     }
 
     @Override

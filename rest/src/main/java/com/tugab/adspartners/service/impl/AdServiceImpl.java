@@ -1,17 +1,20 @@
 package com.tugab.adspartners.service.impl;
 
-import com.nimbusds.jwt.util.DateUtils;
 import com.tugab.adspartners.domain.entities.*;
-import com.tugab.adspartners.domain.models.binding.ad.AdFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.CreateAdBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.FiltersBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
+import com.tugab.adspartners.domain.enums.ApplicationType;
+import com.tugab.adspartners.domain.models.binding.ad.*;
+import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
+import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
+import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
 import org.modelmapper.ModelMapper;
@@ -28,7 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.OptionalDouble;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,17 +40,23 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final AdRatingRepository adRatingRepository;
     private final CloudinaryService cloudinaryService;
+    private final SubscriptionRepository subscriptionRepository;
+    private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
     public AdServiceImpl(AdRepository adRepository,
                          AdRatingRepository adRatingRepository,
                          CloudinaryService cloudinaryService,
+                         SubscriptionRepository subscriptionRepository,
+                         AdApplicationRepository adApplicationRepository,
                          ModelMapper modelMapper) {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
-        this.modelMapper = modelMapper;
         this.cloudinaryService = cloudinaryService;
+        this.subscriptionRepository = subscriptionRepository;
+        this.adApplicationRepository = adApplicationRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -109,6 +118,16 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(filtersResponse);
     }
 
+    @Override
+    public ResponseEntity<AdDetailsResponse> getDetails(Long adId) {
+        Ad ad = this.adRepository.findById(adId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid ad id."));
+        this.setAdAverageRating(ad);
+
+        AdDetailsResponse adResponse = this.modelMapper.map(ad, AdDetailsResponse.class);
+        return ResponseEntity.ok(adResponse);
+    }
+
     public ResponseEntity createAd(CreateAdBindingModel createAdBindingModel, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.badRequest().body(errors.getFieldErrors());
@@ -138,5 +157,45 @@ public class AdServiceImpl implements AdService {
         rating.setAdId(ad.getId());
         rating.setYoutubeId(youtuber.getId());
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<MessageResponse> subscribe(Long adId, Youtuber youtuber) {
+        Ad ad = this.adRepository.findById(adId)
+                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
+
+        Subscription subscription = new Subscription();
+        subscription.setId(new SubscriptionId(ad, youtuber));
+        subscription.setSubscriptionDate(new Date());
+        subscription.setIsBlocked(false);
+
+        this.subscriptionRepository.save(subscription);
+        return ResponseEntity.ok(new MessageResponse("You have just subscribed for ad."));
+    }
+
+    public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel) {
+        Ad ad = this.adRepository.findById(adApplicationBindingModel.getAdId())
+                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
+        Youtuber youtuber = adApplicationBindingModel.getYoutuber();
+
+        AdApplication adApplication = new AdApplication();
+        adApplication.setId(new AdApplicationId(ad, youtuber));
+        adApplication.setDescription(adApplicationBindingModel.getDescription());
+        adApplication.setApplicationDate(new Date());
+        adApplication.setMailSent(false); //TODO: send mail here
+        adApplication.setType(ApplicationType.YOUTUBER_SENT);
+
+        this.adApplicationRepository.save(adApplication);
+        return ResponseEntity.ok(new MessageResponse("You have just applied for ad."));
+    }
+
+    @Override
+    public ResponseEntity<List<AdApplicationResponse>> getApplications(Long adId) {
+        List<AdApplication> applications = this.adApplicationRepository.findById_Ad_Id(adId);
+        List<AdApplicationResponse> adApplicationResponses = applications
+                .stream()
+                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(adApplicationResponses);
     }
 }

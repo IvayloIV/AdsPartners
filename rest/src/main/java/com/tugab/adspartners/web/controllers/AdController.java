@@ -1,22 +1,19 @@
 package com.tugab.adspartners.web.controllers;
 
-import com.tugab.adspartners.domain.entities.AdRating;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.binding.ad.AdFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.CreateAdBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.FiltersBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.*;
+import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +42,11 @@ public class AdController {
         return this.adService.getFilters(filtersBindingModel);
     }
 
+    @GetMapping("/details/{id}")
+    public ResponseEntity<AdDetailsResponse> getDetails(@PathVariable("id") Long id) {
+        return this.adService.getDetails(id);
+    }
+
     @PostMapping(path = "/create")
     public ResponseEntity createAd(@Valid @RequestBody CreateAdBindingModel createAdBindingModel,
                                     Errors errors,
@@ -59,5 +61,27 @@ public class AdController {
                                                      Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.adService.vote(adId, ratingBindingModel, youtuber);
+    }
+
+    @PostMapping(path = "/subscribe/{id}")
+    public ResponseEntity<MessageResponse> subscribe(@PathVariable("id") Long adId,
+                                                     Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.adService.subscribe(adId, youtuber);
+    }
+
+    @PostMapping(path = "/applyfor/{id}")
+    public ResponseEntity<MessageResponse> applyFor(@PathVariable("id") Long adId,
+                                                     @RequestBody AdApplicationBindingModel adApplicationBindingModel,
+                                                     Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        adApplicationBindingModel.setAdId(adId);
+        adApplicationBindingModel.setYoutuber(youtuber);
+        return this.adService.applyFor(adApplicationBindingModel);
+    }
+
+    @GetMapping("/applications/{id}")
+    public ResponseEntity<List<AdApplicationResponse>> getApplications(@PathVariable("id") Long adId) {
+        return this.adService.getApplications(adId);
     }
 }

@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { AD_LIST, CREATE_AD, AD_FILTERS } from '../actions/actionTypes';
-import { createAd, getAds, getFilters, voteForAd } from '../services/adService';
+import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS } from '../actions/actionTypes';
+import { createAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications } from '../services/adService';
 
 function getAllAdsAction(params) {
     return (dispatch) => {
@@ -8,6 +8,35 @@ function getAllAdsAction(params) {
             .then(json => {
                 console.log(json);
                 dispatch({ type: AD_LIST, data: json });
+            });
+    };
+}
+
+function getAdDetailsAction(adId) {
+    return (dispatch) => {
+        return getAdDetails(adId)
+            .then(json => {
+                console.log(json);
+                dispatch({ type: AD_DETAILS, data: json });
+            });
+    };
+}
+
+function applyForAdAction(adId, params) {
+    return (dispatch) => {
+        return applyForAd(adId, params)
+            .then(json => {
+                // dispatch({ type: AD_FILTERS, data: json });
+                toast.success(json.message);
+            });
+    };
+}
+
+function getApplicationsAction(adId) {
+    return (dispatch) => {
+        return getApplications(adId)
+            .then(json => {
+                dispatch({ type: AD_APPLICATIONS, data: json });
             });
     };
 }
@@ -44,4 +73,5 @@ function createAdAction(title, shortDescription, reward, validTo, minVideos, min
     };
 }
 
-export { getAllAdsAction, getAdsFiltersAction, createAdAction, voteForAdAction };
+export { getAllAdsAction, getAdDetailsAction, getAdsFiltersAction, 
+    createAdAction, voteForAdAction, applyForAdAction, getApplicationsAction };

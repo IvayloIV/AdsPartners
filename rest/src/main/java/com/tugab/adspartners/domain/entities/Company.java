@@ -31,4 +31,10 @@ public class Company {
     private Integer adsCount = 0;
 
     //TODO: more fields here...
+
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
@@ -277,6 +277,7 @@ class ListAd extends Component {
                 {items.map((a, i) => {
                     return <p key={i}>
                         {a.title}
+                        <Link className="details" to={`/ad/details/${a.id}`}>Details</Link>
                         <Rating
                             // value={0} TODO...
                             // precision={0.5} TODO...

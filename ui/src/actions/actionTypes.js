@@ -8,5 +8,7 @@ export const LOGIN_ADMIN_SUCCESS = 'LOGIN_ADMIN_SUCCESS';
 export const LOAD_USER_INFO = 'LOAD_USER_INFO';
 
 export const AD_LIST = 'AD_LIST';
+export const AD_DETAILS = 'AD_DETAILS';
+export const AD_APPLICATIONS = 'AD_APPLICATIONS';
 export const AD_FILTERS = 'AD_FILTERS';
 export const CREATE_AD = 'CREATE_AD';

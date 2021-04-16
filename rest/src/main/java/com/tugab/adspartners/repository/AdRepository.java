@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AdRepository extends JpaRepository<Ad, Long> {
@@ -38,4 +39,6 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
             " and (instr(lower(a.title), lower(:#{#adFilter.title})) > 0 or :#{#adFilter.title} is null) " +
             " and (instr(lower(a.shortDescription), lower(:#{#adFilter.description})) > 0 or :#{#adFilter.description} is null) ")
     public List<Ad> findAllByFilters(@Param("adFilter") FiltersBindingModel filtersBindingModel);
+
+    public Optional<Ad> findById(Long id);
 }

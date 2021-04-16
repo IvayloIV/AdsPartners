@@ -15,6 +15,7 @@ import Profile from './components/Youtube/Profile';
 import ListAd from './components/Ad/ListAd';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
+import AdDetails from './components/Ad/AdDetails';
 
 class App extends Component {
     constructor(props) {
@@ -42,6 +43,7 @@ class App extends Component {
                     <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/youtube/profile" component={Profile} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/ad/list" component={ListAd} />
+                    <PrivateRoute authorities={["YOUTUBER", "EMPLOYER"]} path="/ad/details/:adId" component={AdDetails} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/company/page" component={CompanyPage} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/ad/create" component={CreateAd} />
                 </Switch>

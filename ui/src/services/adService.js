@@ -22,6 +22,18 @@ export async function getAds(params) {
     return await requester('/ad/list' + query, 'GET', true);
 }
 
+export async function getAdDetails(adId) {
+    return await requester('/ad/details/' + adId, 'GET', true);
+}
+
+export async function applyForAd(adId, params) {
+    return await requester('/ad/applyfor/' + adId, 'POST', true, params);
+}
+
+export async function getApplications(adId) {
+    return await requester('/ad/applications/' + adId, 'GET', true);
+}
+
 export async function voteForAd(adId, rating) {
     return await requester('/ad/vote/' + adId, 'POST', true, { rating });
 }

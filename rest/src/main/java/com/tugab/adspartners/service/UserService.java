@@ -6,6 +6,7 @@ import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,4 +28,6 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<List<CompanyListResponse>> getCompanyList();
 
     public ResponseEntity<CompanyResponse> getCompanyById(Long id);
+
+    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company, Long id);
 }
