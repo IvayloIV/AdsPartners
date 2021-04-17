@@ -15,9 +15,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class SubscriptionId implements Serializable {
 
-    @ManyToOne(targetEntity = Ad.class)
-    @JoinColumn(name = "ad_id", referencedColumnName = "id")
-    private Ad ad;
+    @ManyToOne(targetEntity = Company.class)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
 
     @ManyToOne(targetEntity = Youtuber.class)
     @JoinColumn(name = "youtuber_id", referencedColumnName = "id")

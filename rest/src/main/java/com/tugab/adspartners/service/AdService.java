@@ -25,8 +25,6 @@ public interface AdService {
 
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
 
-    public ResponseEntity<MessageResponse> subscribe(Long adId, Youtuber youtuber);
-
     public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel);
 
     public ResponseEntity<List<AdApplicationResponse>> getApplications(Long adId);

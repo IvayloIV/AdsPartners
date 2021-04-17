@@ -5,15 +5,13 @@ import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
-import com.tugab.adspartners.repository.CompanyRepository;
-import com.tugab.adspartners.repository.RoleRepository;
-import com.tugab.adspartners.repository.SubscriptionRepository;
-import com.tugab.adspartners.repository.UserRepository;
+import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.UserService;
@@ -149,14 +147,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company, Long id) {
-        List<Subscription> subscriptions = this.subscriptionRepository.findById_Ad_CompanyAndId_Ad_Id(company, id);
+    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company) {
+        List<Subscription> subscriptions = this.subscriptionRepository.findById_Company(company);
         List<SubscriptionInfoResponse> subscriptionInfoResponses = subscriptions
                 .stream()
                 .map(s -> this.modelMapper.map(s, SubscriptionInfoResponse.class))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(subscriptionInfoResponses);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponse> changeSubscriberStatus(SubscriberStatusBindingModel subscriberStatusBindingModel) {
+        Long companyId = subscriberStatusBindingModel.getCompanyId();
+        Long youtuberId = subscriberStatusBindingModel.getYoutuberId();
+
+        Subscription subscription = this.subscriptionRepository.findById_Company_IdAndId_Youtuber_Id(companyId, youtuberId)
+                .orElseThrow(() -> new IllegalArgumentException("Subscription does not found."));
+        subscription.setIsBlocked(subscriberStatusBindingModel.getIsBlocked());
+
+        this.subscriptionRepository.save(subscription);
+        return ResponseEntity.ok(new MessageResponse("Subscription was changed successfully."));
+    }
+
+    public ResponseEntity<MessageResponse> subscribe(Youtuber youtuber, Long companyId) {
+        Company company = this.companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("Company does not exist."));
+
+        Subscription subscription = new Subscription();
+        subscription.setId(new SubscriptionId(company, youtuber));
+        subscription.setSubscriptionDate(new Date());
+        subscription.setIsBlocked(false);
+
+        this.subscriptionRepository.save(subscription);
+        return ResponseEntity.ok(new MessageResponse("You have just subscribed for company."));
     }
 
     @Override

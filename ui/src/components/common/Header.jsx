@@ -21,6 +21,7 @@ export default class Header extends Component {
                 {(isAdmin || isEmployer) && <NavLink to="/company/page" activeClassName="active">Company Page</NavLink>}
                 {isYoutuber && <NavLink to="/ad/list" activeClassName="active">List ads</NavLink>}
                 {(isAdmin || isEmployer) && <NavLink to="/ad/create" activeClassName="active">Create Ad</NavLink>}
+                {isEmployer && <NavLink to="/company/subscribers" activeClassName="active">Subscribers</NavLink>}
                 {!loggedIn && <a href={googleUrl}>Login Youtube</a>}
                 {loggedIn && <a href="javascript:void(0)" onClick={onLogout}>Logout</a>}
             </header>

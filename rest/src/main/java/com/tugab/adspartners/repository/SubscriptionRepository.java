@@ -7,9 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, SubscriptionId> {
 
-    public List<Subscription> findById_Ad_CompanyAndId_Ad_Id(Company company, Long id);
+    public List<Subscription> findById_Company(Company company);
+
+    public Optional<Subscription> findById_Company_IdAndId_Youtuber_Id(Long companyId, Long YoutuberId);
 }

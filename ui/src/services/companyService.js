@@ -18,3 +18,11 @@ export async function loginCompany(email, password) {
 export async function getAllCompanies() {
     return await requester('/company/list', 'GET', true);
 }
+
+export async function getSubscribers() {
+    return await requester('/company/subscribers', 'GET', true);
+}
+
+export async function changeSubscriberStatus(youtuberId, newStatus) {
+    return await requester(`/company/subscriber/${youtuberId}/status`, 'POST', true, { isBlocked: newStatus });
+}

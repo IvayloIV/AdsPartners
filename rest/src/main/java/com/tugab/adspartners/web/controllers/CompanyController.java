@@ -4,7 +4,9 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.service.UserService;
@@ -47,10 +49,26 @@ public class CompanyController {
         return this.userService.getCompanyById(id);
     }
 
-    @GetMapping("/subscribers/{id}")
-    public ResponseEntity<List<SubscriptionInfoResponse>> getSubscribers(Authentication authentication,
-                                                                         @PathVariable("id") Long adId) {
+    @GetMapping("/subscribers")
+    public ResponseEntity<List<SubscriptionInfoResponse>> getSubscribers(Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
-        return this.userService.getCompanySubscribers(company, adId);
+        return this.userService.getCompanySubscribers(company);
+    }
+
+    @PostMapping("/subscriber/{id}/status")
+    public ResponseEntity<MessageResponse> subscriberStatus(@RequestBody SubscriberStatusBindingModel subscriberStatusBindingModel,
+                                                            @PathVariable("id") Long youtuberId,
+                                                            Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        subscriberStatusBindingModel.setCompanyId(company.getId());
+        subscriberStatusBindingModel.setYoutuberId(youtuberId);
+        return this.userService.changeSubscriberStatus(subscriberStatusBindingModel);
+    }
+
+    @PostMapping(path = "/subscribe/{id}")
+    public ResponseEntity<MessageResponse> subscribe(@PathVariable("id") Long companyId,
+                                                     Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.userService.subscribe(youtuber, companyId);
     }
 }

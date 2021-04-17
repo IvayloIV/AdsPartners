@@ -40,7 +40,6 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final AdRatingRepository adRatingRepository;
     private final CloudinaryService cloudinaryService;
-    private final SubscriptionRepository subscriptionRepository;
     private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
 
@@ -48,13 +47,11 @@ public class AdServiceImpl implements AdService {
     public AdServiceImpl(AdRepository adRepository,
                          AdRatingRepository adRatingRepository,
                          CloudinaryService cloudinaryService,
-                         SubscriptionRepository subscriptionRepository,
                          AdApplicationRepository adApplicationRepository,
                          ModelMapper modelMapper) {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
         this.cloudinaryService = cloudinaryService;
-        this.subscriptionRepository = subscriptionRepository;
         this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
     }
@@ -157,19 +154,6 @@ public class AdServiceImpl implements AdService {
         rating.setAdId(ad.getId());
         rating.setYoutubeId(youtuber.getId());
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<MessageResponse> subscribe(Long adId, Youtuber youtuber) {
-        Ad ad = this.adRepository.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
-
-        Subscription subscription = new Subscription();
-        subscription.setId(new SubscriptionId(ad, youtuber));
-        subscription.setSubscriptionDate(new Date());
-        subscription.setIsBlocked(false);
-
-        this.subscriptionRepository.save(subscription);
-        return ResponseEntity.ok(new MessageResponse("You have just subscribed for ad."));
     }
 
     public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel) {

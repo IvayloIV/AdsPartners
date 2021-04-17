@@ -63,13 +63,6 @@ public class AdController {
         return this.adService.vote(adId, ratingBindingModel, youtuber);
     }
 
-    @PostMapping(path = "/subscribe/{id}")
-    public ResponseEntity<MessageResponse> subscribe(@PathVariable("id") Long adId,
-                                                     Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.adService.subscribe(adId, youtuber);
-    }
-
     @PostMapping(path = "/applyfor/{id}")
     public ResponseEntity<MessageResponse> applyFor(@PathVariable("id") Long adId,
                                                      @RequestBody AdApplicationBindingModel adApplicationBindingModel,
