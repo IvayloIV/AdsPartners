@@ -1,13 +1,11 @@
 import requester from './requester';
 
-export async function registerCompany(email, password, name, workersCount, logo) {
+export async function registerCompany(params) {
     let formData = new FormData();
-    formData.append("userEmail", email);
-    formData.append("userPassword", password);
-    formData.append("userName", name);
-    formData.append("workersCount", workersCount);
-    formData.append("logo", logo);
-
+    for (let paramKey in params) {
+        formData.append(paramKey, params[paramKey]);
+    }
+    
     return await requester('/company/register', 'POST', false, formData);
 }
 

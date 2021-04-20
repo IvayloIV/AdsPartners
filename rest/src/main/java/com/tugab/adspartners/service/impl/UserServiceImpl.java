@@ -3,6 +3,7 @@ package com.tugab.adspartners.service.impl;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
+import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
         company.setWorkersCount(registerCompanyBindingModel.getWorkersCount());
         CloudinaryResource cloudinaryResource = this.cloudinaryService.uploadImage(registerCompanyBindingModel.getLogo());
         company.setLogo(cloudinaryResource);
+        company.setStatus(RegistrationStatus.UNRESOLVED);
 
         User user = company.getUser();
         user.setPassword(this.passwordEncoder.encode(registerCompanyBindingModel.getUserPassword()));

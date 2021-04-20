@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import axios from "axios";
 import { withRouter } from 'react-router-dom';
 import Input from '../common/Input';
+import TextField from '@material-ui/core/TextField';
 import {  registerCompanyAction } from '../../actions/companyActions';
 
 class RegisterCompanyPage extends Component {
@@ -11,11 +12,16 @@ class RegisterCompanyPage extends Component {
         super(props);
 
         this.state = {
-            name: '',
-            email: '',
-            password: '',
+            userName: '',
+            userEmail: '',
+            userPassword: '',
+            phone: '',
+            incomeLastYear: 0,
+            town: '',
+            description: '',
+            companyCreationDate: '',
             workersCount: 0,
-            selectedFile: null
+            logo: null
         };
 
         this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -28,15 +34,15 @@ class RegisterCompanyPage extends Component {
     }
 
     onChangeHandlerImage(e) {
-        this.setState({ selectedFile: e.target.files[0] });
+        this.setState({ logo: e.target.files[0] });
     }
 
     onSubmitHandler(e) {
         e.preventDefault();
-        const { email, password, name, workersCount, selectedFile } = this.state;
+        const params = this.state;
 
         // Validations
-        this.props.register(email, password, name, workersCount, selectedFile)
+        this.props.register(params)
             .then((json) => {
                 //TODO:
                 /*if (!json.success) { 
@@ -59,35 +65,75 @@ class RegisterCompanyPage extends Component {
     }
 
     render() {
+        console.log(this.state);
+
         return (
             <div className="container">
                 <h1>Register your company</h1>
                 <form onSubmit={this.onSubmitHandler}>
-                    <Input
-                        name="email"
+                    <TextField 
+                        label="Email"
                         value={this.state.email}
+                        name="userEmail"
                         onChange={this.onChangeHandler}
-                        label="E-mail"
                     />
-                    <Input
-                        name="password"
+                    <TextField
                         type="password"
-                        value={this.state.password}
-                        onChange={this.onChangeHandler}
                         label="Password"
-                    />
-                    <Input
-                        name="name"
-                        value={this.state.name}
+                        value={this.state.password}
+                        name="userPassword"
                         onChange={this.onChangeHandler}
+                    />
+                    <TextField
                         label="Name"
-                    />
-                    <Input
-                        name="workersCount"
-                        type="number"
-                        value={this.state.workersCount}
+                        value={this.state.name}
+                        name="userName"
                         onChange={this.onChangeHandler}
-                        label="Workers Count"
+                    />
+                    <TextField
+                        label="Phone"
+                        value={this.state.phone}
+                        name="phone"
+                        onChange={this.onChangeHandler}
+                    />
+                    <TextField
+                        type="number"
+                        step="0.01"
+                        label="Income last year"
+                        value={this.state.incomeLastYear}
+                        name="incomeLastYear"
+                        onChange={this.onChangeHandler}
+                    />
+                    <TextField
+                        label="Town"
+                        value={this.state.town}
+                        name="town"
+                        onChange={this.onChangeHandler}
+                    />
+                    <TextField
+                        multiline
+                        rowsMax={4}
+                        label="Description"
+                        value={this.state.description}
+                        name="description"
+                        onChange={this.onChangeHandler}
+                    />
+                    <TextField
+                        type="date"
+                        label="Company creation date"
+                        value={this.state.companyCreationDate}
+                        onChange={this.onChangeHandler}
+                        name="companyCreationDate"
+                        InputLabelProps={{
+                            shrink: true
+                        }}
+                    />
+                    <TextField
+                        type="number"
+                        label="WorkersCount"
+                        value={this.state.workersCount}
+                        name="workersCount"
+                        onChange={this.onChangeHandler}
                     />
                     <Input
                         name="logo"
@@ -104,8 +150,7 @@ class RegisterCompanyPage extends Component {
 
 function mapDispatch(dispatch) {
     return {
-        register: (email, password, name, workersCount, logo) => 
-            dispatch(registerCompanyAction(email, password, name, workersCount, logo))
+        register: (params) => dispatch(registerCompanyAction(params))
         //TODO: when register login auto??
     };
 }

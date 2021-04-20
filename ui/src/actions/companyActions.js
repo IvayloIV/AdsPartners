@@ -2,9 +2,9 @@ import { toast } from 'react-toastify';
 import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE } from '../actions/actionTypes';
 import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile } from '../services/companyService';
 
-function registerCompanyAction(email, password, name, workersCount, logo) {
+function registerCompanyAction(params) {
     return (dispatch) => {
-        return registerCompany(email, password, name, workersCount, logo)
+        return registerCompany(params)
             .then(json => {
                 console.log(json); //TODO: check if register is success and json contains success object
                 dispatch({ type: REGISTER_COMPANY_SUCCESS });
