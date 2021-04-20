@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS } from '../actions/actionTypes';
-import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus } from '../services/companyService';
+import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE } from '../actions/actionTypes';
+import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile } from '../services/companyService';
 
 function registerCompanyAction(email, password, name, workersCount, logo) {
     return (dispatch) => {
@@ -68,5 +68,25 @@ function changeSubscriberStatusAction(youtuberId, newStatus) {
     };
 }
 
+function getCompanyDetailsAction(companyId) {
+    return (dispatch) => {
+        return getCompanyDetails(companyId)
+            .then(json => {
+                dispatch({ type: GET_COMPANY_DETAILS, data: json });
+                return json;
+            });
+    };
+}
+
+function getCompanyProfileAction() {
+    return (dispatch) => {
+        return getCompanyProfile()
+            .then(json => {
+                dispatch({ type: GET_COMPANY_PROFILE, data: json });
+                return json;
+            });
+    };
+}
+
 export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
-    changeSubscriberStatusAction };
+    changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction };

@@ -278,6 +278,7 @@ class ListAd extends Component {
                     return <p key={i}>
                         {a.title}
                         <Link className="details" to={`/ad/details/${a.id}`}>Details</Link>
+                        <Link className="company-details" to={`/company/details/${a.company.id}`}>Company Details</Link>
                         <Rating
                             // value={0} TODO...
                             // precision={0.5} TODO...

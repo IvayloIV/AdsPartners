@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class AdResponse {
+public class AdYoutuberApplicationResponse {
 
     private Long id;
 
@@ -29,5 +29,5 @@ public class AdResponse {
 
     private Double averageRating;
 
-    private Boolean isBlocked;
+    private String type;
 }

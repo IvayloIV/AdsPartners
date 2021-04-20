@@ -22,12 +22,24 @@ export async function getAds(params) {
     return await requester('/ad/list' + query, 'GET', true);
 }
 
+export async function getCompanyAds() {
+    return await requester('/ad/list/company', 'GET', true);
+}
+
+export async function getCompanyAdsById(companyId) {
+    return await requester('/ad/list/company/' + companyId, 'GET', true);
+}
+
 export async function getAdDetails(adId) {
     return await requester('/ad/details/' + adId, 'GET', true);
 }
 
 export async function applyForAd(adId, params) {
     return await requester('/ad/applyfor/' + adId, 'POST', true, params);
+}
+
+export async function getApplicationsByCompany(companyId) {
+    return await requester('/ad/company/applications/' + companyId, 'GET', true);
 }
 
 export async function getApplications(adId) {

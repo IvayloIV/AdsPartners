@@ -26,3 +26,11 @@ export async function getSubscribers() {
 export async function changeSubscriberStatus(youtuberId, newStatus) {
     return await requester(`/company/subscriber/${youtuberId}/status`, 'POST', true, { isBlocked: newStatus });
 }
+
+export async function getCompanyDetails(companyId) {
+    return await requester(`/company/details/${companyId}`, 'GET', true);
+}
+
+export async function getCompanyProfile() {
+    return await requester('/company/profile', 'GET', true);
+}

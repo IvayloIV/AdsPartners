@@ -12,6 +12,9 @@ public class AdApplicationResponse {
     @JsonProperty("youtuber")
     private YoutuberDetailsResponse idYoutuber;
 
+    @JsonProperty("ad")
+    private AdDetailsResponse idAd;
+
     private Date applicationDate;
 
     private ApplicationType type;

@@ -9,6 +9,7 @@ import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.repository.AdApplicationRepository;
@@ -60,6 +61,7 @@ public class AdServiceImpl implements AdService {
     public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel) {
         Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
         Page<Ad> pageAds = this.adRepository.findAll(adFilterBindingModel, pageable);
+        //TODO: If youtuber make request, return only available ads, without blocked and out of date
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
                 .map(this::setAdsCountToCompany)
@@ -173,7 +175,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<List<AdApplicationResponse>> getApplications(Long adId) {
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(Long adId) {
         List<AdApplication> applications = this.adApplicationRepository.findById_Ad_Id(adId);
         List<AdApplicationResponse> adApplicationResponses = applications
                 .stream()
@@ -181,5 +183,32 @@ public class AdServiceImpl implements AdService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(adApplicationResponses);
+    }
+
+    @Override
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(Long companyId) {
+        List<AdApplication> applications = this.adApplicationRepository.findById_Ad_Company_Id(companyId);
+        List<AdApplicationResponse> adApplicationResponses = applications
+                .stream()
+                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(adApplicationResponses);
+    }
+
+    @Override
+    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId) {
+        List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_Id(youtuberId);
+        List<AdYoutuberApplicationResponse> adsResponse = applications
+                .stream()
+                .map(a -> {
+                    AdYoutuberApplicationResponse adApplication =
+                            this.modelMapper.map(a.getId().getAd(), AdYoutuberApplicationResponse.class);
+                    adApplication.setType(a.getType().name());
+                    return adApplication;
+                }) //TODO: not the best way for AdYoutuberApplicationResponse
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(adsResponse);
     }
 }

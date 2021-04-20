@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { LOAD_USER_INFO } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData } from '../services/youtubeService';
+import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE } from '../actions/actionTypes';
+import { getUserInfo, refreshUserData, checkSubscription, subscribe } from '../services/youtubeService';
 
 function loadUserInfoAction() {
     return (dispatch) => {
@@ -21,4 +21,25 @@ function refreshUserDataAction() {
     };
 }
 
-export { loadUserInfoAction, refreshUserDataAction };
+function checkSubscriptionAction(companyId) {
+    return (dispatch) => {
+        return checkSubscription(companyId)
+            .then(json => {
+                dispatch({ type: CHECK_SUBSCRIPTION, data: json });
+            });
+    };
+}
+
+function subscribeAction(companyId) {
+    return (dispatch) => {
+        return subscribe(companyId)
+            .then(json => {
+                if (json.message != '') {
+                    dispatch({ type: SUBSCRIBE, data: true });
+                }
+                toast.success(json.message);
+            });
+    };
+}
+
+export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction };

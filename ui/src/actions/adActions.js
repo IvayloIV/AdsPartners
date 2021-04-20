@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS } from '../actions/actionTypes';
-import { createAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications } from '../services/adService';
+import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, COMPANY_APPLICATIONS_LIST } from '../actions/actionTypes';
+import { createAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, getCompanyAds, getApplicationsByCompany, getCompanyAdsById } from '../services/adService';
 
 function getAllAdsAction(params) {
     return (dispatch) => {
@@ -8,6 +8,24 @@ function getAllAdsAction(params) {
             .then(json => {
                 console.log(json);
                 dispatch({ type: AD_LIST, data: json });
+            });
+    };
+}
+
+function getCompanyAdsAction() {
+    return (dispatch) => {
+        return getCompanyAds()
+            .then(json => {
+                dispatch({ type: AD_COMPANY_LIST, data: json });
+            });
+    };
+}
+
+function getCompanyAdsByIdAction(companyId) {
+    return (dispatch) => {
+        return getCompanyAdsById(companyId)
+            .then(json => {
+                dispatch({ type: AD_COMPANY_LIST, data: json });
             });
     };
 }
@@ -28,6 +46,15 @@ function applyForAdAction(adId, params) {
             .then(json => {
                 // dispatch({ type: AD_FILTERS, data: json });
                 toast.success(json.message);
+            });
+    };
+}
+
+function getApplicationsByCompanyAction(companyId) {
+    return (dispatch) => {
+        return getApplicationsByCompany(companyId)
+            .then(json => {
+                dispatch({ type: COMPANY_APPLICATIONS_LIST, data: json });
             });
     };
 }
@@ -73,5 +100,6 @@ function createAdAction(title, shortDescription, reward, validTo, minVideos, min
     };
 }
 
-export { getAllAdsAction, getAdDetailsAction, getAdsFiltersAction, 
-    createAdAction, voteForAdAction, applyForAdAction, getApplicationsAction };
+export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
+    createAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, getApplicationsByCompanyAction,
+    getCompanyAdsByIdAction };

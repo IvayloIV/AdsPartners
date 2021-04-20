@@ -49,6 +49,12 @@ public class CompanyController {
         return this.userService.getCompanyById(id);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<CompanyResponse> getProfile(Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        return this.userService.getCompanyById(company.getId());
+    }
+
     @GetMapping("/subscribers")
     public ResponseEntity<List<SubscriptionInfoResponse>> getSubscribers(Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
@@ -70,5 +76,12 @@ public class CompanyController {
                                                      Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.userService.subscribe(youtuber, companyId);
+    }
+    
+    @GetMapping(path = "/subscription/check/{id}")
+    public ResponseEntity<Boolean> checkYoutuberSub(@PathVariable("id") Long companyId,
+                                                    Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.userService.checkSubscription(youtuber.getId(), companyId);
     }
 }

@@ -6,6 +6,8 @@ import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +29,9 @@ public interface AdService {
 
     public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel);
 
-    public ResponseEntity<List<AdApplicationResponse>> getApplications(Long adId);
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(Long adId);
+
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(Long companyId);
+
+    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId);
 }

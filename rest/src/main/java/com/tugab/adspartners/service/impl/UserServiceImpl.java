@@ -1,5 +1,6 @@
 package com.tugab.adspartners.service.impl;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
@@ -181,6 +182,11 @@ public class UserServiceImpl implements UserService {
 
         this.subscriptionRepository.save(subscription);
         return ResponseEntity.ok(new MessageResponse("You have just subscribed for company."));
+    }
+
+    public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId) {
+        Boolean existSub = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuberId);
+        return ResponseEntity.ok(existSub);
     }
 
     @Override

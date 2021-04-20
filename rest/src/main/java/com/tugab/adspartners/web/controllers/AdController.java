@@ -6,8 +6,8 @@ import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
+import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.service.AdService;
@@ -34,6 +34,23 @@ public class AdController {
 
     @GetMapping("/list")
     public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel) {
+        return this.adService.adsList(adFilterBindingModel);
+    }
+
+    @GetMapping("/list/company")
+    public ResponseEntity<AdListResponse> adsListByCompany(AdFilterBindingModel adFilterBindingModel,
+                                                           Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        adFilterBindingModel.setCompanyId(company.getId());
+        adFilterBindingModel.setSize(Integer.MAX_VALUE);
+        return this.adService.adsList(adFilterBindingModel);
+    }
+
+    @GetMapping("/list/company/{id}")
+    public ResponseEntity<AdListResponse> adsListByCompanyId(AdFilterBindingModel adFilterBindingModel,
+                                                           @PathVariable("id") Long companyId) {
+        adFilterBindingModel.setCompanyId(companyId);
+        adFilterBindingModel.setSize(Integer.MAX_VALUE);
         return this.adService.adsList(adFilterBindingModel);
     }
 
@@ -74,7 +91,18 @@ public class AdController {
     }
 
     @GetMapping("/applications/{id}")
-    public ResponseEntity<List<AdApplicationResponse>> getApplications(@PathVariable("id") Long adId) {
-        return this.adService.getApplications(adId);
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(@PathVariable("id") Long adId) {
+        return this.adService.getApplicationsByAdId(adId);
+    }
+
+    @GetMapping("/company/applications/{id}")
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(@PathVariable("id") Long companyId) {
+        return this.adService.getApplicationsByCompanyId(companyId);
+    }
+
+    @GetMapping("/youtuber/applications") //TODO: temp method, remove it after finish work
+    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuber(Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.adService.getApplicationsByYoutuberId(youtuber.getId());
     }
 }

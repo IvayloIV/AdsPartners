@@ -7,3 +7,11 @@ export async function getUserInfo() {
 export async function refreshUserData() {
     return await requester('/youtube/profile/update', 'POST', true);
 }
+
+export async function checkSubscription(companyId) {
+    return await requester('/company/subscription/check/' + companyId, 'GET', true);
+}
+
+export async function subscribe(companyId) {
+    return await requester('/company/subscribe/' + companyId, 'POST', true);
+}
