@@ -15,3 +15,7 @@ export async function checkSubscription(companyId) {
 export async function subscribe(companyId) {
     return await requester('/company/subscribe/' + companyId, 'POST', true);
 }
+
+export async function getYoutubersBySubs(pageSize) {
+    return await requester('/youtube/list/subscribers?size=' + pageSize, 'GET', false);
+}

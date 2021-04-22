@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData, checkSubscription, subscribe } from '../services/youtubeService';
+import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS } from '../actions/actionTypes';
+import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs } from '../services/youtubeService';
 
 function loadUserInfoAction() {
     return (dispatch) => {
@@ -42,4 +42,15 @@ function subscribeAction(companyId) {
     };
 }
 
-export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction };
+function getYoutubersBySubsAction(pageSize) {
+    return (dispatch) => {
+        return getYoutubersBySubs(pageSize)
+            .then(json => {
+                dispatch({ type: YOUTUBERS_BY_SUBS, data: json });
+                return json;
+            });
+    };
+}
+
+export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, 
+    getYoutubersBySubsAction };

@@ -11,6 +11,7 @@ import java.util.List;
 public interface AdApplicationRepository extends JpaRepository<AdApplication, AdApplicationId> {
 
     public List<AdApplication> findById_Ad_Id(Long adId);
+
     public List<AdApplication> findById_Ad_Company_Id(Long company);
 
     public List<AdApplication> findById_Youtuber_Id(Long youtuberId);

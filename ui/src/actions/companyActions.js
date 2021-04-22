@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS } from '../actions/actionTypes';
-import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus } from '../services/companyService';
+import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING } from '../actions/actionTypes';
+import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus, getCompaniesByRating } from '../services/companyService';
 
 function registerCompanyAction(params) {
     return (dispatch) => {
@@ -119,6 +119,17 @@ function updateCompanyStatusAction(companyId, status) {
     };
 }
 
+function getCompaniesByRatingAction(pageSize) {
+    return (dispatch) => {
+        return getCompaniesByRating(pageSize)
+            .then(json => {
+                dispatch({ type: COMPANIES_BY_RATING, data: json });
+                return json;
+            });
+    };
+}
+
 export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
     changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction,
-    getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction };
+    getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction,
+    getCompaniesByRatingAction };

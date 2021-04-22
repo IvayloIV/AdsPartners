@@ -6,11 +6,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.response.UserInfoResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
 import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.YoutuberRepository;
 import com.tugab.adspartners.service.YoutubeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class YoutubeServiceImpl extends DefaultOAuth2UserService implements YoutubeService {
@@ -133,5 +139,18 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     @Override
     public Youtuber findByEmail(String email) {
         return this.youtuberRepository.findByEmail(email);
+    }
+
+    @Override
+    public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubscribers(Integer size) {
+        Pageable youtuberPageable = PageRequest.of(0, size);
+        Page<Youtuber> youtuberPage = this.youtuberRepository
+                .findAllByOrderBySubscriberCountDesc(youtuberPageable);
+
+        List<YoutuberInfoResponse> youtubersInfo = youtuberPage
+                .getContent()
+                .stream().map(y -> this.modelMapper.map(y, YoutuberInfoResponse.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(youtubersInfo);
     }
 }

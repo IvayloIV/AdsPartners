@@ -17,6 +17,10 @@ export async function getAllCompanies() {
     return await requester('/company/list', 'GET', true);
 }
 
+export async function getCompaniesByRating(pageSize) {
+    return await requester('/company/list/rating?size=' + pageSize, 'GET', false);
+}
+
 export async function getSubscribers() {
     return await requester('/company/subscribers', 'GET', true);
 }

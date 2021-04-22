@@ -1,8 +1,9 @@
-import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE } from '../actions/actionTypes';
+import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS } from '../actions/actionTypes';
 
 let youtubeUser = {
     name: '',
-    isSubscriber: false
+    isSubscriber: false,
+    list: []
 };
 
 export function youtubeReducer(state = youtubeUser, action) {
@@ -13,6 +14,8 @@ export function youtubeReducer(state = youtubeUser, action) {
             return Object.assign({}, state, { isSubscriber: action.data });
         case SUBSCRIBE:
             return Object.assign({}, state, { isSubscriber: action.data });
+        case YOUTUBERS_BY_SUBS:
+            return Object.assign({}, state, { list: action.data });
         default:
             return state;
     }

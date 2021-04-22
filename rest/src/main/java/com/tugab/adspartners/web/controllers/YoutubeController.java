@@ -1,12 +1,15 @@
 package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -38,5 +41,10 @@ public class YoutubeController {
     @PreAuthorize("hasAuthority('YOUTUBER')")
     public ResponseEntity<?> userInfo(Authentication authentication) {
         return this.youtubeService.convertAuthenticationToUserInfo(authentication);
+    }
+
+    @GetMapping("/list/subscribers")
+    public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubs(@RequestParam("size") Integer size) {
+        return this.youtubeService.getYoutubersBySubscribers(size);
     }
 }

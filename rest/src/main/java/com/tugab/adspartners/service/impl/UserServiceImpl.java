@@ -13,6 +13,7 @@ import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingMo
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
@@ -22,6 +23,9 @@ import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -230,6 +234,26 @@ public class UserServiceImpl implements UserService {
         CompanyRegisterHistoryResponse companyHistory = this.modelMapper
                 .map(company, CompanyRegisterHistoryResponse.class);
         return ResponseEntity.ok(companyHistory);
+    }
+
+    @Override
+    public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size) {
+        Pageable companyPageable = PageRequest.of(0, size);
+        Page<Object[]> companiesPage = this.companyRepository.findTopCompaniesByRating(companyPageable);
+
+        List<CompanyInfoResponse> companyInfoResponses = companiesPage
+                .getContent()
+                .stream()
+                .map(o -> {
+                    Company company = (Company) o[0];
+                    Double averageRating = (Double) o[1];
+                    CompanyInfoResponse companyInfo = this.modelMapper.map(company, CompanyInfoResponse.class);
+                    companyInfo.setAverageRating(averageRating != null ? averageRating : 0.0);
+                    return companyInfo;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(companyInfoResponses);
     }
 
     @Override

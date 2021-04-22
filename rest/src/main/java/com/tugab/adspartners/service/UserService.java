@@ -11,6 +11,7 @@ import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
@@ -48,4 +49,6 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<List<CompanyRegisterHistoryResponse>> getRegisterHistory();
 
     public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
+
+    public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size);
 }

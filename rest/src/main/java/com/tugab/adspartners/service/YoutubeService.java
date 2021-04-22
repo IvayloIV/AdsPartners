@@ -1,12 +1,15 @@
 package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -18,4 +21,6 @@ public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAu
     public void updateYoutubeDetails(Youtuber youtuber);
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication);
+
+    public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubscribers(Integer size);
 }

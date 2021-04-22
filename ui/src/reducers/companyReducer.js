@@ -1,6 +1,6 @@
 import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
     CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE,
-    REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS } from '../actions/actionTypes';
+    REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING } from '../actions/actionTypes';
 
 let companyState = { 
     registerSuccess: false, 
@@ -19,6 +19,8 @@ export function companyReducer(state = companyState, action) {
         case LOGIN_COMPANY_SUCCESS:
             return Object.assign({}, state, { loginSuccess: true });
         case GET_ALL_COMPANIES:
+            return Object.assign({}, state, { list: action.data });
+        case COMPANIES_BY_RATING:
             return Object.assign({}, state, { list: action.data });
         case GET_SUBSCRIBERS:
             return Object.assign({}, state, { subscribers: action.data });
