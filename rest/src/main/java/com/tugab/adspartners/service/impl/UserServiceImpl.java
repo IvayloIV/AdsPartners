@@ -9,10 +9,13 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
 import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
@@ -189,6 +192,44 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId) {
         Boolean existSub = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuberId);
         return ResponseEntity.ok(existSub);
+    }
+
+    @Override
+    public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests() {
+        List<Company> companies = this.companyRepository
+                .findAllByStatusOrderByUser_CreatedDateDesc(RegistrationStatus.UNRESOLVED);
+        
+        List<CompanyRegisterRequestResponse> companiesRequest = companies.stream()
+                .map(c -> this.modelMapper.map(c, CompanyRegisterRequestResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(companiesRequest);
+    }
+
+    @Override
+    public ResponseEntity<List<CompanyRegisterHistoryResponse>> getRegisterHistory() {
+        List<Company> companies = this.companyRepository
+                .findAllByStatusNotOrderByStatusModifyDateDesc(RegistrationStatus.UNRESOLVED);
+
+        List<CompanyRegisterHistoryResponse> companiesHistory = companies.stream()
+                .map(c -> this.modelMapper.map(c, CompanyRegisterHistoryResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(companiesHistory);
+    }
+
+    @Override
+    public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel) {
+        Company company = this.companyRepository.findById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid company id."));
+
+        company.setStatus(updateStatusBindingModel.getStatus());
+        company.setStatusModifyDate(new Date());
+        this.companyRepository.save(company);
+
+        CompanyRegisterHistoryResponse companyHistory = this.modelMapper
+                .map(company, CompanyRegisterHistoryResponse.class);
+        return ResponseEntity.ok(companyHistory);
     }
 
     @Override

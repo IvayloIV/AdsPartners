@@ -14,7 +14,7 @@ public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //TODO can i use user id for primary key?
 
     private String phone;
 

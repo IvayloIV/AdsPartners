@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE } from '../actions/actionTypes';
-import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile } from '../services/companyService';
+import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS } from '../actions/actionTypes';
+import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus } from '../services/companyService';
 
 function registerCompanyAction(params) {
     return (dispatch) => {
@@ -88,5 +88,37 @@ function getCompanyProfileAction() {
     };
 }
 
+function getCompanyRequestsAction() { //TODO: maybe rename to getCompaniesRequests
+    return (dispatch) => {
+        return registerRequests()
+            .then(json => {
+                dispatch({ type: REGISTER_REQUESTS, data: json });
+                return json;
+            });
+    };
+}
+
+function getCompanyHistoryAction() {
+    return (dispatch) => {
+        return registerHistory()
+            .then(json => {
+                dispatch({ type: REGISTER_HISTORY, data: json });
+                return json;
+            });
+    };
+}
+
+function updateCompanyStatusAction(companyId, status) {
+    return (dispatch) => {
+        return updateRegisterStatus(companyId, status)
+            .then(json => {
+                dispatch({ type: UPDATE_REGISTER_STATUS, data: json });
+                toast.info("Status updated successfully.");
+                return json;
+            });
+    };
+}
+
 export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
-    changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction };
+    changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction,
+    getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction };

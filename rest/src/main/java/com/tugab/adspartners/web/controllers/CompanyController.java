@@ -6,9 +6,12 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
 import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -83,5 +86,21 @@ public class CompanyController {
                                                     Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.userService.checkSubscription(youtuber.getId(), companyId);
+    }
+
+    @GetMapping(path = "/register/requests")
+    public ResponseEntity<List<CompanyRegisterRequestResponse>> registerRequests() {
+        return this.userService.getRegisterRequests();
+    }
+
+    @GetMapping(path = "/register/history")
+    public ResponseEntity<List<CompanyRegisterHistoryResponse>> registerHistory() {
+        return this.userService.getRegisterHistory();
+    }
+
+    @PostMapping(path = "/register/status/{id}")
+    public ResponseEntity<CompanyRegisterHistoryResponse> updateRegisterStatus(@PathVariable("id") Long companyId,
+                                                                @RequestBody UpdateStatusBindingModel updateStatusBindingModel) {
+        return this.userService.updateCompanyStatus(companyId, updateStatusBindingModel);
     }
 }

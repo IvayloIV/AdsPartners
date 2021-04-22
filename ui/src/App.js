@@ -18,6 +18,7 @@ import CreateAd from './components/Ad/CreateAd';
 import AdDetails from './components/Ad/AdDetails';
 import SubscribersPage from './components/Company/SubscribersPage';
 import CompanyDetailsPage from './components/Company/CompanyDetailsPage';
+import RegisterRequests from './components/Company/RegisterRequests';
 
 class App extends Component {
     constructor(props) {
@@ -51,6 +52,7 @@ class App extends Component {
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/subscribers" component={SubscribersPage} />
                     <PrivateRoute authorities={['YOUTUBER', 'ADMIN']} path="/company/details/:companyId" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/profile" component={CompanyDetailsPage} />
+                    <PrivateRoute authorities={['ADMIN']} path="/company/requests" component={RegisterRequests} />
                 </Switch>
             </div>
         );

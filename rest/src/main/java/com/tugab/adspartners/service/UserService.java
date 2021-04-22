@@ -8,9 +8,12 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -39,4 +42,10 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<MessageResponse> subscribe(Youtuber youtuber, Long companyId);
 
     public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId);
+
+    public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests();
+
+    public ResponseEntity<List<CompanyRegisterHistoryResponse>> getRegisterHistory();
+
+    public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
 }

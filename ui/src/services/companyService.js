@@ -32,3 +32,15 @@ export async function getCompanyDetails(companyId) {
 export async function getCompanyProfile() {
     return await requester('/company/profile', 'GET', true);
 }
+
+export async function registerRequests() {
+    return await requester('/company/register/requests', 'GET', true);
+}
+
+export async function registerHistory() {
+    return await requester('/company/register/history', 'GET', true);
+}
+
+export async function updateRegisterStatus(companyId, status) {
+    return await requester('/company/register/status/' + companyId, 'POST', true, { status });
+}
