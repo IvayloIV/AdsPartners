@@ -1,6 +1,7 @@
 import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
     CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE,
-    REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING } from '../actions/actionTypes';
+    REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING,
+    COMPANIES_FILTERS, COMPANIES_ADS, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
 
 let companyState = { 
     registerSuccess: false, 
@@ -9,7 +10,8 @@ let companyState = {
     subscribers: [],
     details: {},
     requests: [],
-    history: []
+    history: [],
+    filters: []
 };
 
 export function companyReducer(state = companyState, action) {
@@ -22,6 +24,11 @@ export function companyReducer(state = companyState, action) {
             return Object.assign({}, state, { list: action.data });
         case COMPANIES_BY_RATING:
             return Object.assign({}, state, { list: action.data });
+        case COMPANIES_ADS:
+            console.log(action.data);
+            return Object.assign({}, state, { list: action.data });
+        case COMPANIES_FILTERS:
+            return Object.assign({}, state, { filters: action.data });
         case GET_SUBSCRIBERS:
             return Object.assign({}, state, { subscribers: action.data });
         case CHANGE_SUBSCRIBER_STATUS:
@@ -42,6 +49,14 @@ export function companyReducer(state = companyState, action) {
             let history = state.history.slice();
             history.unshift(action.data);
             return Object.assign({}, state, { requests, history });
+        case BLOCK_AD:
+        case UNBLOCK_AD:
+            let list = Object.assign({}, state.list);
+            let ads = list.items.filter(c => c.ads.some(a => a.id === action.adId))[0].ads;
+            let ad = ads.filter(a => a.id === action.adId)[0];
+            let { isBlocked } = ad;
+            ad.isBlocked = !ad.isBlocked;
+            return Object.assign({}, state, { list });
         default:
             return state;
     }

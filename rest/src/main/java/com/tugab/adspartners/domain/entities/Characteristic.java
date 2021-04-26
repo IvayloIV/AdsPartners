@@ -24,7 +24,7 @@ public class Characteristic {
     private String name;
 
     @Column(name = "value")
-    @Length(min = 3, message = "Value of characteristic cannot be less than 3 symbols.")
+    @Length(min = 1, message = "Value of characteristic cannot be less than 1 symbols.")
     private String value;
 
     @JsonIgnore

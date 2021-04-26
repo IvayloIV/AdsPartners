@@ -55,6 +55,14 @@ export async function getFilters(params) {
     return await requester('/ad/filters' + query, 'GET', true);
 }
 
+export async function blockAd(adId) {
+    return await requester('/ad/block/' + adId, 'POST', true);
+}
+
+export async function unblockAd(adId) {
+    return await requester('/ad/unblock/' + adId, 'POST', true);
+}
+
 function addQueryParams(params) {
     let query = '?';
 

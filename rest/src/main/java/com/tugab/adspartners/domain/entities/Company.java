@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@Table
-@Entity(name = "company")
+@Entity
+@Table(name = "company")
 public class Company {
 
     @Id
@@ -45,7 +45,7 @@ public class Company {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "company", targetEntity = Ad.class)
+    @OneToMany(mappedBy = "company", targetEntity = Ad.class, fetch = FetchType.EAGER)
     private List<Ad> ads;
 
     @Transient

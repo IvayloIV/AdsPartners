@@ -18,9 +18,9 @@ export function adReducer(state = adState, action) {
             return Object.assign({}, state, { details: action.data });
         case AD_FILTERS:
             return Object.assign({}, state, { filters: action.data });
-        case CREATE_AD:
-            state.list.items.unshift(action.data);
-            return state.list.slice(); //TODO: za ko mi e tui slice()??
+        // case CREATE_AD:
+        //     state.list.items.unshift(action.data);
+        //     return state.list.slice(); //TODO: za ko mi e tui slice()??
         case COMPANY_APPLICATIONS_LIST:
             return Object.assign({}, state, { applications: action.data });
         case AD_APPLICATIONS:

@@ -14,7 +14,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User extends UserInfo implements UserDetails {
 
     @Column(name = "password", nullable = false)
@@ -24,7 +24,7 @@ public class User extends UserInfo implements UserDetails {
     private Date createdDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(	name = "user_roles",
+    @JoinTable(	name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();

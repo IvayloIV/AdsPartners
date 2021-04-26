@@ -1,6 +1,5 @@
 package com.tugab.adspartners.service.impl;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
@@ -8,16 +7,17 @@ import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
-import com.tugab.adspartners.repository.*;
+import com.tugab.adspartners.domain.models.response.company.*;
+import com.tugab.adspartners.repository.CompanyRepository;
+import com.tugab.adspartners.repository.RoleRepository;
+import com.tugab.adspartners.repository.SubscriptionRepository;
+import com.tugab.adspartners.repository.UserRepository;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.UserService;
@@ -38,6 +38,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -254,6 +256,53 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(companyInfoResponses);
+    }
+
+    @Override
+    public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel) {
+        int page = companyFilterBindingModel.getPage() - 1;
+        Integer size = companyFilterBindingModel.getSize();
+        Boolean isBlocked = companyFilterBindingModel.getIsBlocked();
+        Pageable companyPageable = PageRequest.of(page, size);
+        Page<Company> companies = this.companyRepository.findAllByFilters(companyFilterBindingModel, companyPageable);
+
+        List<CompanyAdsResponse> companiesResponse = companies
+                .getContent()
+                .stream()
+                .map(c -> this.modelMapper.map(c, CompanyAdsResponse.class))
+                .map(c -> {
+                    c.setTotalAdsCount(c.getAds().size());
+                    if (isBlocked != null) { //TODO: make it with sql query
+                        c.setAds(c.getAds()
+                                .stream()
+                                .filter(a -> a.getIsBlocked() == isBlocked)
+                                .collect(Collectors.toList()));
+                    }
+                    return c;
+                })
+                .collect(Collectors.toList());
+
+        CompanyAdsListResponse companyAdsList = new CompanyAdsListResponse();
+        companyAdsList.setItems(companiesResponse);
+        companyAdsList.setElementsPerPage(companies.getNumberOfElements());
+        companyAdsList.setTotalElements(companies.getTotalElements());
+        companyAdsList.setTotalPages(companies.getTotalPages());
+
+        return ResponseEntity.ok(companyAdsList);
+    }
+
+    @Override
+    public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters() {
+        List<Company> companies = this.companyRepository.findAll();
+
+        Set<Integer> adCounts = companies
+            .stream()
+            .map(c -> c.getAds().size())
+            .collect(Collectors.toCollection(TreeSet::new));
+
+        CompanyFiltersResponse companyFilters = new CompanyFiltersResponse();
+        companyFilters.setAdCounts(adCounts);
+        return ResponseEntity.ok(companyFilters);
     }
 
     @Override

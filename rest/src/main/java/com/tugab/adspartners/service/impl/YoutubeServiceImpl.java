@@ -68,7 +68,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
             youtuber.setEmail(email);
             youtuber.setName(oAuth2User.getAttribute("name"));
 
-            this.youtuberRepository.save(youtuber);
+//            this.youtuberRepository.save(youtuber); //TODO: for test
         }
 
         final String token = oAuth2UserRequest.getAccessToken().getTokenValue();

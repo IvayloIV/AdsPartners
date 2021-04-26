@@ -140,7 +140,7 @@ public class AdServiceImpl implements AdService {
         ad.setIsBlocked(false);
         ad.getCharacteristics().forEach(c -> c.setAd(ad));
         this.adRepository.save(ad);
-        return new ResponseEntity(ad, HttpStatus.CREATED);
+        return new ResponseEntity(new MessageResponse("Ad created successfully."), HttpStatus.CREATED);
     }
 
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {
@@ -210,5 +210,15 @@ public class AdServiceImpl implements AdService {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(adsResponse);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponse> changeAdBlockingStatus(Long adId, Boolean isBlocked) {
+        Ad ad = this.adRepository.findById(adId)
+                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
+        ad.setIsBlocked(isBlocked);
+
+        this.adRepository.save(ad);
+        return ResponseEntity.ok(new MessageResponse("Status updated successfully."));
     }
 }

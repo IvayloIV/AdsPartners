@@ -1,6 +1,8 @@
 import { toast } from 'react-toastify';
-import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, COMPANY_APPLICATIONS_LIST } from '../actions/actionTypes';
-import { createAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, getCompanyAds, getApplicationsByCompany, getCompanyAdsById } from '../services/adService';
+import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
+    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
+import { createAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
+    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd } from '../services/adService';
 
 function getAllAdsAction(params) {
     return (dispatch) => {
@@ -93,13 +95,33 @@ function createAdAction(title, shortDescription, reward, validTo, minVideos, min
         return createAd(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics)
             .then(json => {
                 console.log(json);
-                dispatch({ type: CREATE_AD, data: json });
+                // dispatch({ type: CREATE_AD, data: json });
                 let msg = null;
-                toast.success(`${msg || 'Ad created'} successfully.`);
+                toast.success(json.message);
+            });
+    };
+}
+
+function blockAdAction(adId) {
+    return (dispatch) => {
+        return blockAd(adId)
+            .then(json => {
+                dispatch({ type: BLOCK_AD, adId });
+                toast.success(json.message);
+            });
+    };
+}
+
+function unblockAdAction(adId) {
+    return (dispatch) => {
+        return unblockAd(adId)
+            .then(json => {
+                dispatch({ type: UNBLOCK_AD, adId });
+                toast.success(json.message);
             });
     };
 }
 
 export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
     createAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, getApplicationsByCompanyAction,
-    getCompanyAdsByIdAction };
+    getCompanyAdsByIdAction, blockAdAction, unblockAdAction };

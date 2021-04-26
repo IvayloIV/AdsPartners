@@ -7,14 +7,12 @@ import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
+import com.tugab.adspartners.domain.models.response.company.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -51,4 +49,8 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
 
     public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size);
+
+    public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel);
+
+    public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters();
 }

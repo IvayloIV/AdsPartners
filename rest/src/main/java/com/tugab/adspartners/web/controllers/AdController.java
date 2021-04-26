@@ -105,4 +105,14 @@ public class AdController {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.adService.getApplicationsByYoutuberId(youtuber.getId());
     }
+
+    @PostMapping("/block/{id}")
+    public ResponseEntity<MessageResponse> blockAd(@PathVariable("id") Long adId) {
+        return this.adService.changeAdBlockingStatus(adId, true);
+    }
+
+    @PostMapping("/unblock/{id}")
+    public ResponseEntity<MessageResponse> unblockAd(@PathVariable("id") Long adId) {
+        return this.adService.changeAdBlockingStatus(adId, false);
+    }
 }

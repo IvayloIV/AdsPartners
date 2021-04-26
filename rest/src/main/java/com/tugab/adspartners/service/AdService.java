@@ -34,4 +34,6 @@ public interface AdService {
     public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(Long companyId);
 
     public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId);
+
+    public ResponseEntity<MessageResponse> changeAdBlockingStatus(Long adId, Boolean isBlocked);
 }

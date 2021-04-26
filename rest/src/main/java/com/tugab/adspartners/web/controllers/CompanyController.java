@@ -5,14 +5,12 @@ import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyInfoResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterHistoryResponse;
-import com.tugab.adspartners.domain.models.response.company.CompanyRegisterRequestResponse;
+import com.tugab.adspartners.domain.models.response.company.*;
 import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -108,5 +106,15 @@ public class CompanyController {
     @GetMapping(path = "/list/rating")
     public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(@RequestParam("size") Integer size) {
         return this.userService.getCompanyList(size);
+    }
+
+    @GetMapping("/list/ad")
+    public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel) {
+        return this.userService.getCompaniesAds(companyFilterBindingModel);
+    }
+
+    @GetMapping("/filters")
+    public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters() {
+        return this.userService.getCompaniesFilters();
     }
 }
