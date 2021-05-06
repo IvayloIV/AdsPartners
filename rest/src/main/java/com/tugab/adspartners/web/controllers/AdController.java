@@ -72,6 +72,14 @@ public class AdController {
         return this.adService.createAd(createAdBindingModel, errors);
     }
 
+    @PostMapping(path = "/edit/{id}")
+    public ResponseEntity<MessageResponse> editAd(@PathVariable("id") Long adId,
+                                                  @Valid @RequestBody EditAdBindingModel editAdBindingModel,
+                                                  Errors errors) {
+        editAdBindingModel.setId(adId);
+        return this.adService.editAd(editAdBindingModel, errors);
+    }
+
     @PostMapping(path = "/vote/{id}")
     public ResponseEntity<CreateRatingResponse> vote(@PathVariable("id") Long adId,
                                                      @RequestBody RatingBindingModel ratingBindingModel,

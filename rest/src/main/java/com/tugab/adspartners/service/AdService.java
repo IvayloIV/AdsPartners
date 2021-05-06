@@ -25,6 +25,8 @@ public interface AdService {
 
     public ResponseEntity createAd(CreateAdBindingModel createAdBindingModel, Errors errors);
 
+    public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors);
+
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
 
     public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel);

@@ -56,7 +56,7 @@ public class Ad {
     @NotNull(message = "Picture is required.")
     private CloudinaryResource picture;
 
-    @OneToMany(mappedBy = "ad", targetEntity = Characteristic.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ad", targetEntity = Characteristic.class, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Characteristic> characteristics;
 
     @OneToMany(mappedBy = "id.ad", targetEntity = AdRating.class, cascade = CascadeType.ALL)

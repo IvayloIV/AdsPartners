@@ -93,7 +93,33 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public boolean deleteImage(CloudinaryResource image) {
+    public CloudinaryResource updateImage(CloudinaryResource oldImage, String base64Image) {
+        CloudinaryResource newCloudinaryResource = this.uploadImage(base64Image);
+        if (newCloudinaryResource != null) {
+            this.deleteImageResource(oldImage);
+            return newCloudinaryResource;
+        }
+
+        return null;
+    }
+
+    @Override
+    public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage) {
+        CloudinaryResource newCloudinaryResource = this.uploadImage(newImage);
+        if (newCloudinaryResource != null) {
+            this.deleteImageResource(oldImage);
+            return newCloudinaryResource;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void deleteImage(CloudinaryResource image) {
+        this.cloudinaryRepository.delete(image);
+    }
+
+    private boolean deleteImageResource(CloudinaryResource image) {
         TreeMap<String, String> params = new TreeMap<>();
         params.put("public_id", image.getId());
 
@@ -109,33 +135,11 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         JsonObject jsonData = this.jsonParser.parse(responseBody).getAsJsonObject();
 
         if (jsonData.has("result") && jsonData.get("result").getAsString().equals("ok")) {
-            this.cloudinaryRepository.delete(image);
+//            this.cloudinaryRepository.delete(image);
             return true;
         } else {
             return false;
         }
-    }
-
-    @Override
-    public CloudinaryResource updateImage(CloudinaryResource oldImage, String base64Image) {
-        CloudinaryResource newCloudinaryResource = this.uploadImage(base64Image);
-        if (newCloudinaryResource != null) {
-            this.deleteImage(oldImage);
-            return newCloudinaryResource;
-        }
-
-        return oldImage;
-    }
-
-    @Override
-    public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage) {
-        CloudinaryResource newCloudinaryResource = this.uploadImage(newImage);
-        if (newCloudinaryResource != null) {
-            this.deleteImage(oldImage);
-            return newCloudinaryResource;
-        }
-
-        return oldImage;
     }
 
     private FormInserter<String> createBody(TreeMap<String, String> params) {

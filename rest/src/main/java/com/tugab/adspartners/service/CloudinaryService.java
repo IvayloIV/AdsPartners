@@ -9,9 +9,9 @@ public interface CloudinaryService {
 
     public CloudinaryResource uploadImage(MultipartFile image);
 
-    public boolean deleteImage(CloudinaryResource image);
-
     public CloudinaryResource updateImage(CloudinaryResource oldImage, String base64Image);
 
     public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage);
+
+    public void deleteImage(CloudinaryResource image);
 }

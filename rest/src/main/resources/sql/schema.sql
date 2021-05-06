@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS `youtuber`
     `id`               BIGINT UNSIGNED AUTO_INCREMENT,
     `email`            VARCHAR(255)    NOT NULL,
     `name`             VARCHAR(255)    NOT NULL,
-    `channel_id`       VARCHAR(255),
-    `description`      VARCHAR(255),
+    `channel_id`       VARCHAR(255)    NOT NULL,
+    `description`      VARCHAR(1023),
     `profile_picture`  VARCHAR(511)    NOT NULL,
     `published_at`     DATETIME        NOT NULL,
     `subscriber_count` BIGINT UNSIGNED NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `company`
 CREATE TABLE IF NOT EXISTS `ad`
 (
     `id`                BIGINT UNSIGNED AUTO_INCREMENT,
-    `creation_date`     DATE            NOT NULL,
+    `creation_date`     DATETIME        NOT NULL,
     `is_blocked`        BIT(1)          NOT NULL,
     `min_subscribers`   BIGINT UNSIGNED,
     `min_videos`        BIGINT UNSIGNED,

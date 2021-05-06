@@ -20,6 +20,7 @@ import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import org.springframework.validation.Errors;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -141,6 +143,52 @@ public class AdServiceImpl implements AdService {
         ad.getCharacteristics().forEach(c -> c.setAd(ad));
         this.adRepository.save(ad);
         return new ResponseEntity(new MessageResponse("Ad created successfully."), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors) {
+        if (errors.hasErrors()) {
+            String errorMessage = errors.getFieldErrors()
+                    .stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining("\n"));
+
+            return ResponseEntity.badRequest().body(new MessageResponse(errorMessage));
+        }
+
+        Ad ad = this.adRepository.findById(editAdBindingModel.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Illegal does not found."));
+        CloudinaryResource oldAdPicture = null;
+
+        if (editAdBindingModel.getPictureBase64() != null) {
+            CloudinaryResource newPicture = this.cloudinaryService
+                    .updateImage(ad.getPicture(), editAdBindingModel.getPictureBase64());
+
+            if (newPicture != null) {
+                oldAdPicture = ad.getPicture();
+                ad.setPicture(newPicture);
+            }
+        }
+
+        ad.setTitle(editAdBindingModel.getTitle());
+        ad.setShortDescription(editAdBindingModel.getShortDescription());
+        ad.setReward(editAdBindingModel.getReward());
+        ad.setValidTo(editAdBindingModel.getValidTo());
+        ad.setMinVideos(editAdBindingModel.getMinVideos());
+        ad.setMinSubscribers(editAdBindingModel.getMinSubscribers());
+        ad.setMinViews(editAdBindingModel.getMinViews());
+
+        ad.getCharacteristics().clear();
+        editAdBindingModel.getCharacteristics().forEach(c -> {
+            c.setAd(ad);
+            ad.getCharacteristics().add(c); //TODO: check if characteristic isn't belong to another ad
+        });
+
+        this.adRepository.save(ad);
+        if (oldAdPicture != null) {
+            this.cloudinaryService.deleteImage(oldAdPicture); //TODO: is it possible to remove picture at the same time with saving ad
+        }
+
+        return new ResponseEntity<>(new MessageResponse("Ad edited successfully."), HttpStatus.CREATED);
     }
 
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {

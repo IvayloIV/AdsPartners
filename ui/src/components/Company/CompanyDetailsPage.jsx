@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
 import { getCompanyAdsAction, getApplicationsByCompanyAction, getCompanyAdsByIdAction } from '../../actions/adActions';
@@ -77,6 +77,8 @@ class CompanyDetailsPage extends Component {
                     <div key={a.id}>
                         <p>Title - {a.title}</p>
                         <p>Valid to - {a.validTo}</p>
+                        {isEmployer && <p><Link className="ad-edit" to={`/ad/edit/${a.id}`}>Edit</Link></p>}
+                        {/* TODO: check if owner is log in for edit ad */}
                     </div>
                 ))}
                 {(isAdmin  || isEmployer) && <h2>Out of date ads</h2>}

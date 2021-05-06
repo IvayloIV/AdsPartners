@@ -17,6 +17,25 @@ export async function createAd(title, shortDescription, reward, validTo, minVide
     });
 }
 
+export async function editAd(id, title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
+    let pictureBase64 = null;
+    if (picture != null) {
+        pictureBase64 = await toBase64(picture);
+    }
+
+    return await requester('/ad/edit/' + id, 'POST', true, {
+        title, 
+        shortDescription, 
+        reward, 
+        validTo, 
+        minVideos, 
+        minSubscribers, 
+        minViews, 
+        pictureBase64, 
+        characteristics
+    });
+}
+
 export async function getAds(params) {
     let query = addQueryParams(params);
     return await requester('/ad/list' + query, 'GET', true);
