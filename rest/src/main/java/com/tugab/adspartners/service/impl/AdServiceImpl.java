@@ -191,6 +191,17 @@ public class AdServiceImpl implements AdService {
         return new ResponseEntity<>(new MessageResponse("Ad edited successfully."), HttpStatus.CREATED);
     }
 
+    @Override
+    public ResponseEntity<MessageResponse> deleteAd(Long adId) {
+        Ad ad = this.adRepository.findById(adId)
+                .orElseThrow(() -> new IllegalArgumentException("Ad does not found."));
+
+        this.adRepository.delete(ad);
+        this.cloudinaryService.deleteImageResource(ad.getPicture());
+
+        return ResponseEntity.ok(new MessageResponse("Ad deleted successfully."));
+    }
+
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {
         Ad ad = this.adRepository.findById(adId)
                 .orElseThrow(() -> new IllegalArgumentException("Incorrect ad id."));

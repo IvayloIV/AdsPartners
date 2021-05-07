@@ -14,4 +14,6 @@ public interface CloudinaryService {
     public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage);
 
     public void deleteImage(CloudinaryResource image);
+
+    public boolean deleteImageResource(CloudinaryResource image);
 }

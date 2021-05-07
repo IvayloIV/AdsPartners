@@ -77,7 +77,9 @@ class CompanyDetailsPage extends Component {
                     <div key={a.id}>
                         <p>Title - {a.title}</p>
                         <p>Valid to - {a.validTo}</p>
+                        <p><Link className="ad-deltail" to={`/ad/details/${a.id}`}>Details</Link></p>
                         {isEmployer && <p><Link className="ad-edit" to={`/ad/edit/${a.id}`}>Edit</Link></p>}
+                        {isEmployer && <p><Link className="ad-delete" to={`/ad/delete/${a.id}`}>Delete</Link></p>}
                         {/* TODO: check if owner is log in for edit ad */}
                     </div>
                 ))}

@@ -119,7 +119,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         this.cloudinaryRepository.delete(image);
     }
 
-    private boolean deleteImageResource(CloudinaryResource image) {
+    @Override
+    public boolean deleteImageResource(CloudinaryResource image) {
         TreeMap<String, String> params = new TreeMap<>();
         params.put("public_id", image.getId());
 

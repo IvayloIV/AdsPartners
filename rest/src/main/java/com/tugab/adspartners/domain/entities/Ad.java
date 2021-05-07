@@ -51,7 +51,7 @@ public class Ad {
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private Company company;
 
-    @ManyToOne(targetEntity = CloudinaryResource.class)
+    @ManyToOne(targetEntity = CloudinaryResource.class, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "picture_id", referencedColumnName = "id")
     @NotNull(message = "Picture is required.")
     private CloudinaryResource picture;
@@ -61,6 +61,9 @@ public class Ad {
 
     @OneToMany(mappedBy = "id.ad", targetEntity = AdRating.class, cascade = CascadeType.ALL)
     private List<AdRating> ratingList;
+
+    @OneToMany(mappedBy = "id.ad", targetEntity = AdApplication.class, cascade = CascadeType.ALL)
+    private List<AdApplication> applicationList;
 
     @Transient
     private Double averageRating = 0.0;

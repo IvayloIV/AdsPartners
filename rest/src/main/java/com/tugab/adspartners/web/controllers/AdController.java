@@ -80,6 +80,11 @@ public class AdController {
         return this.adService.editAd(editAdBindingModel, errors);
     }
 
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<MessageResponse> deleteAd(@PathVariable("id") Long adId) {
+        return this.adService.deleteAd(adId);
+    }
+
     @PostMapping(path = "/vote/{id}")
     public ResponseEntity<CreateRatingResponse> vote(@PathVariable("id") Long adId,
                                                      @RequestBody RatingBindingModel ratingBindingModel,

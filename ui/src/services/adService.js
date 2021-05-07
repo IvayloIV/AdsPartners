@@ -36,6 +36,10 @@ export async function editAd(id, title, shortDescription, reward, validTo, minVi
     });
 }
 
+export async function deleteAd(adId) {
+    return await requester('/ad/delete/' + adId, 'DELETE', true);
+}
+
 export async function getAds(params) {
     let query = addQueryParams(params);
     return await requester('/ad/list' + query, 'GET', true);

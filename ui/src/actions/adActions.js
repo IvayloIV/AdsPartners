@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
     COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
 import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
-    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd } from '../services/adService';
+    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd } from '../services/adService';
 
 function getAllAdsAction(params) {
     return (dispatch) => {
@@ -114,6 +114,15 @@ function editAdAction(id, title, shortDescription, reward, validTo, minVideos, m
     };
 }
 
+function deleteAdAction(adId) {
+    return (dispatch) => {
+        return deleteAd(adId)
+            .then(json => {
+                toast.success(json.message);
+            });
+    };
+}
+
 function blockAdAction(adId) {
     return (dispatch) => {
         return blockAd(adId)
@@ -135,5 +144,5 @@ function unblockAdAction(adId) {
 }
 
 export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
-    createAdAction, editAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, 
+    createAdAction, editAdAction, deleteAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, 
     getApplicationsByCompanyAction, getCompanyAdsByIdAction, blockAdAction, unblockAdAction };
