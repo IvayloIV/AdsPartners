@@ -1,7 +1,14 @@
 package com.tugab.adspartners.web.controllers;
 
+import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
+import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
+import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberListResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +53,23 @@ public class YoutubeController {
     @GetMapping("/list/subscribers")
     public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubs(@RequestParam("size") Integer size) {
         return this.youtubeService.getYoutubersBySubscribers(size);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<YoutuberListResponse> getList(YoutuberFilterBindingModel youtuberFilterBindingModel) {
+        return this.youtubeService.getYoutubersList(youtuberFilterBindingModel);
+    }
+
+    @GetMapping("/filters")
+    public ResponseEntity<FiltersResponse> getFilters() {
+        return this.youtubeService.getYoutuberFilters();
+    }
+
+    @PostMapping(path = "/vote/{id}")
+    public ResponseEntity<YoutuberRatingResponse> vote(@PathVariable("id") Long youtuberId,
+                                                       @RequestBody RatingBindingModel ratingBindingModel,
+                                                       Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        return this.youtubeService.vote(youtuberId, ratingBindingModel, company);
     }
 }

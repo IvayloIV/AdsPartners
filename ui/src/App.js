@@ -22,6 +22,7 @@ import RegisterRequests from './components/Company/RegisterRequests';
 import CompanyBlockPage from './components/Company/CompanyBlockPage';
 import EditAd from './components/Ad/EditAd';
 import DeleteAd from './components/Ad/DeleteAd';
+import ListYoutuber from './components/Youtube/ListYoutuber';
 
 class App extends Component {
     constructor(props) {
@@ -59,6 +60,7 @@ class App extends Component {
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/profile" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={['ADMIN']} path="/company/requests" component={RegisterRequests} />
                     <PrivateRoute authorities={['ADMIN']} path="/company/block" component={CompanyBlockPage} />
+                    <PrivateRoute authorities={['EMPLOYER']} path="/youtuber/list" component={ListYoutuber} />
                 </Switch>
             </div>
         );

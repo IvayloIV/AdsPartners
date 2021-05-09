@@ -7,14 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
+import javax.persistence.*;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -44,6 +38,12 @@ public class Youtuber extends UserInfo implements OAuth2User {
 
     @Column(name = "channel_id")
     private String channelId;
+
+    @OneToMany(mappedBy = "id.youtuber", targetEntity = YoutuberRating.class)
+    private List<YoutuberRating> ratingList;
+
+    @Transient
+    private Double averageRating = 0.0;
 
     @Transient
     private Map<String, Object> attributes;

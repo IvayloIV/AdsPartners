@@ -26,6 +26,20 @@ class HomePage extends Component {
         };
     }
 
+    openPopup() {
+        const width = 600;
+        const height = 600;
+        const left = (window.innerWidth / 2) - (width / 2);
+        const top = (window.innerHeight / 2) - (height / 2);
+        const googleUrl = "http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth2/redirect"; //TODO remove it from here
+    
+        return window.open(googleUrl, '',       
+          `toolbar=no, location=no, directories=no, status=no, menubar=no, 
+          scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
+          height=${height}, top=${top}, left=${left}`
+        );
+    }
+
     async componentDidMount() {
         try {
             await this.props.getCompaniesByRating(10);
@@ -60,14 +74,13 @@ class HomePage extends Component {
             </div>
         ));
 
-        const googleUrl = "http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth2/redirect"; //TODO remove it from here
         const loggedIn = localStorage.getItem("accessToken") != null;
 
         return (
             <div className="homepage">
                 <div>
                 {!loggedIn && <NavLink to="/company/login" activeClassName="active">Login Company</NavLink>}
-                {!loggedIn && <a href={googleUrl}>Login Youtube</a>}
+                {!loggedIn && <div onClick={this.openPopup}>Login Youtube</div>}
                 </div>
                 <div>
                     <h2>Site description</h2>

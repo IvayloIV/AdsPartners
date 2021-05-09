@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs } from '../services/youtubeService';
+import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTUBERS_LIST, YOUTUBERS_FILTERS } from '../actions/actionTypes';
+import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs, getYoutubers, getFilters, voteForYoutuber } from '../services/youtubeService';
 
 function loadUserInfoAction() {
     return (dispatch) => {
@@ -52,5 +52,34 @@ function getYoutubersBySubsAction(pageSize) {
     };
 }
 
+function getYoutubersAction(params) {
+    return (dispatch) => {
+        return getYoutubers(params)
+            .then(json => {
+                dispatch({ type: YOUTUBERS_LIST, data: json });
+                return json;
+            });
+    };
+}
+
+function getYoutubersFiltersAction() {
+    return (dispatch) => {
+        return getFilters()
+            .then(json => {
+                dispatch({ type: YOUTUBERS_FILTERS, data: json });
+                return json;
+            });
+    };
+}
+
+function voteForYoutuberAction(youtuberId, rating) {
+    return (dispatch) => {
+        return voteForYoutuber(youtuberId, rating)
+            .then(json => {
+                toast.success("You vote for youtuber successfully.");
+            });
+    };
+}
+
 export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, 
-    getYoutubersBySubsAction };
+    getYoutubersBySubsAction, getYoutubersAction, getYoutubersFiltersAction, voteForYoutuberAction };

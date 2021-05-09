@@ -19,3 +19,35 @@ export async function subscribe(companyId) {
 export async function getYoutubersBySubs(pageSize) {
     return await requester('/youtube/list/subscribers?size=' + pageSize, 'GET', false);
 }
+
+export async function getYoutubers(params) {
+    let query = addQueryParams(params);
+    let data = await requester('/youtube/list' + query, 'GET', true);
+    data["queryParams"] = query;
+    return data;
+}
+
+export async function getFilters() {
+    return await requester('/youtube/filters', 'GET', true);
+}
+
+export async function voteForYoutuber(youtuberId, rating) {
+    return await requester('/youtube/vote/' + youtuberId, 'POST', true, { rating });
+}
+
+function addQueryParams(params) {
+    let query = '?';
+
+    for (let key in params) {
+        let value = params[key];
+
+        if (value && ((typeof value === 'object' && value.length !== 0) || value != '')) {
+            if (query.length !== 1) {
+                query += '&';
+            }
+            query += `${key}=${value}`;
+        }
+    }
+
+    return query;
+}
