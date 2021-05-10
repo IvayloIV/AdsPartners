@@ -4,7 +4,7 @@ import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET
     REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING, COMPANIES_FILTERS, COMPANIES_ADS } from '../actions/actionTypes';
 import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, 
     getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus, 
-    getCompaniesByRating, getCompaniesFilters, getCompaniesByAds } from '../services/companyService';
+    getCompaniesByRating, getCompaniesFilters, getCompaniesByAds, offerPartnership } from '../services/companyService';
 
 function registerCompanyAction(params) {
     return (dispatch) => {
@@ -153,7 +153,21 @@ function getCompaniesByAdsAction(params) {
     };
 }
 
+function offerPartnershipAction(adId, youtuberId, description) {
+    return (dispatch) => {
+        return offerPartnership(adId, youtuberId, description)
+            .then(json => {
+                toast.success(json.message);
+                return json;
+            }).catch((err) => {
+                toast.error(err.message);
+                return null;
+            });
+    };
+}
+
 export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
     changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction,
     getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction,
-    getCompaniesByRatingAction, getCompaniesFiltersAction, getCompaniesByAdsAction };
+    getCompaniesByRatingAction, getCompaniesFiltersAction, getCompaniesByAdsAction,
+    offerPartnershipAction };

@@ -8,6 +8,7 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
@@ -53,4 +54,6 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel);
 
     public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters();
+
+    public ResponseEntity<MessageResponse> companyOffer(CompanyOfferBindingModel companyOfferBindingModel, Company company);
 }

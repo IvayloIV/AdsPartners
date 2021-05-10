@@ -1,6 +1,7 @@
 package com.tugab.adspartners.service.impl;
 
 import com.tugab.adspartners.domain.entities.*;
+import com.tugab.adspartners.domain.enums.ApplicationType;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
@@ -8,16 +9,15 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.*;
-import com.tugab.adspartners.repository.CompanyRepository;
-import com.tugab.adspartners.repository.RoleRepository;
-import com.tugab.adspartners.repository.SubscriptionRepository;
-import com.tugab.adspartners.repository.UserRepository;
+import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.UserService;
@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final CompanyRepository companyRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final AdRepository adRepository;
+    private final YoutuberRepository youtuberRepository;
+    private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
 
@@ -65,6 +69,9 @@ public class UserServiceImpl implements UserService {
                            RoleRepository roleRepository,
                            CompanyRepository companyRepository,
                            SubscriptionRepository subscriptionRepository,
+                           AdRepository adRepository,
+                           YoutuberRepository youtuberRepository,
+                           AdApplicationRepository adApplicationRepository,
                            ModelMapper modelMapper,
                            JwtUtils jwtUtils) {
         this.cloudinaryService = cloudinaryService;
@@ -72,6 +79,9 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.companyRepository = companyRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.adRepository = adRepository;
+        this.youtuberRepository = youtuberRepository;
+        this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
     }
@@ -303,6 +313,41 @@ public class UserServiceImpl implements UserService {
         CompanyFiltersResponse companyFilters = new CompanyFiltersResponse();
         companyFilters.setAdCounts(adCounts);
         return ResponseEntity.ok(companyFilters);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponse> companyOffer(CompanyOfferBindingModel companyOfferBindingModel, Company company) {
+        final Long youtuberId = companyOfferBindingModel.getYoutuberId();
+        final Long adId = companyOfferBindingModel.getAdId();
+
+        Ad ad = this.adRepository.findById(adId).orElse(null);
+        if (ad == null) {
+            return new ResponseEntity<>(new MessageResponse("Ad not found."), HttpStatus.NOT_FOUND);
+        }
+
+        if (!ad.getCompany().getId().equals(company.getId())) {
+            return new ResponseEntity<>(new MessageResponse("You are not owner of the ad."), HttpStatus.FORBIDDEN);
+        }
+
+        Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElse(null);
+
+        if (youtuber == null) {
+            return new ResponseEntity<>(new MessageResponse("Youtuber not found."), HttpStatus.NOT_FOUND);
+        }
+
+        if (ad.getApplicationList().stream().anyMatch(a -> a.getId().getYoutuber().getId().equals(youtuberId) && a.getId().getAd().getId().equals(adId))) {
+            return new ResponseEntity<>(new MessageResponse("Youtuber already received offer or applied for this ad."), HttpStatus.FORBIDDEN);
+        }
+
+        AdApplication adApplication = new AdApplication();
+        adApplication.setId(new AdApplicationId(ad, youtuber));
+        adApplication.setDescription(companyOfferBindingModel.getDescription());
+        adApplication.setApplicationDate(new Date());
+        adApplication.setMailSent(false); //TODO: send mail here
+        adApplication.setType(ApplicationType.COMPANY_SENT);
+
+        this.adApplicationRepository.save(adApplication);
+        return ResponseEntity.ok(new MessageResponse("You have just offered new partnership."));
     }
 
     @Override

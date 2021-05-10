@@ -25,7 +25,13 @@ function requester(endPoint, type, auth, data) {
 
     console.log(obj);
     return fetch(url + endPoint, obj) //TODO: swap to axios
-        .then(res => res.json());
+        .then(async (res) => {
+            if (!res.ok) {
+                let json = await res.json();
+                throw new Error(json.message);
+            }
+            return res.json();
+        });
 }
 
 

@@ -59,6 +59,10 @@ export async function getCompaniesByAds(params) {
     return await requester('/company/list/ad' + query, 'GET', true);
 }
 
+export async function offerPartnership(adId, youtuberId, description) {
+    return await requester('/company/offer', 'POST', true, { adId, youtuberId, description });
+}
+
 function addQueryParams(params) {
     let query = '?';
 

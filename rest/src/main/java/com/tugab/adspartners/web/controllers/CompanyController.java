@@ -6,6 +6,7 @@ import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
@@ -116,5 +117,12 @@ public class CompanyController {
     @GetMapping("/filters")
     public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters() {
         return this.userService.getCompaniesFilters();
+    }
+
+    @PostMapping(path = "/offer")
+    public ResponseEntity<MessageResponse> partnershipOffer(@RequestBody CompanyOfferBindingModel companyOfferBindingModel,
+                                                            Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        return this.userService.companyOffer(companyOfferBindingModel, company);
     }
 }

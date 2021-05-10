@@ -10,14 +10,27 @@ class SliderBox extends Component {
 
         this.moveForward = this.moveForward.bind(this);
         this.moveBackward = this.moveBackward.bind(this);
+        this.callOnChangeAdId = this.callOnChangeAdId.bind(this);
     }
 
     moveForward() {
-        this.setState({ position: this.state.position + 1 });
+        this.setState({ position: this.state.position + 1 },
+            this.callOnChangeAdId)
     }
 
     moveBackward() {
-        this.setState({  position: this.state.position - 1 });
+        this.setState({ position: this.state.position - 1 }, 
+            this.callOnChangeAdId);
+    }
+
+    callOnChangeAdId() {
+        if (this.props.onChangeAdId != null) {
+            this.props.onChangeAdId(this.props.boxes[this.state.position].key);
+        }
+    }
+
+    async componentDidMount() {
+        this.callOnChangeAdId();
     }
 
     render() {

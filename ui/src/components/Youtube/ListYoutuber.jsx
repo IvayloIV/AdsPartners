@@ -221,7 +221,7 @@ class ListYoutuber extends Component {
                         <p>{u.email}</p>
                         <p>{u.subscriberCount}, {u.videoCount}, {u.viewCount}</p>
                         <Link className="details" to={`/youtuber/details/${u.id}`}>User profile</Link>
-                        <Link className="company-details" to={`/youtuber/send/${u.id}`}>Offer partnership</Link>
+                        <Link className="company-details" to={`/youtuber/offer/${u.id}`}>Offer partnership</Link>
                         <Rating
                             // value={0} TODO...
                             // precision={0.5} TODO...

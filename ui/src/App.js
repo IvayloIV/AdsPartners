@@ -23,6 +23,7 @@ import CompanyBlockPage from './components/Company/CompanyBlockPage';
 import EditAd from './components/Ad/EditAd';
 import DeleteAd from './components/Ad/DeleteAd';
 import ListYoutuber from './components/Youtube/ListYoutuber';
+import OfferPartnership from './components/Company/OfferPartnership';
 
 class App extends Component {
     constructor(props) {
@@ -55,6 +56,7 @@ class App extends Component {
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/ad/create" component={CreateAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/edit/:adId" component={EditAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/delete/:adId" component={DeleteAd} />
+                    <PrivateRoute authorities={["EMPLOYER"]} path="/youtuber/offer/:youtuberId" component={OfferPartnership} />
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/subscribers" component={SubscribersPage} />
                     <PrivateRoute authorities={['YOUTUBER', 'ADMIN']} path="/company/details/:companyId" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/profile" component={CompanyDetailsPage} />
