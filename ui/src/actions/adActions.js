@@ -1,8 +1,9 @@
 import { toast } from 'react-toastify';
 import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
-    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
+    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS } from '../actions/actionTypes';
 import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
-    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd } from '../services/adService';
+    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd,
+    getApplicationsByYoutuber } from '../services/adService';
 
 function getAllAdsAction(params) {
     return (dispatch) => {
@@ -143,6 +144,17 @@ function unblockAdAction(adId) {
     };
 }
 
+function getYoutuberApplicationAction(adId) {
+    return (dispatch) => {
+        return getApplicationsByYoutuber(adId)
+            .then(json => {
+                dispatch({ type: YOUTUBER_APPLICATIONS, data: json });
+                toast.success(json.message);
+            });
+    };
+}
+
 export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
     createAdAction, editAdAction, deleteAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, 
-    getApplicationsByCompanyAction, getCompanyAdsByIdAction, blockAdAction, unblockAdAction };
+    getApplicationsByCompanyAction, getCompanyAdsByIdAction, blockAdAction, unblockAdAction,
+    getYoutuberApplicationAction };

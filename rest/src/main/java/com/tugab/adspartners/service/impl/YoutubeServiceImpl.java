@@ -7,10 +7,8 @@ import com.google.gson.JsonParser;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
 import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
+import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.UserInfoResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.*;
 import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.YoutuberRatingRepository;
@@ -91,7 +89,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public void updateYoutubeDetails(Youtuber youtuber) {
+    public ResponseEntity<MessageResponse> updateYoutubeDetails(Youtuber youtuber) {
         WebClient.RequestBodySpec requestBodySpec = this.webClient
                 .method(HttpMethod.GET)
                 .uri(BASE_YOUTUBE_URL + "/channels?part=snippet,contentDetails,statistics&mine=true")
@@ -137,7 +135,9 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
             youtuber.setUpdateDate(new Date());
             this.youtuberRepository.save(youtuber); //TODO: after user login i save it, does it needed here??
+            return ResponseEntity.ok(new MessageResponse("Data updated successfully."));
         }
+        return ResponseEntity.ok(new MessageResponse("Fail to update your data."));
     }
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication) {
@@ -220,6 +220,29 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
         rating.setYoutuberId(youtuber.getId());
         rating.setCompanyId(company.getId());
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<YoutuberProfileResponse> getProfile(Authentication authentication) {
+        Long youtuberId = ((Youtuber) authentication.getPrincipal()).getId();
+        Youtuber youtuber = this.youtuberRepository.findById(youtuberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid youtuber!"));
+
+        this.setYoutuberAverageRating(youtuber);
+        YoutuberProfileResponse youtuberProfileResponse = this.modelMapper
+                .map(youtuber, YoutuberProfileResponse.class);
+        return ResponseEntity.ok(youtuberProfileResponse);
+    }
+
+    @Override
+    public ResponseEntity<YoutuberDetailsResponse> getDetails(Long youtuberId) {
+        Youtuber youtuber = this.youtuberRepository.findById(youtuberId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid youtuber!"));
+
+        this.setYoutuberAverageRating(youtuber);
+        YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper
+                .map(youtuber, YoutuberDetailsResponse.class);
+        return ResponseEntity.ok(youtuberDetailsResponse);
     }
 
     private Youtuber setYoutuberAverageRating(Youtuber youtuber) {

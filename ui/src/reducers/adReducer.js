@@ -1,4 +1,5 @@
-import { AD_LIST, AD_DETAILS, AD_FILTERS, CREATE_AD, AD_APPLICATIONS, AD_COMPANY_LIST, COMPANY_APPLICATIONS_LIST } from '../actions/actionTypes';
+import { AD_LIST, AD_DETAILS, AD_FILTERS, CREATE_AD, AD_APPLICATIONS, AD_COMPANY_LIST, 
+    COMPANY_APPLICATIONS_LIST, YOUTUBER_APPLICATIONS } from '../actions/actionTypes';
 
 let adState = {
     list: {},
@@ -21,6 +22,8 @@ export function adReducer(state = adState, action) {
         // case CREATE_AD:
         //     state.list.items.unshift(action.data);
         //     return state.list.slice(); //TODO: za ko mi e tui slice()??
+        case YOUTUBER_APPLICATIONS:
+            return Object.assign({}, state, { applications: action.data });
         case COMPANY_APPLICATIONS_LIST:
             return Object.assign({}, state, { applications: action.data });
         case AD_APPLICATIONS:

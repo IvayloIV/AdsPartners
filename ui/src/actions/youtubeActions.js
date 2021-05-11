@@ -1,6 +1,8 @@
 import { toast } from 'react-toastify';
-import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTUBERS_LIST, YOUTUBERS_FILTERS } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs, getYoutubers, getFilters, voteForYoutuber } from '../services/youtubeService';
+import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTUBERS_LIST,
+    YOUTUBERS_FILTERS, YOUTUBER_PROFILE, YOUTUBER_DETAILS } from '../actions/actionTypes';
+import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs,
+    getYoutubers, getFilters, voteForYoutuber, getProfile, getYoutuberDetails } from '../services/youtubeService';
 
 function loadUserInfoAction() {
     return (dispatch) => {
@@ -15,9 +17,10 @@ function loadUserInfoAction() {
 
 function refreshUserDataAction() {
     return (dispatch) => {
-        return refreshUserData().then(() => {
-            toast.success("User data refreshed.");
-        });
+        return refreshUserData()
+            .then((json) => {
+                toast.success(json.message);
+            });
     };
 }
 
@@ -81,5 +84,24 @@ function voteForYoutuberAction(youtuberId, rating) {
     };
 }
 
+function getYoutuberProfileAction() {
+    return (dispatch) => {
+        return getProfile()
+            .then(json => {
+                dispatch({ type: YOUTUBER_PROFILE, data: json });
+            });
+    };
+}
+
+function getYoutuberDetailsAction(youtuberId) {
+    return (dispatch) => {
+        return getYoutuberDetails(youtuberId)
+            .then(json => {
+                dispatch({ type: YOUTUBER_DETAILS, data: json });
+            });
+    };
+}
+
 export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, 
-    getYoutubersBySubsAction, getYoutubersAction, getYoutubersFiltersAction, voteForYoutuberAction };
+    getYoutubersBySubsAction, getYoutubersAction, getYoutubersFiltersAction, voteForYoutuberAction,
+    getYoutuberProfileAction, getYoutuberDetailsAction };

@@ -4,11 +4,8 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
 import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
-import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberListResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
+import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.*;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +27,19 @@ public class YoutubeController {
         this.youtubeService = youtubeService;
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<YoutuberProfileResponse> getProfile(Authentication authentication) {
+        return this.youtubeService.getProfile(authentication);
+    }
+
+    @GetMapping("/details/{youtuberId}")
+    public ResponseEntity<YoutuberDetailsResponse> getDetails(@PathVariable("youtuberId") Long youtuberId) {
+        return this.youtubeService.getDetails(youtuberId);
+    }
+
     @PostMapping("/profile/update")
     @PreAuthorize("hasAuthority('YOUTUBER')") //TODO: It should return some response
-    public void updateDetails(Authentication authentication) {
+    public ResponseEntity<MessageResponse> updateDetails(Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
 
         //TODO: How to get jwt token example
@@ -41,7 +48,7 @@ public class YoutubeController {
 //                        authenticationToken.getName());
 //        String token = client.getAccessToken().getTokenValue();
 
-        this.youtubeService.updateYoutubeDetails(youtuber);
+        return this.youtubeService.updateYoutubeDetails(youtuber);
     }
 
     @GetMapping("/profile/info")

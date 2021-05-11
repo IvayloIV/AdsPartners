@@ -61,6 +61,10 @@ export async function applyForAd(adId, params) {
     return await requester('/ad/applyfor/' + adId, 'POST', true, params);
 }
 
+export async function getApplicationsByYoutuber(youtuberId) {
+    return await requester('/ad/youtuber/applications/' + youtuberId, 'GET', true);
+}
+
 export async function getApplicationsByCompany(companyId) {
     return await requester('/ad/company/applications/' + companyId, 'GET', true);
 }

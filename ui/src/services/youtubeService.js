@@ -35,6 +35,14 @@ export async function voteForYoutuber(youtuberId, rating) {
     return await requester('/youtube/vote/' + youtuberId, 'POST', true, { rating });
 }
 
+export async function getProfile() {
+    return await requester('/youtube/profile', 'GET', true);
+}
+
+export async function getYoutuberDetails(youtuberId) {
+    return await requester('/youtube/details/' + youtuberId, 'GET', true);
+}
+
 function addQueryParams(params) {
     let query = '?';
 

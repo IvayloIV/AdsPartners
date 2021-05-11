@@ -113,6 +113,13 @@ public class AdController {
         return this.adService.getApplicationsByCompanyId(companyId);
     }
 
+    @GetMapping("/youtuber/applications/{youtuberId}")
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(@PathVariable("youtuberId") Long youtuberId,
+                                                                                 Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        return this.adService.getApplicationsByYoutuber(youtuberId, company.getId());
+    }
+
     @GetMapping("/youtuber/applications") //TODO: temp method, remove it after finish work
     public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuber(Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();

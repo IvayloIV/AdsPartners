@@ -42,6 +42,9 @@ public class Youtuber extends UserInfo implements OAuth2User {
     @OneToMany(mappedBy = "id.youtuber", targetEntity = YoutuberRating.class)
     private List<YoutuberRating> ratingList;
 
+    @OneToMany(mappedBy = "id.youtuber", targetEntity = AdApplication.class)
+    private List<AdApplication> adApplicationList;
+
     @Transient
     private Double averageRating = 0.0;
 

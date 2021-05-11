@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `user`
     `email`        VARCHAR(255) NOT NULL,
     `name`         VARCHAR(255) NOT NULL,
     `created_date` DATETIME     NOT NULL,
-    `password`     VARCHAR(255) NOT NULL,
+    `password`     CHAR(60)     NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY (`email`)
 );

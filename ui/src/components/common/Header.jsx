@@ -17,7 +17,6 @@ export default class Header extends Component {
                 {!loggedIn && <NavLink to="/company/login" activeClassName="active">Login Company</NavLink>}
                 {!loggedIn && <NavLink to="/company/register" activeClassName="active">Register Company</NavLink>}
                 {!loggedIn && <NavLink to="/admin/login" activeClassName="active">Login Admin</NavLink>}
-                {isYoutuber && <NavLink to="/youtube/profile" activeClassName="active">Profile</NavLink>}
                 {(isAdmin || isEmployer) && <NavLink to="/company/page" activeClassName="active">Company Page</NavLink>}
                 {isYoutuber && <NavLink to="/ad/list" activeClassName="active">List ads</NavLink>}
                 {(isAdmin || isEmployer) && <NavLink to="/ad/create" activeClassName="active">Create Ad</NavLink>}
@@ -25,6 +24,7 @@ export default class Header extends Component {
                 {isAdmin && <NavLink to="/company/block" activeClassName="active">Company Block</NavLink>}
                 {isEmployer && <NavLink to="/company/subscribers" activeClassName="active">Subscribers</NavLink>}
                 {isEmployer && <NavLink to="/company/profile" activeClassName="active">Profile</NavLink>}
+                {isYoutuber && <NavLink to="/youtuber/profile" activeClassName="active">Profile</NavLink>}
                 {isEmployer && <NavLink to="/youtuber/list" activeClassName="active">Youtubers</NavLink>}
                 {!loggedIn && <a href={googleUrl}>Login Youtube</a>}
                 {loggedIn && <a href="javascript:void(0)" onClick={onLogout}>Logout</a>}

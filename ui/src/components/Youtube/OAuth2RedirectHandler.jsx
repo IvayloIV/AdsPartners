@@ -39,15 +39,13 @@ class OAuth2RedirectHandler extends Component {
 
         if(token) {
             toast.success("Login with youtube successful.");
-
-            return <Redirect to={{
-                pathname: "/youtube/profile"
-            }}/>;
         } else {
-            return <Redirect to={{
-                pathname: "/"
-            }}/>; 
+            toast.error("Fail to login.");
         }
+
+        return <Redirect to={{
+            pathname: "/"
+        }}/>;
     }
 }
 

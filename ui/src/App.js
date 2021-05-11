@@ -11,7 +11,6 @@ import LoginAdmin from './components/Admin/LoginAdmin';
 import OAuth2RedirectHandler from './components/Youtube/OAuth2RedirectHandler';
 import CompanyPage from './components/Company/CompanyPage';
 import HomePage from './components/HomePage/HomePage';
-import Profile from './components/Youtube/Profile';
 import ListAd from './components/Ad/ListAd';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
@@ -24,6 +23,7 @@ import EditAd from './components/Ad/EditAd';
 import DeleteAd from './components/Ad/DeleteAd';
 import ListYoutuber from './components/Youtube/ListYoutuber';
 import OfferPartnership from './components/Company/OfferPartnership';
+import YoutuberDetails from './components/Youtube/YoutuberDetails';
 
 class App extends Component {
     constructor(props) {
@@ -49,9 +49,10 @@ class App extends Component {
                     <Route path="/company/register" component={RegisterCompanyPage} />
                     <Route path="/admin/login" component={LoginAdmin} />
                     <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
-                    <PrivateRoute authorities={["YOUTUBER"]} path="/youtube/profile" component={Profile} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/ad/list" component={ListAd} />
                     <PrivateRoute authorities={["YOUTUBER", "EMPLOYER"]} path="/ad/details/:adId" component={AdDetails} />
+                    <PrivateRoute authorities={["YOUTUBER"]} path="/youtuber/profile" component={YoutuberDetails} />
+                    <PrivateRoute authorities={["EMPLOYER"]} path="/youtuber/details/:youtuberId" component={YoutuberDetails} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/company/page" component={CompanyPage} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/ad/create" component={CreateAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/edit/:adId" component={EditAd} />

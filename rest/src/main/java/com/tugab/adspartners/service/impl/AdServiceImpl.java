@@ -256,6 +256,17 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(Long youtuberId, Long companyId) {
+        List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_IdAndId_Ad_Company_Id(youtuberId, companyId);
+        List<AdApplicationResponse> adApplicationResponses = applications
+                .stream()
+                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(adApplicationResponses);
+    }
+
+    @Override
     public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId) {
         List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_Id(youtuberId);
         List<AdYoutuberApplicationResponse> adsResponse = applications

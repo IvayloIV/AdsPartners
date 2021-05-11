@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); //TODO: should i hash my password instead encode it?
+        return new BCryptPasswordEncoder();
     }
 
     @Override
