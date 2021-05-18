@@ -9,7 +9,6 @@ import RegisterCompanyPage from './components/Company/RegisterCompanyPage';
 import LoginCompanyPage from './components/Company/LoginCompanyPage';
 import LoginAdmin from './components/Admin/LoginAdmin';
 import OAuth2RedirectHandler from './components/Youtube/OAuth2RedirectHandler';
-import CompanyPage from './components/Company/CompanyPage';
 import HomePage from './components/HomePage/HomePage';
 import ListAd from './components/Ad/ListAd';
 import PrivateRoute from './components/common/PrivateRoute';
@@ -39,12 +38,22 @@ class App extends Component {
     }
 
     render() {
+        const isAuthed = localStorage.getItem('accessToken') != null;
+
         return (
             <div className="App">
 				<ToastContainer closeButton={false}/>
-                <Header loggedIn={localStorage.getItem('accessToken') != null} onLogout={this.onLogout} />
+                <Header loggedIn={isAuthed} onLogout={this.onLogout} />
                 <Switch>
-                    <Route exact path="/" component={HomePage} />
+                    <Route exact
+                        path="/"
+                        render={(props) => (
+                            <HomePage {...props} isAuthed={isAuthed} />
+                        )} />
+                    <Route path="/home"
+                        render={(props) => (
+                            <HomePage {...props} isAuthed={isAuthed} />
+                        )} />
                     <Route path="/company/login" component={LoginCompanyPage} />
                     <Route path="/company/register" component={RegisterCompanyPage} />
                     <Route path="/admin/login" component={LoginAdmin} />
@@ -53,7 +62,6 @@ class App extends Component {
                     <PrivateRoute authorities={["YOUTUBER", "EMPLOYER"]} path="/ad/details/:adId" component={AdDetails} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/youtuber/profile" component={YoutuberDetails} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/youtuber/details/:youtuberId" component={YoutuberDetails} />
-                    <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/company/page" component={CompanyPage} />
                     <PrivateRoute authorities={["ADMIN", 'EMPLOYER']} path="/ad/create" component={CreateAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/edit/:adId" component={EditAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/delete/:adId" component={DeleteAd} />

@@ -27,7 +27,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Query("select c as Company, " +
             " avg(ar.rating) as averageRating from AdRating ar " +
             " right join ar.id.ad.company as c" +
-            " group by ar.id.ad.company" +
+            " group by c.id" +
             " order by avg(ar.rating) desc")
     public Page<Object[]> findTopCompaniesByRating(Pageable pageable);
 

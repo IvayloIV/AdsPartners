@@ -1,43 +1,93 @@
-import React, { Component } from 'react';
-import traverson from 'traverson';
-import JsonHalAdapter from 'traverson-hal';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from 'react-router-dom';
+import { Button, Icon } from 'semantic-ui-react';
+import { googleRequestUrl } from '../../services/requester';
 import SliderBox from '../common/SliderBox';
-import { connect } from 'react-redux';
-import { withRouter, NavLink } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import CompanyBox from './CompanyBox';
+import YoutuberBox from './YoutuberBox';
 import { getCompaniesByRatingAction } from '../../actions/companyActions';
 import { getYoutubersBySubsAction } from '../../actions/youtubeActions';
 
-// 		traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter);
-		
-//         /*traverson.from('http://localhost:8080/api')
-//             .follow('ingredients')
-// 			.post({ "id": "12", "name": "Ing12", "type": "MEAT"}, (err, res) => {
-// 				console.log(err);
-// 				console.log(res);
-// 			});*/
+const HomePage = ({ isAuthed }) => {
+    const [loading, setLoading] = useState(true);
+    const companies = useSelector(state => state.company.list);
+    const youtubers = useSelector(state => state.youtube.list);
+    const dispatch = useDispatch();
 
-class HomePage extends Component {
+    useEffect(() => {
+        (async () => {
+            await dispatch(getCompaniesByRatingAction(10));
+            await dispatch(getYoutubersBySubsAction(10));
+            setLoading(false);
+        })();
+    }, []);
+
+    if (loading) {
+        return <div>{'Loading...'}</div>;
+    }
+
+    return (
+        <div className="homepage">
+            <section className="site-logo">
+                <h1>Рекламно партньорство</h1>
+                <hr />
+                {!isAuthed && <div className="login-buttons">
+                    <Button color='orange' className="large" as={NavLink} to="/company/login">
+                        <Icon name='briefcase' />  Вход за компания
+                    </Button>
+                    <Button color='youtube' className="large" as="a" href={googleRequestUrl}>
+                        <Icon name='youtube' /> Вход за ютубър
+                    </Button>
+                </div>}
+            </section>
+            <section className="about-us">
+                <h2>За нас</h2>
+                <hr />
+                <p>Сайтът е създаден през 2021, като разработка на дипломна работа в ТУ-Габрово.
+                    Нащата цел е да свърже по най-лесния и успешен начин инициативни компании и активни ютубъри.
+                    Осигурявайки сигурност, лоялност и печалба от двете страни на партньорство.
+                </p>
+            </section>
+            <section className="company-home-container">
+                <div className="company-title">
+                    <h2>Топ 10 Компании с най-добър рейтинг</h2>
+                    <hr />
+                </div>
+                <SliderBox items={companies.map(c => <CompanyBox company={c} />)} />
+            </section>
+            <section className="about-you">
+                <h2>Както ще направим за Вас</h2>
+                <hr />
+                <p>Създаваме най-добрите маркетинг партньори в 3 лесни стъпки</p>
+                <div>
+                    <span>правилен избор на партньор</span>
+                    <Icon name='long arrow alternate right' size="huge" color="blue" />
+                    <span>осъществен контант</span>
+                    <Icon name='long arrow alternate right' size="huge" color="blue" />
+                    <span>успешен бизнес</span>
+                </div>
+            </section>
+            <section className="youtber-home-container">
+                <div className="youtuber-title">
+                    <h2>Топ 10 Ютубъри с най-много абонати</h2>
+                    <hr />
+                </div>
+                <SliderBox items={youtubers.map(y => <YoutuberBox youtuber={y} />)} />
+            </section>
+        </div>
+    );
+};
+
+export default HomePage;
+
+/*class HomePage extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             loading: true
         };
-    }
-
-    openPopup() {
-        const width = 600;
-        const height = 600;
-        const left = (window.innerWidth / 2) - (width / 2);
-        const top = (window.innerHeight / 2) - (height / 2);
-        const googleUrl = "http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth2/redirect"; //TODO remove it from here
-    
-        return window.open(googleUrl, '',       
-          `toolbar=no, location=no, directories=no, status=no, menubar=no, 
-          scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
-          height=${height}, top=${top}, left=${left}`
-        );
     }
 
     async componentDidMount() {
@@ -57,42 +107,45 @@ class HomePage extends Component {
         }
         
         const { companies, youtubers } = this.props;
-
-        let companiesBoxes = companies.map(c => (
-            <div className="company-home" key={c.id}>
-                <img src={c.logoUrl} alt="company-logo" width="50px" height="30px"/>
-                <h3>{c.userName} ({c.averageRating})</h3>
-                <h3>Town - {c.town}</h3>
-            </div>
-        ));
-
-        let youtubersBoxes = youtubers.map(y => (
-            <div className="youtuber-home" key={y.channelId}>
-                <img src={y.profilePicture} alt="youtuber-picture" width="50px" height="30px"/>
-                <h3>{y.name} ({y.subscriberCount} subs)</h3>
-                <a href={'https://www.youtube.com/channel/' + y.channelId} target="_blank">View Channel</a>
-            </div>
-        ));
+        const googleUrl = "http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000/oauth2/redirect"; //TODO remove it from here
 
         const loggedIn = localStorage.getItem("accessToken") != null;
 
         return (
             <div className="homepage">
-                <div>
-                {!loggedIn && <NavLink to="/company/login" activeClassName="active">Login Company</NavLink>}
-                {!loggedIn && <div onClick={this.openPopup}>Login Youtube</div>}
+                <section className="site-logo">
+                    <h1>Рекламно партньорство</h1>
+                    <hr />
+                    {!loggedIn && <div class="login-buttons">
+                        <Button color='orange' className="large" as={NavLink} to="/company/login">
+                            <Icon name='briefcase' />  Вход за компания
+                        </Button>
+                        <Button color='youtube' className="large" as="a" href={googleUrl}>
+                            <Icon name='youtube' /> Вход за ютубър
+                        </Button>
+                    </div>}
+                </section>
+                <div class="site-description">
+                    <h2>За нас</h2>
+                    <hr />
+                    <p>Сайтът е създаден през 2021, като разработка на дипломна работа в ТУ-Габрово.
+                        Нащата цел е да свърже по най-лесния и успешен начин инициативни компании и активни ютубъри.
+                        Осигурявайки сигурност, лоялност и печалба от двете страни на партньорство.
+                    </p>
                 </div>
-                <div>
-                    <h2>Site description</h2>
-                    <p>To increase your salary!</p>
+                <div className="company-home-container">
+                    <div className="company-title">
+                        <h2>Топ 10 Компании с най-добър рейтинг</h2>
+                        <hr />
+                    </div>
+                    <SliderBox items={companies.map(c => <CompanyBox company={c} />)} />
                 </div>
-                <div>
-                    <h2>Companies</h2>
-                    <SliderBox boxes={companiesBoxes}></SliderBox>
-                </div>
-                <div>
-                    <h2>Youtubers</h2>
-                    <SliderBox boxes={youtubersBoxes}></SliderBox>
+                <div className="youtber-home-container">
+                    <div className="youtuber-title">
+                        <h2>Топ 10 Ютубъри с най-много абонати търсещи рекламно партньорство</h2>
+                        <hr />
+                    </div>
+                    <SliderBox items={youtubers.map(y => <YoutuberBox youtuber={y} />)} />
                 </div>
             </div>
         )
@@ -113,4 +166,4 @@ function mapDispatch(dispatch) {
     };
 }
 
-export default withRouter(connect(mapState, mapDispatch)(HomePage));
+export default withRouter(connect(mapState, mapDispatch)(HomePage));*/

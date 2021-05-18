@@ -1,4 +1,5 @@
-const url = 'http://localhost:8080';
+const baseRemoteUrl = 'http://localhost:8080';
+export const googleRequestUrl = `${baseRemoteUrl}/oauth2/authorization/google?redirect_uri=${window.location.origin}/oauth2/redirect`;
 
 function requester(endPoint, type, auth, data) {
     let obj = {
@@ -24,7 +25,7 @@ function requester(endPoint, type, auth, data) {
     }
 
     console.log(obj);
-    return fetch(url + endPoint, obj) //TODO: swap to axios
+    return fetch(baseRemoteUrl + endPoint, obj) //TODO: swap to axios
         .then(async (res) => {
             if (!res.ok) {
                 let json = await res.json();

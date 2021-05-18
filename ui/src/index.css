@@ -1,4 +1,197 @@
-body {
+/*** Menu ***/
+#menu-logo {
+    margin: 10px 20px;
+    color: #f1c575;
+}
+
+.menu-welcome {
+    align-self: center;
+    margin: 0;
+    color: white;
+}
+
+/*** Home page ***/
+
+.site-logo {
+    padding: 240px 0;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/pexels-photo-3184306.jpeg) no-repeat center;
+    background-size: cover;
+    text-align: center;
+    color: white;
+}
+
+.site-logo h1 {
+    font-weight: 900;
+    font-size: 3em;
+    font-style: italic;
+}
+
+.site-logo hr {
+    width: 700px;
+}
+
+.login-buttons {
+    padding-top: 16px;
+}
+
+.login-buttons .orange {
+    margin-right: 35px;
+}
+
+.about-us {
+    text-align: center;
+    padding: 50px 0;
+}
+
+.about-us h2 {
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.about-us hr {
+    width: 400px;
+}
+
+.about-us p {
+    font-size: 15px;
+    width: 640px;
+    margin: 10px auto 0;
+}
+
+.company-home-container, .youtber-home-container {
+    background: #fdfaf6;
+    padding: 50px 0;
+}
+
+.company-home, .youtuber-home {
+    width: 300px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0px 0px 8px 3px rgb(0 0 0 / 12%);
+    margin: 10px 0;
+}
+
+.company-home-description, .youtuber-home-description {
+    padding: 22px;
+}
+
+.company-home h3, .youtuber-home h3 {
+    text-align: center;
+    border-bottom: 2px dotted black;
+    padding-bottom: 7px;
+}
+
+.company-home-rating {
+    font-size: 20px;
+}
+
+.company-home-info p {
+    border-left: 1px solid black;
+    padding-left: 5px;
+    padding-top: 6px;
+    font-size: 15px;
+}
+
+.company-home-info span {
+    padding-right: 10px;
+}
+
+.company-title, .youtuber-title {
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+.company-title hr, .youtuber-title hr {
+    width: 700px;
+    border: 1px solid rgb(3, 174, 255);
+}
+
+.company-home img, .youtuber-home img {
+    width: 100%;
+    height: 200px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.youtuber-home-description {
+    text-align: center;
+}
+
+.youtber-home-container {
+    background: #fffdf6;
+}
+
+/*** SliderBox ***/
+
+.carousel-block {
+    position: relative;
+}
+
+.btn-prev-slider, .btn-next-slider {
+    opacity: 0;
+    transition: opacity 0.6s;
+}
+
+.carousel-block:hover .btn-prev-slider, .carousel-block:hover .btn-next-slider  {
+    opacity: 0.8;
+}
+
+.btn-prev-slider {
+    position: absolute;
+    top: 40%;
+    left: 2%;
+    border: 1px solid black;
+    padding: 7px 16px 11px 14px;
+    font-size: 21px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn-next-slider {
+    position: absolute;
+    top: 40%;
+    right: 2%;
+    border: 1px solid black;
+    padding: 7px 15px 11px 15px;
+    font-size: 21px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.alice-carousel__stage {
+    transition: transform 1000ms ease 0ms !important; /* TODO: not the best practice */
+}
+
+.about-you {
+    text-align: center;
+    padding: 100px 0;
+    background: linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),url(./images/about-you.jpg) no-repeat center;
+    background-size: cover;
+}
+
+.about-you h2 {
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.about-you hr {
+    width: 600px;
+    border: 1px solid #03aeff;
+}
+
+.about-you p {
+    font-size: 18px;
+}
+
+.about-you div {
+    padding-top: 40px;
+    font-style: italic;
+    font-size: 19px;
+    text-transform: uppercase;
+}
+
+
+/* body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
@@ -134,4 +327,4 @@ header h2 {
 .slider-container {
     width: 300px;
     padding: 20px;
-}
+} */
