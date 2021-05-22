@@ -16,8 +16,10 @@ import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -33,8 +35,9 @@ public class CompanyController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerCompany(@ModelAttribute RegisterCompanyBindingModel registerCompanyBindingModel) {
-        return this.userService.registerCompany(registerCompanyBindingModel);
+    public ResponseEntity<?> registerCompany(@Valid @RequestBody RegisterCompanyBindingModel registerCompanyBindingModel,
+                                             Errors errors) {
+        return this.userService.registerCompany(registerCompanyBindingModel, errors);
     }
 
     @PostMapping("/login")

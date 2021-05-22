@@ -190,6 +190,84 @@
     text-transform: uppercase;
 }
 
+/*** Register company ***/
+
+.register-container {
+    display: flex;
+}
+
+.register-info {
+    width: 70%;
+    background: linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url(./images/register-info.jpg) no-repeat center;
+    background-size: cover;
+    box-shadow: 17px 2px 10px -7px rgba(0,0,0,0.28);
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    padding-top: 222px;
+    color: white;
+}
+
+.register-info h1 {
+    text-transform: uppercase;
+    font-size: 35px;
+}
+
+.register-info p {
+    width: 70%;
+    margin: 24px auto;
+    font-style: italic;
+    opacity: 0.9;
+    text-shadow: 4px 3px 5px rgb(8 8 8);
+}
+
+.register-form {
+    width: 30%;
+}
+
+.register-form form {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.register-company-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 12px 0;
+}
+
+.register-company-field > span {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    color: #ff6060;
+    font-size: 12px;
+    font-style: italic;
+}
+
+#register-company-logo {
+    display: none;
+}
+
+.company-logo-label {
+    border-bottom: 1px solid #949494;
+}
+
+.company-logo-value {
+    color: #777777;
+}
+
+#register-company-button {
+    margin: 20px;
+}
+
+#standard-multiline-static { 
+    height: 76px !important; /* TODO: not the best practice */
+}
+
 
 /* body {
   margin: 0;

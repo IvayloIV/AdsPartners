@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
+import { LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
     CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS, 
     REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING, COMPANIES_FILTERS, COMPANIES_ADS } from '../actions/actionTypes';
 import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, 
@@ -7,14 +7,15 @@ import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeS
     getCompaniesByRating, getCompaniesFilters, getCompaniesByAds, offerPartnership } from '../services/companyService';
 
 function registerCompanyAction(params) {
-    return (dispatch) => {
-        return registerCompany(params)
-            .then(json => {
-                console.log(json); //TODO: check if register is success and json contains success object
-                dispatch({ type: REGISTER_COMPANY_SUCCESS });
-
-                return json;
-            });
+    return async () => {
+        try {
+            const json = await registerCompany(params);
+            toast.success(json.message);
+            return json;
+        } catch (err) {
+            err.messages.forEach(m => toast.error(m));
+            return null;
+        }
     };
 }
 

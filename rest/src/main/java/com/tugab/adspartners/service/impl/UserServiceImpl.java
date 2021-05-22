@@ -14,6 +14,7 @@ import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.MessagesResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.*;
@@ -21,6 +22,7 @@ import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.UserService;
+import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +38,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 
 import java.util.Date;
 import java.util.List;
@@ -56,6 +60,7 @@ public class UserServiceImpl implements UserService {
     private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
+    private final ResourceBundleUtil resourceBundleUtil;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -73,7 +78,8 @@ public class UserServiceImpl implements UserService {
                            YoutuberRepository youtuberRepository,
                            AdApplicationRepository adApplicationRepository,
                            ModelMapper modelMapper,
-                           JwtUtils jwtUtils) {
+                           JwtUtils jwtUtils,
+                           ResourceBundleUtil resourceBundleUtil) {
         this.cloudinaryService = cloudinaryService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -84,17 +90,27 @@ public class UserServiceImpl implements UserService {
         this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
+        this.resourceBundleUtil = resourceBundleUtil;
     }
 
-    public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel) {
+    public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors) {
+        if (errors.hasErrors()) {
+            List<String> errorMessages = errors.getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
         if (userRepository.existsByEmail(registerCompanyBindingModel.getUserEmail())) {
             return ResponseEntity.badRequest()
-                    .body(new MessageResponse("Error: Email is already taken!")); //TODO: properties file
+                    .body(new MessagesResponse(this.resourceBundleUtil.getMessage("registerCompany.emailNotExist")));
         }
 
         Company company = this.modelMapper.map(registerCompanyBindingModel, Company.class);
         company.setWorkersCount(registerCompanyBindingModel.getWorkersCount());
-        CloudinaryResource cloudinaryResource = this.cloudinaryService.uploadImage(registerCompanyBindingModel.getLogo());
+        CloudinaryResource cloudinaryResource = this.cloudinaryService.uploadImage(registerCompanyBindingModel.getLogoBase64());
         company.setLogo(cloudinaryResource);
         company.setStatus(RegistrationStatus.UNRESOLVED);
 
@@ -102,12 +118,15 @@ public class UserServiceImpl implements UserService {
         user.setPassword(this.passwordEncoder.encode(registerCompanyBindingModel.getUserPassword()));
         user.setCreatedDate(new Date());
 
-        Role employerRole = this.roleRepository.findByAuthority(Authority.EMPLOYER)
-                .orElseThrow(() -> new IllegalArgumentException("Employer role not found."));
+        Role employerRole = this.roleRepository.findByAuthority(Authority.EMPLOYER).orElse(null);
+        if (employerRole == null) {
+            return new ResponseEntity<>(new MessagesResponse(this.resourceBundleUtil.getMessage("registerCompany.roleNotFound")),
+                    HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         user.addRole(employerRole);
 
         this.companyRepository.save(company);
-        return ResponseEntity.ok(new MessageResponse("Company registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse(this.resourceBundleUtil.getMessage("registerCompany.success")));
     }
 
     public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel) {

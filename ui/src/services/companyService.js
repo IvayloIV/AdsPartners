@@ -1,12 +1,25 @@
 import requester from './requester';
+import toBase64 from './fileConverter';
 
 export async function registerCompany(params) {
-    let formData = new FormData();
-    for (let paramKey in params) {
-        formData.append(paramKey, params[paramKey]);
+    let logoBase64 = null;
+
+    if (params.logo != null) {
+        logoBase64 = await toBase64(params.logo);
     }
-    
-    return await requester('/company/register', 'POST', false, formData);
+
+    return await requester('/company/register', 'POST', false, {
+        userName: params.userName,
+        userEmail: params.userEmail,
+        userPassword: params.userPassword,
+        phone: params.phone,
+        incomeLastYear: params.incomeLastYear,
+        town: params.town,
+        description: params.description,
+        companyCreationDate: params.companyCreationDate,
+        workersCount: params.workersCount,
+        logoBase64
+    });
 }
 
 export async function loginCompany(email, password) {

@@ -16,12 +16,13 @@ import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoR
 import com.tugab.adspartners.domain.models.response.company.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.Errors;
 
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel);
+    public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors);
 
     public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel);
 

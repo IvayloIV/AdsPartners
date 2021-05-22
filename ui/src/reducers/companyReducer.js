@@ -1,4 +1,4 @@
-import { REGISTER_COMPANY_SUCCESS, LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
+import { LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
     CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE,
     REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING,
     COMPANIES_FILTERS, COMPANIES_ADS, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
@@ -16,8 +16,6 @@ let companyState = {
 
 export function companyReducer(state = companyState, action) {
     switch (action.type) {
-        case REGISTER_COMPANY_SUCCESS:
-            return Object.assign({}, state, { registerSuccess: true });
         case LOGIN_COMPANY_SUCCESS:
             return Object.assign({}, state, { loginSuccess: true });
         case GET_ALL_COMPANIES:

@@ -54,10 +54,10 @@ class App extends Component {
                         render={(props) => (
                             <HomePage {...props} isAuthed={isAuthed} />
                         )} />
-                    <Route path="/company/login" component={LoginCompanyPage} />
-                    <Route path="/company/register" component={RegisterCompanyPage} />
-                    <Route path="/admin/login" component={LoginAdmin} />
-                    <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
+                    <Route path="/company/login" component={LoginCompanyPage} /> {/* //TODO: Validation only annonymous to reach page */}
+                    <Route path="/company/register" component={RegisterCompanyPage} /> {/* //TODO: Validation only annonymous to reach page */}
+                    <Route path="/admin/login" component={LoginAdmin} /> {/* //TODO: Validation only annonymous to reach page */}
+                    <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} /> {/* //TODO: Validation only annonymous to reach page */}
                     <PrivateRoute authorities={["YOUTUBER"]} path="/ad/list" component={ListAd} />
                     <PrivateRoute authorities={["YOUTUBER", "EMPLOYER"]} path="/ad/details/:adId" component={AdDetails} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/youtuber/profile" component={YoutuberDetails} />
