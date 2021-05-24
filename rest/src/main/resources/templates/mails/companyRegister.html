@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Company Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #b7e9f8; margin: 0;">
+    <div style="width: 600px; margin: 0 auto;">
+        <div style="text-align: center; background: linear-gradient(rgba(26,145,231,0.4),rgba(73,138,239,0.4)),url(https://res.cloudinary.com/dbeoyblgx/image/upload/v1621801856/coffe-background_elul7a.jpg) no-repeat center; background-size: cover; padding: 30px 0">
+            <img src="https://res.cloudinary.com/dbeoyblgx/image/upload/v1621801752/handshake_wnj7ys.png" width="150px" height="120px" alt="Image logo">
+            <p style="width: 500px; color: white; font-family: Arial; font-size: 36px; font-weight: bold; margin: 10px auto 20px auto; text-shadow: 4px 4px 2px rgba(150,150,150,0.38);">
+                Заявка за нов партньор в сайта!
+            </p>
+        </div>
+        <div style="padding: 30px 0 10px 0; background-color: #ffffff;">
+            <div style="width: 500px; margin: 0 auto; font-family: Cambria; font-size: 17px;">
+                <p>Здравейте,</p>
+                <p>&nbsp;&nbsp;&nbsp;Подадена е нова заявта в <span th:text="${requestDate}"></span> от компания за регистрация в сайта. Проверете верността на данните и обработете заявката.</p>
+            </div>
+            <table style="width: 500px; text-align: left; border-collapse: collapse; margin: 20px auto;">
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Лого на компанията:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;"><img th:src="${logoUrl}" alt="Company logo" height="150px" width="230px" /></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Мейл:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${userEmail}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Име:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${userName}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Телефон:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${phone}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Град:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${town}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Описание:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${description}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Брой работници:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${workersCount}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Приходи през предходната година:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${incomeLastYear}"></td>
+                </tr>
+                <tr>
+                    <th style="font-family: Arial; border: 2px solid #86adea; padding: 8px;">Дата на създаване:</th>
+                    <td style="font-family: Arial; border: 2px solid #86adea; padding: 8px;" th:text="${companyCreationDate}"></td>
+                </tr>
+            </table>
+            <p style="text-align: center; padding-top: 20px;">
+                <a th:href="${processRequestUrl}" target="_blank" style="text-transform: uppercase; text-shadow: 4px 4px 2px rgba(150,150,150,0.38); padding: 10px 30px; background: #229cca; text-decoration: none; margin-top: 20px; color: white; font-weight: bold; border-radius: 3px; font-size: 15px">Обработи заявката</a>
+            </p>
+        </div>
+        <div style="width: 600px; background: white; padding: 10px 0 20px 0; text-align: center">
+            <p style="font-family: Cambria; font-size: 12px; width: 500px; margin: 0 auto;">
+                Моля не отговаряйте на това съобщение. Може да се свържете с нас на следния адрес <a href="mailto::adspartners@gmail.com" style="color:#86adea; text-decoration: none;">adspartners@gmail.com</a>
+            </p>
+            <p style="font-family: Cambria; font-size: 12px;">
+                &copy; copyright 2021 AdsPartners
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

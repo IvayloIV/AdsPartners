@@ -21,6 +21,7 @@ import com.tugab.adspartners.domain.models.response.company.*;
 import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.CloudinaryService;
+import com.tugab.adspartners.service.EmailService;
 import com.tugab.adspartners.service.UserService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
     private final ResourceBundleUtil resourceBundleUtil;
+    private final EmailService emailService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -79,7 +81,8 @@ public class UserServiceImpl implements UserService {
                            AdApplicationRepository adApplicationRepository,
                            ModelMapper modelMapper,
                            JwtUtils jwtUtils,
-                           ResourceBundleUtil resourceBundleUtil) {
+                           ResourceBundleUtil resourceBundleUtil,
+                           EmailService emailService) {
         this.cloudinaryService = cloudinaryService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -91,6 +94,7 @@ public class UserServiceImpl implements UserService {
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
         this.resourceBundleUtil = resourceBundleUtil;
+        this.emailService = emailService;
     }
 
     public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors) {
@@ -126,6 +130,7 @@ public class UserServiceImpl implements UserService {
         user.addRole(employerRole);
 
         this.companyRepository.save(company);
+        this.emailService.sendAfterCompanyRegistration(company, registerCompanyBindingModel.getAdminRedirectUrl());
         return ResponseEntity.ok(new MessageResponse(this.resourceBundleUtil.getMessage("registerCompany.success")));
     }
 

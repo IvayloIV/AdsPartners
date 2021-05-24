@@ -41,4 +41,7 @@ public class RegisterCompanyBindingModel {
 
     @NotNull(message = "{registerCompany.nullCompanyLogo}")
     private String logoBase64;
+
+    @NotNull(message = "{registerCompany.adminRedirectUrl}")
+    private String adminRedirectUrl;
 }
