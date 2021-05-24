@@ -1,5 +1,6 @@
+export const baseUrl = window.location.origin;
 const baseRemoteUrl = 'http://localhost:8080';
-export const googleRequestUrl = `${baseRemoteUrl}/oauth2/authorization/google?redirect_uri=${window.location.origin}/oauth2/redirect`;
+export const googleRequestUrl = `${baseRemoteUrl}/oauth2/authorization/google?redirect_uri=${baseUrl}/oauth2/redirect`;
 
 function requester(endPoint, type, auth, data) {
     let obj = {

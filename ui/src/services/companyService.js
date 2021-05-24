@@ -1,4 +1,4 @@
-import requester from './requester';
+import requester, { baseUrl } from './requester';
 import toBase64 from './fileConverter';
 
 export async function registerCompany(params) {
@@ -18,7 +18,8 @@ export async function registerCompany(params) {
         description: params.description,
         companyCreationDate: params.companyCreationDate,
         workersCount: params.workersCount,
-        logoBase64
+        logoBase64,
+        adminRedirectUrl: baseUrl + "/company/requests"
     });
 }
 
