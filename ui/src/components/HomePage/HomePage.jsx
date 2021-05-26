@@ -9,7 +9,7 @@ import YoutuberBox from './YoutuberBox';
 import { getCompaniesByRatingAction } from '../../actions/companyActions';
 import { getYoutubersBySubsAction } from '../../actions/youtubeActions';
 
-const HomePage = ({ isAuthed }) => {
+export default ({ isAuthed }) => {
     const [loading, setLoading] = useState(true);
     const companies = useSelector(state => state.company.list);
     const youtubers = useSelector(state => state.youtube.list);
@@ -78,8 +78,6 @@ const HomePage = ({ isAuthed }) => {
         </div>
     );
 };
-
-export default HomePage;
 
 /*class HomePage extends Component {
     constructor(props) {

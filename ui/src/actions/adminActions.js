@@ -1,27 +1,26 @@
 import { toast } from 'react-toastify';
-import { LOGIN_ADMIN_SUCCESS } from '../actions/actionTypes';
 import { loginAdmin } from '../services/adminServices';
+import { setCookie, deleteAllCookies } from '../utils/CookiesUtil';
 
-function loginAdminAction(email, password) {
-    return (dispatch) => {
-        return loginAdmin(email, password)
-            .then(json => {
-                //TODO: check if register is success and json contains success object
-                console.log(json);
-                localStorage.setItem('accessToken', json.accessToken);
-                localStorage.setItem('username', json.username); //TODO: get name and other things
-                localStorage.setItem('roles', JSON.stringify(json.roles));
-                dispatch({ type: LOGIN_ADMIN_SUCCESS });
-                let msg = null;
-                toast.success(`${msg || 'Login'} successful.`);
-            });
+export const loginAdminAction = (params) => {
+    return async () => {
+        try {
+            const json = await loginAdmin(params);
+            setCookie('accessToken', json.accessToken, 1);
+            setCookie('username', json.username, 1);
+            setCookie('roles', JSON.stringify(json.roles), 1);
+
+            toast.success(`Успешно влязохте като администратор в системата.`);
+            return json;
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+            return null;
+        }
     };
-}
+};
 
-function logoutAction() {
-    return (dispatch) => {
-        localStorage.clear();
+export const logoutAction = () => {
+    return () => {
+        deleteAllCookies();
     };
-}
-
-export { loginAdminAction, logoutAction };
+};

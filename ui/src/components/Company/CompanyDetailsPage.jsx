@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import { getCompanyAdsAction, getApplicationsByCompanyAction, getCompanyAdsByIdAction } from '../../actions/adActions';
 import { getCompanyDetailsAction, getCompanyProfileAction } from '../../actions/companyActions';
 import { checkSubscriptionAction, subscribeAction } from '../../actions/youtubeActions';
+import { getCookie } from '../../utils/CookiesUtil';
 
 class CompanyDetailsPage extends Component {
     constructor(props) {
@@ -27,7 +28,7 @@ class CompanyDetailsPage extends Component {
                 await this.props.getCompanyProfile();
             }
 
-            const userRoles = JSON.parse(localStorage.getItem("roles"));
+            const userRoles = JSON.parse(getCookie("roles"));
             const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
 
             if (isYoutuber) {
@@ -53,7 +54,7 @@ class CompanyDetailsPage extends Component {
 
         console.log(applications);
 
-        const userRoles = JSON.parse(localStorage.getItem("roles"));
+        const userRoles = JSON.parse(getCookie("roles"));
         const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
         const isAdmin = userRoles != null && userRoles.some(e => e == 'ADMIN');
         const isEmployer = userRoles != null && userRoles.some(e => e == 'EMPLOYER');

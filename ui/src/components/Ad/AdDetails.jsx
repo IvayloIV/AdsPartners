@@ -15,6 +15,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { makeStyles } from '@material-ui/core/styles';
 import { getAdDetailsAction, applyForAdAction, voteForAdAction, getApplicationsAction } from '../../actions/adActions';
 import { getAllCompaniesAction } from '../../actions/companyActions';
+import { getCookie } from '../../utils/CookiesUtil';
 
 class AdDetails extends Component {
     constructor(props) {
@@ -61,7 +62,7 @@ class AdDetails extends Component {
         const { id, title, shortDescription, reward, creationDate, validTo, minVideos, 
             minSubscribers, minViews, isBlocked, pictureUrl, characteristics, averageRating, company } = this.props.ad;
 
-        const roles = JSON.parse(localStorage.getItem('roles'));
+        const roles = JSON.parse(getCookie('roles'));
         const isYoutuber = roles.includes('YOUTUBER');
         const isCompany = roles.includes('EMPLOYER');
 

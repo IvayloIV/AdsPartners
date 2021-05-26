@@ -30,7 +30,7 @@ public interface UserService extends UserDetailsService {
 
     public Company findCompanyByEmail(String email);
 
-    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel);
+    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel, Errors errors);
 
     public ResponseEntity<List<CompanyListResponse>> getCompanyList();
 

@@ -9,7 +9,7 @@ import { Button } from 'semantic-ui-react';
 import validations from '../../validations/register';
 import {  registerCompanyAction } from '../../actions/companyActions';
 
-const RegisterCompanyPage = (props) => {
+export default props => {
     const [userName, setUserName] = useState('');
     const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPassword] = useState('');
@@ -209,8 +209,6 @@ const RegisterCompanyPage = (props) => {
         </div>
     );
 };
-
-export default RegisterCompanyPage;
 
 /*class RegisterCompanyPage extends Component {
     constructor(props) {

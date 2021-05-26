@@ -5,6 +5,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getYoutuberProfileAction, refreshUserDataAction, getYoutuberDetailsAction } from '../../actions/youtubeActions';
 import { getYoutuberApplicationAction } from '../../actions/adActions';
+import { getCookie } from '../../utils/CookiesUtil';
 
 class YoutuberDetails extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class YoutuberDetails extends Component {
 
     async componentDidMount() {
         try {
-            const userRoles = JSON.parse(localStorage.getItem("roles"));
+            const userRoles = JSON.parse(getCookie("roles"));
             const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
 
             if (isYoutuber) {
@@ -40,7 +41,7 @@ class YoutuberDetails extends Component {
             return <div>{'Loading...'}</div>;
         }
         
-        const userRoles = JSON.parse(localStorage.getItem("roles"));
+        const userRoles = JSON.parse(getCookie("roles"));
         const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
 
         let youtuberDetails = this.props.youtuber;

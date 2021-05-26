@@ -3,13 +3,14 @@ import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTU
     YOUTUBERS_FILTERS, YOUTUBER_PROFILE, YOUTUBER_DETAILS } from '../actions/actionTypes';
 import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs,
     getYoutubers, getFilters, voteForYoutuber, getProfile, getYoutuberDetails } from '../services/youtubeService';
+import { setCookie } from '../utils/CookiesUtil';
 
 function loadUserInfoAction() {
     return (dispatch) => {
         return getUserInfo()
             .then(json => {
-                localStorage.setItem('username', json.name);
-                localStorage.setItem('roles', JSON.stringify(json.authorities));
+                setCookie('username', json.name, 1);
+                setCookie('roles', JSON.stringify(json.authorities), 1);
                 // dispatch({ type: LOAD_USER_INFO, name: json.name }); TODO
             });
     };

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { loadUserInfoAction } from '../../actions/youtubeActions';
+import { setCookie } from '../../utils/CookiesUtil';
 
 class OAuth2RedirectHandler extends Component {
     constructor(props) {
@@ -28,7 +29,7 @@ class OAuth2RedirectHandler extends Component {
 
         if (this.state.loading && token) {
             
-            localStorage.setItem("accessToken", token);
+            setCookie("accessToken", token, 1);
 
             this.props.loadUserInfo().then(() => {
                 this.setState({ loading: false });

@@ -1,3 +1,5 @@
+import { getCookie } from '../utils/CookiesUtil';
+
 export const baseUrl = window.location.origin;
 const baseRemoteUrl = 'http://localhost:8080';
 export const googleRequestUrl = `${baseRemoteUrl}/oauth2/authorization/google?redirect_uri=${baseUrl}/oauth2/redirect`;
@@ -20,7 +22,7 @@ function requester(endPoint, type, auth, data) {
     }
 
     if (auth) {
-        obj['headers']['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+        obj['headers']['Authorization'] = `Bearer ${getCookie('accessToken')}`;
     }
 
     console.log(obj);

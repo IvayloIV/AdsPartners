@@ -5,6 +5,7 @@ import { LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS,
 import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, 
     getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus, 
     getCompaniesByRating, getCompaniesFilters, getCompaniesByAds, offerPartnership } from '../services/companyService';
+import { setCookie, deleteAllCookies } from '../utils/CookiesUtil';
 
 function registerCompanyAction(params) {
     return async () => {
@@ -25,9 +26,10 @@ function loginCompanyAction(email, password) {
             .then(json => {
                 //TODO: check if register is success and json contains success object
                 console.log(json);
-                localStorage.setItem('accessToken', json.accessToken);
-                localStorage.setItem('username', json.username); //TODO: get name and other things
-                localStorage.setItem('roles', JSON.stringify(json.roles));
+                setCookie("accessToken", json.accessToken, 1);
+                setCookie("username", json.username, 1);
+                setCookie("roles", JSON.stringify(json.roles), 1);
+
                 dispatch({ type: LOGIN_COMPANY_SUCCESS });
                 let msg = null;
                 toast.success(`${msg || 'Login'} successful.`);
@@ -37,7 +39,7 @@ function loginCompanyAction(email, password) {
 
 function logoutAction() {
     return (dispatch) => {
-        localStorage.clear();
+        deleteAllCookies();
     };
 }
 

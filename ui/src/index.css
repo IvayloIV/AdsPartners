@@ -268,6 +268,53 @@
     height: 76px !important; /* TODO: not the best practice */
 }
 
+/*** Admin login ***/
+
+.login-admin-container {
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/admin-login-background.jpg) no-repeat center;
+    background-size: cover;
+    text-align: center;
+    padding: 130px 0 230px 0;
+}
+
+.login-admin-form {
+    background: rgba(255, 255, 255, .9);
+    width: 400px;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.login-admin-form h1 {
+    color: #2185d0;
+    padding: 18px 0;
+    border-bottom: 7px solid #2185d0;
+    margin-bottom: 5px;
+}
+
+.login-admin-field {
+    position: relative;
+    display: inline-block;
+    width: 65%;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.login-admin-field > .MuiTextField-root {
+    width: 100%;
+}
+
+.login-admin-field > span {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    color: #ff6060;
+    font-size: 12px;
+    font-style: italic;
+}
+
+#login-admin-button {
+    margin: 20px 0;
+}
 
 /* body {
   margin: 0;

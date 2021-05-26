@@ -32,6 +32,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -153,12 +154,26 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(jwtResponse);
     }
 
-    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel) { //TODO: repetition with upper method
+    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel, Errors errors) { //TODO: repetition with upper method
+        if (errors.hasErrors()) {
+            List<String> errorMessages = errors.getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        Authentication authentication;
         String adminEmail = loginCompanyBindingModel.getEmail();
         String adminPassword = loginCompanyBindingModel.getPassword();
 
-        Authentication authentication = this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(adminEmail, adminPassword));
+        try {
+            authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminEmail, adminPassword));
+        } catch (BadCredentialsException ex) {
+            String badCredentialsMessage = this.resourceBundleUtil.getMessage("adminLogin.badCredentials");
+            return new ResponseEntity<>(new MessagesResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
+        }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = this.jwtUtils.generateJwtToken(authentication);

@@ -11,6 +11,7 @@ import LoginAdmin from './components/Admin/LoginAdmin';
 import OAuth2RedirectHandler from './components/Youtube/OAuth2RedirectHandler';
 import HomePage from './components/HomePage/HomePage';
 import ListAd from './components/Ad/ListAd';
+import AnonymousRoute from './components/common/AnonymousRoute';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
 import AdDetails from './components/Ad/AdDetails';
@@ -23,6 +24,7 @@ import DeleteAd from './components/Ad/DeleteAd';
 import ListYoutuber from './components/Youtube/ListYoutuber';
 import OfferPartnership from './components/Company/OfferPartnership';
 import YoutuberDetails from './components/Youtube/YoutuberDetails';
+import { getCookie } from './utils/CookiesUtil';
 
 class App extends Component {
     constructor(props) {
@@ -38,7 +40,7 @@ class App extends Component {
     }
 
     render() {
-        const isAuthed = localStorage.getItem('accessToken') != null;
+        const isAuthed = getCookie('accessToken') != null;
 
         return (
             <div className="App">
@@ -54,10 +56,10 @@ class App extends Component {
                         render={(props) => (
                             <HomePage {...props} isAuthed={isAuthed} />
                         )} />
-                    <Route path="/company/login" component={LoginCompanyPage} /> {/* //TODO: Validation only annonymous to reach page */}
-                    <Route path="/company/register" component={RegisterCompanyPage} /> {/* //TODO: Validation only annonymous to reach page */}
-                    <Route path="/admin/login" component={LoginAdmin} /> {/* //TODO: Validation only annonymous to reach page */}
-                    <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} /> {/* //TODO: Validation only annonymous to reach page */}
+                    <AnonymousRoute path="/company/login" component={LoginCompanyPage} />
+                    <AnonymousRoute path="/company/register" component={RegisterCompanyPage} />
+                    <AnonymousRoute path="/admin/login" component={LoginAdmin} />
+                    <AnonymousRoute path="/oauth2/redirect" component={OAuth2RedirectHandler} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/ad/list" component={ListAd} />
                     <PrivateRoute authorities={["YOUTUBER", "EMPLOYER"]} path="/ad/details/:adId" component={AdDetails} />
                     <PrivateRoute authorities={["YOUTUBER"]} path="/youtuber/profile" component={YoutuberDetails} />

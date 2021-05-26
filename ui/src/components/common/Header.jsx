@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Menu, Dropdown, Icon } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { googleRequestUrl } from '../../services/requester';
+import { getCookie } from '../../utils/CookiesUtil';
 
 export default class Header extends Component {
     state = { activeItem: 'home' }
@@ -10,7 +11,7 @@ export default class Header extends Component {
 
     render() {
         const { loggedIn, onLogout } = this.props;
-        const userRoles = JSON.parse(localStorage.getItem("roles"));
+        const userRoles = JSON.parse(getCookie("roles"));
         const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
         const isAdmin = userRoles != null && userRoles.some(e => e == 'ADMIN');
         const isEmployer = userRoles != null && userRoles.some(e => e == 'EMPLOYER');
@@ -27,7 +28,7 @@ export default class Header extends Component {
                         </h2>
                     </NavLink>
                     {loggedIn && <h4 className="menu-welcome">
-                        Добре дошли, {localStorage.getItem("username")}
+                        Добре дошли, {getCookie("username")}
                     </h4>}
                     <Menu.Menu position='right'>
                         <Menu.Item

@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Input from '../common/Input';
 import { loginCompanyAction } from '../../actions/companyActions';
+import { getCookie } from '../../utils/CookiesUtil';
 
 class LoginPage extends Component {
     constructor(props) {
@@ -33,7 +34,7 @@ class LoginPage extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        if (localStorage.getItem("accessToken")) {
+        if (getCookie("accessToken")) {
             props.history.push('/');
         }
 
