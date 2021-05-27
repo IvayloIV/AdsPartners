@@ -268,30 +268,39 @@
     height: 76px !important; /* TODO: not the best practice */
 }
 
-/*** Admin login ***/
+/*** Admin/Company login ***/
 
-.login-admin-container {
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/admin-login-background.jpg) no-repeat center;
-    background-size: cover;
+.login-container {
     text-align: center;
     padding: 130px 0 230px 0;
 }
 
-.login-admin-form {
+.admin-login {
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/admin-login-background.jpg) no-repeat center;
+    background-size: cover;
+}
+
+.company-login {
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/company-login-background.jpg) no-repeat center;
+    background-size: cover;
+}
+
+.login-form {
     background: rgba(255, 255, 255, .9);
     width: 400px;
     margin: 0 auto;
     border-radius: 5px;
+    box-shadow: 0px 0px 15px -1px rgb(0 0 0 / 34%);
 }
 
-.login-admin-form h1 {
+.login-form h1 {
     color: #2185d0;
     padding: 18px 0;
     border-bottom: 7px solid #2185d0;
     margin-bottom: 5px;
 }
 
-.login-admin-field {
+.login-field {
     position: relative;
     display: inline-block;
     width: 65%;
@@ -299,11 +308,11 @@
     margin: 12px 0;
 }
 
-.login-admin-field > .MuiTextField-root {
+.login-field > .MuiTextField-root {
     width: 100%;
 }
 
-.login-admin-field > span {
+.login-field > span {
     position: absolute;
     left: 0;
     bottom: -20px;
@@ -312,7 +321,7 @@
     font-style: italic;
 }
 
-#login-admin-button {
+#login-button {
     margin: 20px 0;
 }
 

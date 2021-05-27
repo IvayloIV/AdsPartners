@@ -24,7 +24,7 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors);
 
-    public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel);
+    public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel, Errors errors);
 
     public User findByEmail(String email);
 

@@ -1,12 +1,92 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
-import Input from '../common/Input';
+import TextField from '@material-ui/core/TextField';
+import { Button } from 'semantic-ui-react';
+import validations from '../../validations/login';
 import { loginCompanyAction } from '../../actions/companyActions';
-import { getCookie } from '../../utils/CookiesUtil';
 
-class LoginPage extends Component {
+export default props => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const [emailValidation, setEmailValidation] = useState('');
+    const [passwordValidation, setPasswordValidation] = useState('');
+    
+    const dispatch = useDispatch();
+
+    const onChangeHandler = (e, setValue, setValidation) => {
+        const name = e.target.name;
+        const value = e.target.value;
+
+        if (setValidation !== null) {
+            setValidation(validations[name](value));
+        }
+        setValue(value);
+    };
+
+    const onSubmitHandler = e => {
+        e.preventDefault();
+        let haveError = false;
+
+        haveError = validateField('email', email, setEmailValidation) || haveError;
+        haveError = validateField('password', password, setPasswordValidation) || haveError;
+
+        if (haveError) {
+            toast.error('Поправете грешките в полетата.');
+            return;
+        }
+
+        const params = { email, password };
+
+        dispatch(loginCompanyAction(params))
+            .then(json => {
+                if (json !== null) {
+                    props.history.push("/");
+                }
+            })
+    };
+
+    const validateField = (name, value, setValidation) => {
+        let validationValue = validations[name](value);
+        setValidation(validationValue);
+        return validationValue !== '';
+    };
+
+    return (
+        <div className="login-container company-login">
+            <div className="login-form">
+                <h1>Вход за компания</h1>
+                <form onSubmit={onSubmitHandler}>
+                    <div className="login-field">
+                        <TextField 
+                            label="Мейл"
+                            value={email}
+                            name="email"
+                            onChange={e => onChangeHandler(e, setEmail, setEmailValidation)}
+                        />
+                        <span>{emailValidation}</span>
+                    </div>
+                    <div className="login-field">
+                        <TextField
+                            type="password"
+                            label="Парола"
+                            value={password}
+                            name="password"
+                            onChange={e => onChangeHandler(e, setPassword, setPasswordValidation)}
+                        />
+                        <span>{passwordValidation}</span>
+                    </div>
+                    <div>
+                        <Button color="blue" type="submit" id="login-button">Влез</Button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+/*class LoginPage extends Component {
     constructor(props) {
         super(props);
 
@@ -72,4 +152,4 @@ function mapDispatch(dispatch) {
     };
 }
 
-export default withRouter(connect(null, mapDispatch)(LoginPage));
+export default withRouter(connect(null, mapDispatch)(LoginPage));*/

@@ -135,26 +135,23 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(new MessageResponse(this.resourceBundleUtil.getMessage("registerCompany.success")));
     }
 
-    public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel) {
-        String employerEmail = loginCompanyBindingModel.getEmail();
-        String employerPassword = loginCompanyBindingModel.getPassword();
+    public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel, Errors errors) {
+        String companyEmail = loginCompanyBindingModel.getEmail();
+        String companyPassword = loginCompanyBindingModel.getPassword();
+        String badCredentialsKey = "companyLogin.badCredentials";
 
-        Authentication authentication = this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(employerEmail, employerPassword));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = this.jwtUtils.generateJwtToken(authentication);
-
-        User user = (User) authentication.getPrincipal();
-        List<String> roles = user.getRoles().stream()
-                .map(Role::getAuthority)
-                .collect(Collectors.toList());
-
-        JwtResponse jwtResponse = new JwtResponse(jwt, user.getId(), user.getName(), user.getEmail(), roles);
-        return ResponseEntity.ok(jwtResponse);
+        return this.authenticateUser(companyEmail, companyPassword, errors, badCredentialsKey);
     }
 
-    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel, Errors errors) { //TODO: repetition with upper method
+    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginAdminBindingModel, Errors errors) {
+        String adminEmail = loginAdminBindingModel.getEmail();
+        String adminPassword = loginAdminBindingModel.getPassword();
+        String badCredentialsKey = "adminLogin.badCredentials";
+
+        return this.authenticateUser(adminEmail, adminPassword, errors, badCredentialsKey);
+    }
+
+    private ResponseEntity<?> authenticateUser(String username, String password, Errors errors, String badCredentialsKey) {
         if (errors.hasErrors()) {
             List<String> errorMessages = errors.getAllErrors()
                     .stream()
@@ -165,13 +162,11 @@ public class UserServiceImpl implements UserService {
         }
 
         Authentication authentication;
-        String adminEmail = loginCompanyBindingModel.getEmail();
-        String adminPassword = loginCompanyBindingModel.getPassword();
 
         try {
-            authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(adminEmail, adminPassword));
+            authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException ex) {
-            String badCredentialsMessage = this.resourceBundleUtil.getMessage("adminLogin.badCredentials");
+            String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
             return new ResponseEntity<>(new MessagesResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
         }
 

@@ -41,8 +41,9 @@ public class CompanyController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginCompany(@RequestBody LoginCompanyBindingModel loginCompanyBindingModel) {
-        return this.userService.loginCompany(loginCompanyBindingModel);
+    public ResponseEntity<?> loginCompany(@Valid @RequestBody LoginCompanyBindingModel loginCompanyBindingModel,
+                                          Errors errors) {
+        return this.userService.loginCompany(loginCompanyBindingModel, errors);
     }
 
     @GetMapping("/list")

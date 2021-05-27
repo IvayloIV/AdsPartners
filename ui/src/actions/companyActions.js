@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
-import { LOGIN_COMPANY_SUCCESS, GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
-    CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS, 
+import { GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS,
+    GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS,
     REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING, COMPANIES_FILTERS, COMPANIES_ADS } from '../actions/actionTypes';
 import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, 
     getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus, 
@@ -20,20 +20,20 @@ function registerCompanyAction(params) {
     };
 }
 
-function loginCompanyAction(email, password) {
-    return (dispatch) => {
-        return loginCompany(email, password)
-            .then(json => {
-                //TODO: check if register is success and json contains success object
-                console.log(json);
-                setCookie("accessToken", json.accessToken, 1);
-                setCookie("username", json.username, 1);
-                setCookie("roles", JSON.stringify(json.roles), 1);
+function loginCompanyAction(params) {
+    return async () => {
+        try {
+            const json = await loginCompany(params);
+            setCookie('accessToken', json.accessToken, 1);
+            setCookie('username', json.username, 1);
+            setCookie('roles', JSON.stringify(json.roles), 1);
 
-                dispatch({ type: LOGIN_COMPANY_SUCCESS });
-                let msg = null;
-                toast.success(`${msg || 'Login'} successful.`);
-            });
+            toast.success(`Успешно влязохте като компания в системата.`);
+            return json;
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+            return null;
+        }
     };
 }
 

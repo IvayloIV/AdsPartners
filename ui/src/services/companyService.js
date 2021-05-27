@@ -23,8 +23,8 @@ export async function registerCompany(params) {
     });
 }
 
-export async function loginCompany(email, password) {
-    return await requester('/company/login', 'POST', false, { email, password });
+export async function loginCompany(params) {
+    return await requester('/company/login', 'POST', false, params);
 }
 
 export async function getAllCompanies() {

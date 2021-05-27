@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
 import { Button } from 'semantic-ui-react';
-import validations from '../../validations/loginAdmin';
+import validations from '../../validations/login';
 import { loginAdminAction } from '../../actions/adminActions';
 
 export default props => {
@@ -54,11 +54,11 @@ export default props => {
     };
 
     return (
-        <div className="login-admin-container">
-            <div className="login-admin-form">
+        <div className="login-container admin-login">
+            <div className="login-form">
                 <h1>Вход за администратор</h1>
                 <form onSubmit={onSubmitHandler}>
-                    <div className="login-admin-field">
+                    <div className="login-field">
                         <TextField 
                             label="Мейл"
                             value={email}
@@ -67,7 +67,7 @@ export default props => {
                         />
                         <span>{emailValidation}</span>
                     </div>
-                    <div className="login-admin-field">
+                    <div className="login-field">
                         <TextField
                             type="password"
                             label="Парола"
@@ -78,7 +78,7 @@ export default props => {
                         <span>{passwordValidation}</span>
                     </div>
                     <div>
-                        <Button color="blue" type="submit" id="login-admin-button">Влез</Button>
+                        <Button color="blue" type="submit" id="login-button">Влез</Button>
                     </div>
                 </form>
             </div>
