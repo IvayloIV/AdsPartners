@@ -4,6 +4,7 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Role;
 import com.tugab.adspartners.domain.entities.User;
 import com.tugab.adspartners.domain.enums.Authority;
+import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.UserRepository;
 import com.tugab.adspartners.service.EmailService;
@@ -68,9 +69,10 @@ public class EmailServiceImpl implements EmailService {
         return templateEngine.process(template, context);
     }
 
+    @Override
     public void sendAfterCompanyRegistration(Company company, String adminRedirectUrl) {
-        final String mailSubject = this.resourceBundleUtil.getMessage("registerCompany.mailSubject");
-        String template = this.createRegisterCompanyTemplate("companyRegister", company, adminRedirectUrl);
+        final String mailSubject = this.resourceBundleUtil.getMessage("registerCompany.requestMailSubject");
+        String template = this.createRegisterCompanyTemplate(company, adminRedirectUrl);
         Role adminRole = this.roleRepository.findByAuthority(Authority.ADMIN).orElse(null);
 
         if (adminRole != null) {
@@ -79,7 +81,20 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    private String createRegisterCompanyTemplate(String templateName, Company company, String adminRedirectUrl) {
+    @Override
+    public void sendCompanyStatusChanged(String companyEmail, RegistrationStatus status) {
+        final String mailSubject = this.resourceBundleUtil.getMessage("registerCompany.statusMailSubject");
+        String template = this.createCompanyStatusChangedTemplate(status);
+        this.sendMail(template, companyEmail, mailSubject);
+    }
+
+    private String createCompanyStatusChangedTemplate(RegistrationStatus status) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("requestAllowed", RegistrationStatus.ALLOWED.equals(status));
+        return this.createTemplate("companyStatusChange", variables);
+    }
+
+    private String createRegisterCompanyTemplate(Company company, String adminRedirectUrl) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("requestDate", this.dateTimeFormatter.toDateTimeFormat(company.getUser().getCreatedDate()));
         variables.put("logoUrl", company.getLogo().getUrl());
@@ -93,6 +108,6 @@ public class EmailServiceImpl implements EmailService {
         variables.put("companyCreationDate", this.dateTimeFormatter.toDate(company.getCompanyCreationDate()));
         variables.put("processRequestUrl", adminRedirectUrl);
 
-        return this.createTemplate(templateName, variables);
+        return this.createTemplate("companyRegister", variables);
     }
 }

@@ -43,10 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,8 +137,16 @@ public class UserServiceImpl implements UserService {
         String companyEmail = loginCompanyBindingModel.getEmail();
         String companyPassword = loginCompanyBindingModel.getPassword();
         String badCredentialsKey = "companyLogin.badCredentials";
+        Function<String, ResponseEntity<?>> checkCompanyStatus = email -> {
+            Company company = this.companyRepository.findByUserEmail(email).orElse(null);
+            if (company != null && !RegistrationStatus.ALLOWED.equals(company.getStatus())) {
+                String badCompanyStatusMessage = this.resourceBundleUtil.getMessage("companyLogin.badCompanyStatus");
+                return new ResponseEntity<>(new MessagesResponse(badCompanyStatusMessage), HttpStatus.UNAUTHORIZED);
+            }
+            return null;
+        };
 
-        return this.authenticateUser(companyEmail, companyPassword, errors, badCredentialsKey);
+        return this.authenticateUser(companyEmail, companyPassword, errors, badCredentialsKey, checkCompanyStatus);
     }
 
     public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginAdminBindingModel, Errors errors) {
@@ -148,10 +154,10 @@ public class UserServiceImpl implements UserService {
         String adminPassword = loginAdminBindingModel.getPassword();
         String badCredentialsKey = "adminLogin.badCredentials";
 
-        return this.authenticateUser(adminEmail, adminPassword, errors, badCredentialsKey);
+        return this.authenticateUser(adminEmail, adminPassword, errors, badCredentialsKey, null);
     }
 
-    private ResponseEntity<?> authenticateUser(String username, String password, Errors errors, String badCredentialsKey) {
+    private ResponseEntity<?> authenticateUser(String username, String password, Errors errors, String badCredentialsKey, Function<String, ResponseEntity<?>> checkCompanyStatus) {
         if (errors.hasErrors()) {
             List<String> errorMessages = errors.getAllErrors()
                     .stream()
@@ -168,6 +174,13 @@ public class UserServiceImpl implements UserService {
         } catch (BadCredentialsException ex) {
             String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
             return new ResponseEntity<>(new MessagesResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (checkCompanyStatus != null) {
+            ResponseEntity<?> responseEntity = checkCompanyStatus.apply(username);
+            if (responseEntity != null) {
+                return responseEntity;
+            }
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -276,6 +289,7 @@ public class UserServiceImpl implements UserService {
         company.setStatus(updateStatusBindingModel.getStatus());
         company.setStatusModifyDate(new Date());
         this.companyRepository.save(company);
+        this.emailService.sendCompanyStatusChanged(company.getUser().getEmail(), company.getStatus());
 
         CompanyRegisterHistoryResponse companyHistory = this.modelMapper
                 .map(company, CompanyRegisterHistoryResponse.class);

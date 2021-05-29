@@ -1,6 +1,7 @@
 package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Company;
+import com.tugab.adspartners.domain.enums.RegistrationStatus;
 
 import java.util.Map;
 
@@ -11,4 +12,6 @@ public interface EmailService {
     public String createTemplate(String templateName, Map<String, Object> variables);
 
     public void sendAfterCompanyRegistration(Company company, String adminRedirectUrl);
+
+    public void sendCompanyStatusChanged(String companyEmail, RegistrationStatus status);
 }
