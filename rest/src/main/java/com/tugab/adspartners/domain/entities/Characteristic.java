@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 
@@ -20,11 +19,9 @@ public class Characteristic {
     private Long id;
 
     @Column(name = "name")
-    @Length(min = 3, message = "Name of characteristic cannot be less than 3 symbols.")
     private String name;
 
     @Column(name = "value")
-    @Length(min = 1, message = "Value of characteristic cannot be less than 1 symbols.")
     private String value;
 
     @JsonIgnore

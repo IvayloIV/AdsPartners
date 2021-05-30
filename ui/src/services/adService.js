@@ -1,19 +1,19 @@
 import requester from './requester';
 import toBase64 from './fileConverter';
 
-export async function createAd(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
-    let pictureBase64 = await toBase64(picture);
+export async function createAd(params) {
+    let pictureBase64 = await toBase64(params.picture);
 
     return await requester('/ad/create', 'POST', true, {
-        title, 
-        shortDescription, 
-        reward, 
-        validTo, 
-        minVideos, 
-        minSubscribers, 
-        minViews, 
-        pictureBase64, 
-        characteristics
+        title: params.title,
+        shortDescription: params.shortDescription,
+        reward: params.reward,
+        validTo: params.validTo,
+        minVideos: params.minVideos,
+        minSubscribers: params.minSubscribers,
+        minViews: params.minViews,
+        pictureBase64,
+        characteristics: params.characteristics
     });
 }
 

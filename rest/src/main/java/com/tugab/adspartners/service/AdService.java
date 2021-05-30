@@ -23,7 +23,7 @@ public interface AdService {
 
     public ResponseEntity<AdDetailsResponse> getDetails(Long adId);
 
-    public ResponseEntity createAd(CreateAdBindingModel createAdBindingModel, Errors errors);
+    public ResponseEntity<?> createAd(CreateAdBindingModel createAdBindingModel, Errors errors);
 
     public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors);
 

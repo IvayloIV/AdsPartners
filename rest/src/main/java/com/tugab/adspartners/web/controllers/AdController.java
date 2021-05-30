@@ -65,7 +65,7 @@ public class AdController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity createAd(@Valid @RequestBody CreateAdBindingModel createAdBindingModel,
+    public ResponseEntity<?> createAd(@Valid @RequestBody CreateAdBindingModel createAdBindingModel,
                                     Errors errors,
                                     Authentication authentication) {
         createAdBindingModel.setCompany((Company) authentication.getPrincipal());

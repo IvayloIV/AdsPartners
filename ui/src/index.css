@@ -1,3 +1,8 @@
+body {
+    overflow: inherit !important;
+    padding: 0 !important;
+}
+
 /*** Menu ***/
 #menu-logo {
     margin: 10px 20px;
@@ -322,6 +327,119 @@
 }
 
 #login-button {
+    margin: 20px 0;
+}
+
+/*** Ad form ***/
+
+.ad-form-container {
+    text-align: center;
+    padding: 50px 0;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/create-ad-background.jpg) no-repeat fixed;
+    background-size: cover;
+}
+
+.ad-form {
+    background: rgba(255, 255, 255, .9);
+    width: 464px;
+    margin-left: 90px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 15px -1px rgb(0 0 0 / 34%);
+}
+
+.ad-form h1 {
+    color: #2185d0;
+    padding: 18px 0;
+    border-bottom: 7px solid #2185d0;
+    margin-bottom: 5px;
+}
+
+.ad-form-field {
+    position: relative;
+    display: inline-block;
+    width: 74%;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.ad-form-field > .MuiTextField-root {
+    width: 100%;
+}
+
+.ad-form-field > p {
+    position: absolute;
+    right: 17px;
+    top: 20px;
+    font-size: 16px;
+    font-style: italic;
+    margin: 0;
+}
+
+.ad-form-field > span {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    color: #ff6060;
+    font-size: 12px;
+    font-style: italic;
+}
+
+#ad-form-picture {
+    display: none;
+}
+
+.ad-form-picture-label {
+    border-bottom: 1px solid #949494;
+    width: 100%;
+    display: block;
+    text-align: left;
+}
+
+.ad-form-picture-value {
+    color: #777777;
+}
+
+.characteristics ul {
+    text-align: left;
+    width: 65%;
+    margin: 5px auto;
+    padding: 0;
+    font-size: 16px;
+}
+
+.characteristics li {
+    padding: 5px 0;
+}
+
+.remove-char {
+    padding-left: 5px;
+    color: #de2222;
+    cursor: pointer;
+}
+
+.create-char-container h4 {
+    font-size: 22px;
+    color: #2185d0;
+    padding: 12px 0;
+    border-top: 4px solid #2185d0;
+    border-bottom: 4px solid #2185d0;
+    margin-bottom: 5px;
+    margin-top: 16px;
+}
+
+.create-char-container .button {
+    margin: 15px 0 0 0;
+}
+
+.new-char {
+    display: none;
+}
+
+.new-char-active {
+    display: block;
+}
+
+#ad-form-button {
     margin: 20px 0;
 }
 

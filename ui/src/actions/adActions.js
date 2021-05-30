@@ -91,17 +91,18 @@ function voteForAdAction(adId, rating) {
     };
 }
 
-function createAdAction(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
-    return (dispatch) => {
-        return createAd(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics)
-            .then(json => {
-                console.log(json);
-                // dispatch({ type: CREATE_AD, data: json });
-                let msg = null;
-                toast.success(json.message);
-            });
+const createAdAction = params => {
+    return async () => {
+        try {
+            const json = await createAd(params);
+            toast.success(json.message);
+            return json;
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+            return null;
+        }
     };
-}
+};
 
 function editAdAction(id, title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
     return (dispatch) => {

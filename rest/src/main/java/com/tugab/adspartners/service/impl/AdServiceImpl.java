@@ -4,9 +4,9 @@ import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.ApplicationType;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.MessagesResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
@@ -15,9 +15,9 @@ import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingRespon
 import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
-import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
+import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -28,13 +28,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,18 +44,21 @@ public class AdServiceImpl implements AdService {
     private final CloudinaryService cloudinaryService;
     private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
+    private final ResourceBundleUtil resourceBundleUtil;
 
     @Autowired
     public AdServiceImpl(AdRepository adRepository,
                          AdRatingRepository adRatingRepository,
                          CloudinaryService cloudinaryService,
                          AdApplicationRepository adApplicationRepository,
-                         ModelMapper modelMapper) {
+                         ModelMapper modelMapper,
+                         ResourceBundleUtil resourceBundleUtil) {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
         this.cloudinaryService = cloudinaryService;
         this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
+        this.resourceBundleUtil = resourceBundleUtil;
     }
 
     @Override
@@ -129,9 +131,10 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(adResponse);
     }
 
-    public ResponseEntity createAd(CreateAdBindingModel createAdBindingModel, Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors.getFieldErrors());
+    public ResponseEntity<?> createAd(CreateAdBindingModel createAdBindingModel, Errors errors) {
+        ResponseEntity<?> errorResponseEntity = this.checkForErrors(errors);
+        if (errorResponseEntity != null) {
+            return errorResponseEntity;
         }
 
         CloudinaryResource picture = this.cloudinaryService.uploadImage(createAdBindingModel.getPictureBase64());
@@ -142,7 +145,9 @@ public class AdServiceImpl implements AdService {
         ad.setIsBlocked(false);
         ad.getCharacteristics().forEach(c -> c.setAd(ad));
         this.adRepository.save(ad);
-        return new ResponseEntity(new MessageResponse("Ad created successfully."), HttpStatus.CREATED);
+
+        MessageResponse responseMessage = new MessageResponse(this.resourceBundleUtil.getMessage("createAd.success"));
+        return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
     public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors) {
@@ -290,5 +295,19 @@ public class AdServiceImpl implements AdService {
 
         this.adRepository.save(ad);
         return ResponseEntity.ok(new MessageResponse("Status updated successfully."));
+    }
+
+    private ResponseEntity<?> checkForErrors(Errors errors) {
+        if (errors.hasErrors()) {
+            List<String> errorMessages = errors.getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        return null;
     }
 }
