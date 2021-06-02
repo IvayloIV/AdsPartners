@@ -84,7 +84,14 @@ public class CompanyController {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.userService.subscribe(youtuber, companyId);
     }
-    
+
+    @PostMapping(path = "/{id}/unsubscribe")
+    public ResponseEntity<?> unsubscribe(@PathVariable("id") Long companyId,
+                                                       Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.userService.unsubscribe(youtuber, companyId);
+    }
+
     @GetMapping(path = "/subscription/check/{id}")
     public ResponseEntity<Boolean> checkYoutuberSub(@PathVariable("id") Long companyId,
                                                     Authentication authentication) {

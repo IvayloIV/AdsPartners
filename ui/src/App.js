@@ -16,6 +16,7 @@ import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
 import AdDetails from './components/Ad/AdDetails';
 import SubscribersPage from './components/Company/SubscribersPage';
+import UnsubscribePage from './components/Youtube/UnsubscribePage';
 import CompanyDetailsPage from './components/Company/CompanyDetailsPage';
 import RegisterRequests from './components/Company/RegisterRequests';
 import CompanyBlockPage from './components/Company/CompanyBlockPage';
@@ -69,6 +70,7 @@ class App extends Component {
                     <PrivateRoute authorities={["EMPLOYER"]} path="/ad/delete/:adId" component={DeleteAd} />
                     <PrivateRoute authorities={["EMPLOYER"]} path="/youtuber/offer/:youtuberId" component={OfferPartnership} />
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/subscribers" component={SubscribersPage} />
+                    <PrivateRoute authorities={['YOUTUBER']} path="/company/:companyId/unsubscribe" component={UnsubscribePage} />
                     <PrivateRoute authorities={['YOUTUBER', 'ADMIN']} path="/company/details/:companyId" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={['EMPLOYER']} path="/company/profile" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={['ADMIN']} path="/company/requests" component={RegisterRequests} />

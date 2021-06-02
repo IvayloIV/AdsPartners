@@ -47,4 +47,6 @@ public class CreateAdBindingModel {
     private List<CharacteristicBindingModel> characteristics;
 
     private Company company;
+
+    private String remoteUrl;
 }

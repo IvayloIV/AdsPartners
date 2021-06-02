@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ad subscription</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #b7e9f8; margin: 0;">
+<div style="width: 600px; margin: 0 auto;">
+    <div style="text-align: center; background: linear-gradient(rgba(26,145,231,0.4),rgba(73,138,239,0.4)),url(https://res.cloudinary.com/dbeoyblgx/image/upload/v1621801856/coffe-background_elul7a.jpg) no-repeat center; background-size: cover; padding: 30px 0">
+        <img src="https://res.cloudinary.com/dbeoyblgx/image/upload/v1621801752/handshake_wnj7ys.png" width="150px" height="120px" alt="Image logo">
+        <p style="width: 500px; color: white; font-family: Arial; font-size: 36px; font-weight: bold; margin: 10px auto 20px auto; text-shadow: 4px 4px 2px rgba(150,150,150,0.38);">
+            Нова рекламна обява от компания <span th:text="${companyName}"></span>
+        </p>
+    </div>
+    <div style="padding: 30px 0 10px 0; background-color: #ffffff; font-family: Courier;">
+        <div style="border: 2px solid #1A91E7; border-radius: 5px; margin: 0 30px;">
+            <div style="text-align: center; margin-top: 14px;"><img th:src="${adPictureUrl}" width="500px"/></div>
+            <div style="display: inline-block; width: 220px; margin: 15px 0; padding: 0 18px; font-size: 14px; text-align: center; border-right: 2px solid #1A91E7;">
+                <h2 th:text="${adTitle}"></h2>
+                <p style="word-break: break-word;" th:text="${adDescription}"></p>
+            </div>
+            <div style="display: inline-block; width: 220px; padding-left: 18px; font-size: 14px; vertical-align: top; margin-top: 25px;">
+                <div><b>Възнаграждение:</b> <span th:text="${adReward}"></span> &euro;</div>
+                <div><b>Валидна до:</b> <span th:text="${adValidTo}"></span></div>
+                <div><b>Минимален брой: </b></div>
+                <ul style="padding-left: 11px; margin: 6px 0;">
+                    <li>видеа: <span th:text="${adMinVideos} ?: '-'"></span></li>
+                    <li>абонати: <span th:text="${adMinSubscribers} ?: '-'"></span></li>
+                    <li>показвания: <span th:text="${adMinViews} ?: '-'"></span></li>
+                </ul>
+            </div>
+            <div style="border-top: 2px solid #1A91E7; font-size: 14px; margin: 0 22px;" th:unless="${#lists.isEmpty(adCharacteristics)}">
+                <h3>Допълнителни характер:</h3>
+                <ul>
+                    <li th:each="char: ${adCharacteristics}" th:text="${char.name + ' - ' + char.value}"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div style="width: 600px; background: white; padding: 30px 0 10px 0">
+        <p style="font-family: Cambria; font-size: 12px; width: 450px; margin: 0 auto 10px;">
+            Ако искате да се откажете от абонамента за компания <span th:text="${companyName}"></span> натиснете <a th:href="${unsubscribeCompanyUrl}" target="_blank" style="color:#86adea; text-decoration: none;">тук</a>.
+        </p>
+        <p style="font-family: Cambria; font-size: 12px; width: 450px; margin: 0 auto;">
+            Моля не отговаряйте на това съобщение. Може да се свържете с нас на следния адрес: <a href="mailto::adspartners@gmail.com" style="color:#86adea; text-decoration: none;">adspartners@gmail.com</a>
+        </p>
+        <p style="font-family: Cambria; font-size: 12px; width: 450px; margin: 15px auto;">
+            &copy; copyright 2021 AdsPartners
+        </p>
+    </div>
+</div>
+</body>
+
+</html>

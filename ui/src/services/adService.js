@@ -1,4 +1,4 @@
-import requester from './requester';
+import requester, { baseUrl } from './requester';
 import toBase64 from './fileConverter';
 
 export async function createAd(params) {
@@ -13,7 +13,8 @@ export async function createAd(params) {
         minSubscribers: params.minSubscribers,
         minViews: params.minViews,
         pictureBase64,
-        characteristics: params.characteristics
+        characteristics: params.characteristics,
+        remoteUrl: baseUrl
     });
 }
 

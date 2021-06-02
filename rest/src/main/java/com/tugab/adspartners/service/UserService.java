@@ -42,6 +42,8 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<MessageResponse> subscribe(Youtuber youtuber, Long companyId);
 
+    public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId);
+
     public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId);
 
     public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests();

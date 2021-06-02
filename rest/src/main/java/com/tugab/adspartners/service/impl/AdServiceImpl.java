@@ -15,8 +15,10 @@ import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingRespon
 import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
+import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
+import com.tugab.adspartners.service.EmailService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,8 @@ public class AdServiceImpl implements AdService {
     private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
     private final ResourceBundleUtil resourceBundleUtil;
+    private final SubscriptionRepository subscriptionRepository;
+    private final EmailService emailService;
 
     @Autowired
     public AdServiceImpl(AdRepository adRepository,
@@ -52,13 +56,17 @@ public class AdServiceImpl implements AdService {
                          CloudinaryService cloudinaryService,
                          AdApplicationRepository adApplicationRepository,
                          ModelMapper modelMapper,
-                         ResourceBundleUtil resourceBundleUtil) {
+                         ResourceBundleUtil resourceBundleUtil,
+                         SubscriptionRepository subscriptionRepository,
+                         EmailService emailService) {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
         this.cloudinaryService = cloudinaryService;
         this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
         this.resourceBundleUtil = resourceBundleUtil;
+        this.subscriptionRepository = subscriptionRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -145,6 +153,14 @@ public class AdServiceImpl implements AdService {
         ad.setIsBlocked(false);
         ad.getCharacteristics().forEach(c -> c.setAd(ad));
         this.adRepository.save(ad);
+
+        this.subscriptionRepository.findById_Company(ad.getCompany())
+            .forEach(s -> {
+                String unsubscribeCompanyUrl = String.format("%s/company/%d/unsubscribe",
+                        createAdBindingModel.getRemoteUrl(), ad.getCompany().getId());
+                String youtuberEmail = s.getId().getYoutuber().getEmail();
+                this.emailService.sendAdSubscription(ad, youtuberEmail, unsubscribeCompanyUrl);
+            });
 
         MessageResponse responseMessage = new MessageResponse(this.resourceBundleUtil.getMessage("createAd.success"));
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);

@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTUBERS_LIST,
     YOUTUBERS_FILTERS, YOUTUBER_PROFILE, YOUTUBER_DETAILS } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData, checkSubscription, subscribe, getYoutubersBySubs,
+import { getUserInfo, refreshUserData, checkSubscription, subscribe, unsubscribe, getYoutubersBySubs,
     getYoutubers, getFilters, voteForYoutuber, getProfile, getYoutuberDetails } from '../services/youtubeService';
 import { setCookie } from '../utils/CookiesUtil';
 
@@ -45,6 +45,17 @@ function subscribeAction(companyId) {
             });
     };
 }
+
+const unsubscribeAction = (companyId) => {
+    return async () => {
+        try {
+            const json = await unsubscribe(companyId);
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        };
+    };
+};
 
 function getYoutubersBySubsAction(pageSize) {
     return (dispatch) => {
@@ -103,6 +114,6 @@ function getYoutuberDetailsAction(youtuberId) {
     };
 }
 
-export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, 
+export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, unsubscribeAction,
     getYoutubersBySubsAction, getYoutubersAction, getYoutubersFiltersAction, voteForYoutuberAction,
     getYoutuberProfileAction, getYoutuberDetailsAction };

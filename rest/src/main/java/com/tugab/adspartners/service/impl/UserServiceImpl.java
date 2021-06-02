@@ -252,6 +252,20 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(new MessageResponse("You have just subscribed for company."));
     }
 
+    public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId) {
+        Subscription subscription = this.subscriptionRepository
+                .findById_Company_IdAndId_Youtuber_Id(companyId, youtuber.getId()).orElse(null);
+
+        if (subscription == null) {
+            String unsubscribeNotExist = this.resourceBundleUtil.getMessage("subscription.unsubscribeNotExist");
+            return new ResponseEntity<>(new MessagesResponse(unsubscribeNotExist), HttpStatus.NOT_FOUND);
+        }
+
+        this.subscriptionRepository.delete(subscription);
+        String unsubscribeSuccessfullyMessage = this.resourceBundleUtil.getMessage("subscription.unsubscribeSuccessfully");
+        return ResponseEntity.ok(new MessageResponse(unsubscribeSuccessfullyMessage));
+    }
+
     public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId) {
         Boolean existSub = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuberId);
         return ResponseEntity.ok(existSub);

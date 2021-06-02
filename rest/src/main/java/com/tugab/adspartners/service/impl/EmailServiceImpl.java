@@ -1,5 +1,6 @@
 package com.tugab.adspartners.service.impl;
 
+import com.tugab.adspartners.domain.entities.Ad;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Role;
 import com.tugab.adspartners.domain.entities.User;
@@ -88,6 +89,13 @@ public class EmailServiceImpl implements EmailService {
         this.sendMail(template, companyEmail, mailSubject);
     }
 
+    @Override
+    public void sendAdSubscription(Ad ad, String youtuberEmail, String unsubscribeCompanyUrl) {
+        final String mailSubject = this.resourceBundleUtil.getMessage("createAd.mailSubject");
+        String template = this.createAdSubscriptionTemplate(ad, unsubscribeCompanyUrl);
+        this.sendMail(template, youtuberEmail, mailSubject);
+    }
+
     private String createCompanyStatusChangedTemplate(RegistrationStatus status) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("requestAllowed", RegistrationStatus.ALLOWED.equals(status));
@@ -109,5 +117,22 @@ public class EmailServiceImpl implements EmailService {
         variables.put("processRequestUrl", adminRedirectUrl);
 
         return this.createTemplate("companyRegister", variables);
+    }
+
+    private String createAdSubscriptionTemplate(Ad ad, String unsubscribeCompanyUrl) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("companyName", ad.getCompany().getUser().getName());
+        variables.put("adPictureUrl", ad.getPicture().getUrl());
+        variables.put("adTitle", ad.getTitle());
+        variables.put("adDescription", ad.getShortDescription()); //TODO: maybe i should reduce letters to 50
+        variables.put("adReward", String.format("%.2f", ad.getReward()));
+        variables.put("adValidTo", this.dateTimeFormatter.toDate(ad.getValidTo()));
+        variables.put("adMinVideos", ad.getMinVideos());
+        variables.put("adMinSubscribers", ad.getMinSubscribers());
+        variables.put("adMinViews", ad.getMinViews());
+        variables.put("adCharacteristics", ad.getCharacteristics());
+        variables.put("unsubscribeCompanyUrl", unsubscribeCompanyUrl);
+
+        return this.createTemplate("adSubscribers", variables);
     }
 }

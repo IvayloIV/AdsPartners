@@ -9,13 +9,13 @@ import java.util.Date;
 public class DateTimeFormatter {
 
     private final static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
-    private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+    private final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-    public  String toDate(Date date) {
+    public String toDate(Date date) {
         return dateFormat.format(date);
     }
 
-    public  String toDateTimeFormat(Date date) {
+    public String toDateTimeFormat(Date date) {
         return dateTimeFormat.format(date);
     }
 }
