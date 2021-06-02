@@ -443,6 +443,19 @@ body {
     margin: 20px 0;
 }
 
+.edit-curr-text {
+    margin: 5px 0;
+    font-weight: 100;
+    font-size: 12px;
+    text-align: left;
+    color: rgba(0, 0, 0, 0.54);
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.edit-curr-img {
+    width: 100%;
+}
+
 /* body {
   margin: 0;
   padding: 0;

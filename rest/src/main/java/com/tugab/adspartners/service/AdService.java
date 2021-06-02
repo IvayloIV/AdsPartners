@@ -6,7 +6,6 @@ import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
@@ -25,7 +24,7 @@ public interface AdService {
 
     public ResponseEntity<?> createAd(CreateAdBindingModel createAdBindingModel, Errors errors);
 
-    public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors);
+    public ResponseEntity<?> editAd(EditAdBindingModel editAdBindingModel, Errors errors);
 
     public ResponseEntity<MessageResponse> deleteAd(Long adId);
 

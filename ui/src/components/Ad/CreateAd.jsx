@@ -6,7 +6,7 @@ import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import CharacteristicList from '../Characteristic/CharacteristicList';
 import CreateCharacteristic from '../Characteristic/CreateCharacteristic';
 import Dialog from '../common/Dialog';
-import * as validations from '../../validations/createAd';
+import * as validations from '../../validations/ad';
 import { createAdAction } from '../../actions/adActions';
 
 export default props => {

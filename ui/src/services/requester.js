@@ -15,7 +15,7 @@ function requester(endPoint, type, auth, data) {
     if (data instanceof FormData) {
         obj['body'] = data;
     } else {
-        if (type === 'POST' || type === 'DELETE') {
+        if (type !== 'GET') {
             obj['headers']['Content-Type'] = 'application/json';
             obj['body'] = JSON.stringify(data);
         }

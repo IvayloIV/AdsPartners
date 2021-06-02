@@ -72,11 +72,13 @@ public class AdController {
         return this.adService.createAd(createAdBindingModel, errors);
     }
 
-    @PostMapping(path = "/edit/{id}")
-    public ResponseEntity<MessageResponse> editAd(@PathVariable("id") Long adId,
-                                                  @Valid @RequestBody EditAdBindingModel editAdBindingModel,
-                                                  Errors errors) {
+    @PutMapping(path = "/edit/{id}")
+    public ResponseEntity<?> editAd(@PathVariable("id") Long adId,
+                                      @Valid @RequestBody EditAdBindingModel editAdBindingModel,
+                                      Errors errors,
+                                      Authentication authentication) {
         editAdBindingModel.setId(adId);
+        editAdBindingModel.setCompany((Company) authentication.getPrincipal());
         return this.adService.editAd(editAdBindingModel, errors);
     }
 

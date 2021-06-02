@@ -28,6 +28,5 @@ export const AD_COMPANY_LIST = 'AD_COMPANY_LIST';
 export const AD_DETAILS = 'AD_DETAILS';
 export const AD_APPLICATIONS = 'AD_APPLICATIONS';
 export const AD_FILTERS = 'AD_FILTERS';
-export const CREATE_AD = 'CREATE_AD';
 export const BLOCK_AD = 'BLOCK_AD';
 export const UNBLOCK_AD = 'UNBLOCK_AD';

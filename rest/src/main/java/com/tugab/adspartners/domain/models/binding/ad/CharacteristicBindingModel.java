@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class CharacteristicBindingModel {
 
+    private Long id;
+
     @Length(min = 2, message = "{createAd.charName}")
     private String name;
 

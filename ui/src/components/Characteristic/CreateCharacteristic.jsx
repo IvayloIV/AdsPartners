@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
 import { Button, Icon } from 'semantic-ui-react';
-import * as validations from '../../validations/createAd';
+import * as validations from '../../validations/ad';
 
 export default props => {
     const [isActiveChar, setIsActiveChar] = useState(false);

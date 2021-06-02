@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { AD_LIST, AD_DETAILS, CREATE_AD, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
+import { AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
     COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS } from '../actions/actionTypes';
 import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
     getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd,
@@ -33,15 +33,13 @@ function getCompanyAdsByIdAction(companyId) {
     };
 }
 
-function getAdDetailsAction(adId) {
-    return (dispatch) => {
-        return getAdDetails(adId)
-            .then(json => {
-                console.log(json);
-                dispatch({ type: AD_DETAILS, data: json });
-            });
+const getAdDetailsAction = adId => {
+    return async (dispatch) => {
+        const json = await getAdDetails(adId);
+        dispatch({ type: AD_DETAILS, data: json });
+        return json;
     };
-}
+};
 
 function applyForAdAction(adId, params) {
     return (dispatch) => {
@@ -104,17 +102,18 @@ const createAdAction = params => {
     };
 };
 
-function editAdAction(id, title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
-    return (dispatch) => {
-        return editAd(id, title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics)
-            .then(json => {
-                console.log(json);
-                // dispatch({ type: CREATE_AD, data: json });
-                let msg = null;
-                toast.success(json.message);
-            });
+const editAdAction = (adId, params) => {
+    return async () => {
+        try {
+            const json = await editAd(adId, params);
+            toast.success(json.message);
+            return json;
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+            return null;
+        }
     };
-}
+};
 
 function deleteAdAction(adId) {
     return (dispatch) => {

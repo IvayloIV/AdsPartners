@@ -18,22 +18,22 @@ export async function createAd(params) {
     });
 }
 
-export async function editAd(id, title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) {
+export async function editAd(adId, params) {
     let pictureBase64 = null;
-    if (picture != null) {
-        pictureBase64 = await toBase64(picture);
+    if (params.picture != null) {
+        pictureBase64 = await toBase64(params.picture);
     }
 
-    return await requester('/ad/edit/' + id, 'POST', true, {
-        title, 
-        shortDescription, 
-        reward, 
-        validTo, 
-        minVideos, 
-        minSubscribers, 
-        minViews, 
-        pictureBase64, 
-        characteristics
+    return await requester('/ad/edit/' + adId, 'PUT', true, {
+        title: params.title,
+        shortDescription: params.shortDescription,
+        reward: params.reward,
+        validTo: params.validTo,
+        minVideos: params.minVideos,
+        minSubscribers: params.minSubscribers,
+        minViews: params.minViews,
+        pictureBase64,
+        characteristics: params.characteristics
     });
 }
 

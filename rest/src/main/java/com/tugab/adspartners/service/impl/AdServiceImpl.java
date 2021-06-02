@@ -15,6 +15,7 @@ import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingRespon
 import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
+import com.tugab.adspartners.repository.CharacteristicRepository;
 import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
@@ -22,7 +23,6 @@ import com.tugab.adspartners.service.EmailService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +34,7 @@ import org.springframework.validation.ObjectError;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class AdServiceImpl implements AdService {
     private final ResourceBundleUtil resourceBundleUtil;
     private final SubscriptionRepository subscriptionRepository;
     private final EmailService emailService;
+    private final CharacteristicRepository characteristicRepository;
 
     @Autowired
     public AdServiceImpl(AdRepository adRepository,
@@ -58,13 +60,15 @@ public class AdServiceImpl implements AdService {
                          ModelMapper modelMapper,
                          ResourceBundleUtil resourceBundleUtil,
                          SubscriptionRepository subscriptionRepository,
-                         EmailService emailService) {
+                         EmailService emailService,
+                         CharacteristicRepository characteristicRepository) {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
         this.cloudinaryService = cloudinaryService;
         this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
         this.resourceBundleUtil = resourceBundleUtil;
+        this.characteristicRepository = characteristicRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.emailService = emailService;
     }
@@ -166,18 +170,21 @@ public class AdServiceImpl implements AdService {
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<MessageResponse> editAd(EditAdBindingModel editAdBindingModel, Errors errors) {
-        if (errors.hasErrors()) {
-            String errorMessage = errors.getFieldErrors()
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining("\n"));
-
-            return ResponseEntity.badRequest().body(new MessageResponse(errorMessage));
+    public ResponseEntity<?> editAd(EditAdBindingModel editAdBindingModel, Errors errors) {
+        ResponseEntity<?> errorResponseEntity = this.checkForErrors(errors);
+        if (errorResponseEntity != null) {
+            return errorResponseEntity;
         }
 
-        Ad ad = this.adRepository.findById(editAdBindingModel.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Illegal does not found."));
+        Ad ad = this.adRepository.findById(editAdBindingModel.getId()).orElse(null);
+        if (ad == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("editAd.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        } else if (!ad.getCompany().getId().equals(editAdBindingModel.getCompany().getId())) {
+            String wrongCompanyMessage = this.resourceBundleUtil.getMessage("editAd.wrongCompany");
+            return new ResponseEntity<>(new MessagesResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
+        }
+
         CloudinaryResource oldAdPicture = null;
 
         if (editAdBindingModel.getPictureBase64() != null) {
@@ -198,18 +205,38 @@ public class AdServiceImpl implements AdService {
         ad.setMinSubscribers(editAdBindingModel.getMinSubscribers());
         ad.setMinViews(editAdBindingModel.getMinViews());
 
+        List<String> errorCharMessages = new ArrayList<>();
         ad.getCharacteristics().clear();
         editAdBindingModel.getCharacteristics().forEach(c -> {
-            c.setAd(ad);
-            ad.getCharacteristics().add(c); //TODO: check if characteristic isn't belong to another ad
+            if (c.getId() != null) {
+                Characteristic savedChar = this.characteristicRepository.findById(c.getId()).orElse(null);
+                if (savedChar == null) {
+                    String charNotExist = this.resourceBundleUtil.getMessage("editAd.charNotExist");
+                    errorCharMessages.add(charNotExist);
+                } else if (!savedChar.getAd().getId().equals(ad.getId())) {
+                    String charBelongToOtherAd = this.resourceBundleUtil.getMessage("editAd.charBelongToOtherAd");
+                    errorCharMessages.add(charBelongToOtherAd);
+                }
+            }
+
+            Characteristic characteristic = this.modelMapper.map(c, Characteristic.class);
+            characteristic.setAd(ad);
+            ad.getCharacteristics().add(characteristic);
         });
+
+        if (errorCharMessages.size() != 0) {
+            List<String> errorCharDistinctMessages = errorCharMessages.stream()
+                .distinct()
+                .collect(Collectors.toList());
+            return new ResponseEntity<>(new MessagesResponse(errorCharDistinctMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
 
         this.adRepository.save(ad);
         if (oldAdPicture != null) {
-            this.cloudinaryService.deleteImage(oldAdPicture); //TODO: is it possible to remove picture at the same time with saving ad
+            this.cloudinaryService.deleteImage(oldAdPicture);
         }
 
-        return new ResponseEntity<>(new MessageResponse("Ad edited successfully."), HttpStatus.CREATED);
+        return ResponseEntity.ok(new MessageResponse(this.resourceBundleUtil.getMessage("editAd.success")));
     }
 
     @Override
