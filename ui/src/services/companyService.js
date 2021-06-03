@@ -60,7 +60,7 @@ export async function registerHistory() {
 }
 
 export async function updateRegisterStatus(companyId, status) {
-    return await requester('/company/register/status/' + companyId, 'POST', true, { status });
+    return await requester(`/company/register/status/${companyId}`, 'PATCH', true, { status });
 }
 
 export async function getCompaniesFilters() {

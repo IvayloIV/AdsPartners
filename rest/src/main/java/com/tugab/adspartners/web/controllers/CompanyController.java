@@ -109,8 +109,8 @@ public class CompanyController {
         return this.userService.getRegisterHistory();
     }
 
-    @PostMapping(path = "/register/status/{id}")
-    public ResponseEntity<CompanyRegisterHistoryResponse> updateRegisterStatus(@PathVariable("id") Long companyId,
+    @PatchMapping(path = "/register/status/{id}")
+    public ResponseEntity<?> updateRegisterStatus(@PathVariable("id") Long companyId,
                                                                 @RequestBody UpdateStatusBindingModel updateStatusBindingModel) {
         return this.userService.updateCompanyStatus(companyId, updateStatusBindingModel);
     }

@@ -50,7 +50,7 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<List<CompanyRegisterHistoryResponse>> getRegisterHistory();
 
-    public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
+    public ResponseEntity<?> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
 
     public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size);
 

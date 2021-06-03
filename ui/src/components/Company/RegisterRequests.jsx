@@ -1,18 +1,94 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction } from '../../actions/companyActions';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from "react-redux";
+import { Table, Button } from 'semantic-ui-react'
+import { getCompaniesRequests, getCompaniesHistoryAction, updateCompanyStatusAction } from '../../actions/companyActions';
 
-class RegisterRequests extends Component {
+export default () => {
+    const [loading, setLoading] = useState(true);
+
+    const requests = useSelector(state => state.company.requests);
+    const history = useSelector(state => state.company.history);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(getCompaniesRequests());
+            await dispatch(getCompaniesHistoryAction());
+            setLoading(false);
+        })();
+    }, []);
+
+    if (loading) {
+        return <div>{'Loading...'}</div>;
+    }
+
+    return (
+        <div className="company-requests">
+            <h2 id="company-requests-title">Заявни на компаниите</h2>
+            <Table id="company-register-table" color='blue' key='company-register-table'>
+                <Table.Header>
+                    <Table.Row textAlign="center">
+                        <Table.HeaderCell>Име</Table.HeaderCell>
+                        <Table.HeaderCell>Мейл</Table.HeaderCell>
+                        <Table.HeaderCell>Телефон</Table.HeaderCell>
+                        <Table.HeaderCell>Дата на заявката</Table.HeaderCell>
+                        <Table.HeaderCell>Действия</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body className="company-request-body">
+                    {requests.map(r => (
+                        <Table.Row key={r.id} id="company-request-row" textAlign="center">
+                            <Table.Cell>{r.userName}</Table.Cell>
+                            <Table.Cell>{r.userEmail}</Table.Cell>
+                            <Table.Cell>{r.phone}</Table.Cell>
+                            <Table.Cell>{new Date(r.userCreatedDate).toLocaleString()}</Table.Cell>
+                            <Table.Cell>
+                                <Button.Group>
+                                    <Button inverted color='blue'
+                                            onClick={() => dispatch(updateCompanyStatusAction(r.id, 'ALLOWED'))}>
+                                        Одобри
+                                    </Button>
+                                    <Button inverted color='red'
+                                            onClick={() => dispatch(updateCompanyStatusAction(r.id, 'BLOCKED'))}>
+                                        Забрани
+                                    </Button>
+                                </Button.Group>
+                            </Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
+            <hr/>
+            <h2 id="company-history-title">История на обработените заявки</h2>
+            <Table id="company-history-table" color='green' key='company-history-table'>
+                <Table.Header>
+                    <Table.Row textAlign="center">
+                        <Table.HeaderCell>Име</Table.HeaderCell>
+                        <Table.HeaderCell>Мейл</Table.HeaderCell>
+                        <Table.HeaderCell>Телефон</Table.HeaderCell>
+                        <Table.HeaderCell>Дата на заявката</Table.HeaderCell>
+                        <Table.HeaderCell>Дата на промяната</Table.HeaderCell>
+                        <Table.HeaderCell>Статус</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body className="company-history-body">
+                    {history.map(r => (
+                        <Table.Row key={r.id} id="company-history-row" className={r.status.toLowerCase()} textAlign="center">
+                            <Table.Cell>{r.userName}</Table.Cell>
+                            <Table.Cell>{r.userEmail}</Table.Cell>
+                            <Table.Cell>{r.phone}</Table.Cell>
+                            <Table.Cell>{new Date(r.userCreatedDate).toLocaleString()}</Table.Cell>
+                            <Table.Cell>{new Date(r.statusModifyDate).toLocaleString()}</Table.Cell>
+                            <Table.Cell>{r.status === 'ALLOWED' ? 'Одобрено' : 'Забранено'}</Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
+        </div>
+    );
+};
+
+/*class RegisterRequests extends Component {
     constructor(props) {
         super(props);
 
@@ -122,4 +198,4 @@ function mapDispatch(dispatch) {
     };
 }
 
-export default withRouter(connect(mapState, mapDispatch)(RegisterRequests));
+export default withRouter(connect(mapState, mapDispatch)(RegisterRequests));*/

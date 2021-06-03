@@ -95,36 +95,33 @@ function getCompanyProfileAction() {
     };
 }
 
-function getCompanyRequestsAction() { //TODO: maybe rename to getCompaniesRequests
-    return (dispatch) => {
-        return registerRequests()
-            .then(json => {
-                dispatch({ type: REGISTER_REQUESTS, data: json });
-                return json;
-            });
+const getCompaniesRequests = () => {
+    return async (dispatch) => {
+        const json = await registerRequests();
+        dispatch({ type: REGISTER_REQUESTS, data: json });
+        return json;
     };
-}
+};
 
-function getCompanyHistoryAction() {
-    return (dispatch) => {
-        return registerHistory()
-            .then(json => {
-                dispatch({ type: REGISTER_HISTORY, data: json });
-                return json;
-            });
+const getCompaniesHistoryAction = () => {
+    return async (dispatch) => {
+        const json = await registerHistory();
+        dispatch({ type: REGISTER_HISTORY, data: json });
+        return json;
     };
-}
+};
 
-function updateCompanyStatusAction(companyId, status) {
-    return (dispatch) => {
-        return updateRegisterStatus(companyId, status)
-            .then(json => {
-                dispatch({ type: UPDATE_REGISTER_STATUS, data: json });
-                toast.info("Status updated successfully.");
-                return json;
-            });
+const updateCompanyStatusAction = (companyId, status) => {
+    return async (dispatch) => {
+        try {
+            const json = await updateRegisterStatus(companyId, status);
+            dispatch({ type: UPDATE_REGISTER_STATUS, data: json });
+            toast.success("Успешно променихте статуса на компанията.");
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 function getCompaniesByRatingAction(pageSize) {
     return (dispatch) => {
@@ -171,6 +168,6 @@ function offerPartnershipAction(adId, youtuberId, description) {
 
 export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
     changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction,
-    getCompanyRequestsAction, getCompanyHistoryAction, updateCompanyStatusAction,
+    getCompaniesRequests, getCompaniesHistoryAction, updateCompanyStatusAction,
     getCompaniesByRatingAction, getCompaniesFiltersAction, getCompaniesByAdsAction,
     offerPartnershipAction };

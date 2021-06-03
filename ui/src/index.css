@@ -456,6 +456,45 @@ body {
     width: 100%;
 }
 
+/*** Company requests ***/
+
+#company-register-table, #company-history-table {
+    width: 80%;
+    margin: 10px auto;
+}
+
+#company-requests-title, #company-history-title {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+#company-requests-title {
+    color: #2185D0;
+}
+
+.company-request-body #company-request-row:nth-child(even) {
+    background-color: #d9efff;
+}
+
+.company-requests hr {
+    margin-top: 63px;
+    height: 2px;
+    background: linear-gradient(to right,  #2185D0 50%,#21BA45 50%);
+}
+
+#company-history-title {
+    color: #21BA45;
+}
+
+#company-history-row.allowed  {
+    background-color: #abffab;
+}
+
+#company-history-row.blocked  {
+    background-color: #ffabab;
+}
+
 /* body {
   margin: 0;
   padding: 0;

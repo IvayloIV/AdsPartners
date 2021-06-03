@@ -295,9 +295,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<CompanyRegisterHistoryResponse> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel) {
-        Company company = this.companyRepository.findById(companyId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid company id."));
+    public ResponseEntity<?> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel) {
+        Company company = this.companyRepository.findById(companyId).orElse(null);
+
+        if (company == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("companyRequest.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
 
         company.setStatus(updateStatusBindingModel.getStatus());
         company.setStatusModifyDate(new Date());
