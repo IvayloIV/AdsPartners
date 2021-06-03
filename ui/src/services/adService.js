@@ -38,7 +38,7 @@ export async function editAd(adId, params) {
 }
 
 export async function deleteAd(adId) {
-    return await requester('/ad/delete/' + adId, 'DELETE', true);
+    return await requester(`/ad/delete/${adId}`, 'DELETE', true);
 }
 
 export async function getAds(params) {

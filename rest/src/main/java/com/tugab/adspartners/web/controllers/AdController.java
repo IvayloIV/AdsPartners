@@ -83,8 +83,10 @@ public class AdController {
     }
 
     @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<MessageResponse> deleteAd(@PathVariable("id") Long adId) {
-        return this.adService.deleteAd(adId);
+    public ResponseEntity<?> deleteAd(@PathVariable("id") Long adId,
+                                      Authentication authentication) {
+        Company company = (Company) authentication.getPrincipal();
+        return this.adService.deleteAd(adId, company);
     }
 
     @PostMapping(path = "/vote/{id}")

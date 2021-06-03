@@ -23,6 +23,7 @@ export const REGISTER_HISTORY = 'REGISTER_HISTORY';
 export const UPDATE_REGISTER_STATUS = 'UPDATE_REGISTER_STATUS';
 export const SUBSCRIBE = 'SUBSCRIBE';
 
+export const DELETE_AD = 'DELETE_AD';
 export const AD_LIST = 'AD_LIST';
 export const AD_COMPANY_LIST = 'AD_COMPANY_LIST';
 export const AD_DETAILS = 'AD_DETAILS';

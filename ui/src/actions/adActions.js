@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import { AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
-    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS } from '../actions/actionTypes';
+    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS, DELETE_AD } from '../actions/actionTypes';
 import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
     getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd,
     getApplicationsByYoutuber } from '../services/adService';
@@ -115,14 +115,17 @@ const editAdAction = (adId, params) => {
     };
 };
 
-function deleteAdAction(adId) {
-    return (dispatch) => {
-        return deleteAd(adId)
-            .then(json => {
-                toast.success(json.message);
-            });
+const deleteAdAction = adId => {
+    return async (dispatch) => {
+        try {
+            const json = await deleteAd(adId);
+            dispatch({ type: DELETE_AD, data: adId });
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 function blockAdAction(adId) {
     return (dispatch) => {

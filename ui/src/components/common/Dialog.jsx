@@ -10,7 +10,7 @@ export default props => {
 
   const handleInitButton = e => {
     e.preventDefault();
-    const hasErrors = props.checkForErrors();
+    const hasErrors = props.checkForErrors !== null && props.checkForErrors();
     if (!hasErrors) {
         setOpen(true);
     }

@@ -125,9 +125,16 @@ public class AdServiceImpl implements AdService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            filtersResponse.getMinVideos().add(ad.getMinVideos());
-            filtersResponse.getMinSubscribers().add(ad.getMinSubscribers());
-            filtersResponse.getMinViews().add(ad.getMinViews());
+
+            if (ad.getMinVideos() != null) {
+                filtersResponse.getMinVideos().add(ad.getMinVideos());
+            }
+            if (ad.getMinSubscribers() != null) {
+                filtersResponse.getMinSubscribers().add(ad.getMinSubscribers());
+            }
+            if (ad.getMinViews() != null) {
+                filtersResponse.getMinViews().add(ad.getMinViews());
+            }
         }
 
         return ResponseEntity.ok(filtersResponse);
@@ -240,14 +247,22 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<MessageResponse> deleteAd(Long adId) {
-        Ad ad = this.adRepository.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Ad does not found."));
+    public ResponseEntity<?> deleteAd(Long adId, Company company) {
+        Ad ad = this.adRepository.findById(adId).orElse(null);
+
+        if (ad == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("deleteAd.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        } else if (!ad.getCompany().getId().equals(company.getId())) {
+            String wrongCompanyMessage = this.resourceBundleUtil.getMessage("deleteAd.wrongCompany");
+            return new ResponseEntity<>(new MessagesResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
+        }
 
         this.adRepository.delete(ad);
         this.cloudinaryService.deleteImageResource(ad.getPicture());
 
-        return ResponseEntity.ok(new MessageResponse("Ad deleted successfully."));
+        String successMessage = this.resourceBundleUtil.getMessage("deleteAd.success");
+        return ResponseEntity.ok(new MessageResponse(successMessage));
     }
 
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {

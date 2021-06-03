@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
-import { getCompanyAdsAction, getApplicationsByCompanyAction, getCompanyAdsByIdAction } from '../../actions/adActions';
+import { getCompanyAdsAction, getApplicationsByCompanyAction, getCompanyAdsByIdAction, deleteAdAction } from '../../actions/adActions';
 import { getCompanyDetailsAction, getCompanyProfileAction } from '../../actions/companyActions';
 import { checkSubscriptionAction, subscribeAction } from '../../actions/youtubeActions';
 import { getCookie } from '../../utils/CookiesUtil';
+import Dialog from '../common/Dialog';
 
 class CompanyDetailsPage extends Component {
     constructor(props) {
@@ -80,7 +81,16 @@ class CompanyDetailsPage extends Component {
                         <p>Valid to - {a.validTo}</p>
                         <p><Link className="ad-deltail" to={`/ad/details/${a.id}`}>Details</Link></p>
                         {isEmployer && <p><Link className="ad-edit" to={`/ad/edit/${a.id}`}>Edit</Link></p>}
-                        {isEmployer && <p><Link className="ad-delete" to={`/ad/delete/${a.id}`}>Delete</Link></p>}
+                        {isEmployer && <p>
+                            <Dialog
+                                checkForErrors={null}
+                                onSubmitHandler={() => this.props.deleteAd(a.id)}
+                                buttonAgree='Изтрий'
+                                buttonDisagree='Отказване'
+                                dialogContent='Наистина ли искате да изтриете рекламнaта обява ?'
+                            />
+                            <Link className="ad-delete" to={`/ad/delete/${a.id}`}>Delete</Link>
+                        </p>}
                         {/* TODO: check if owner is log in for edit ad */}
                     </div>
                 ))}
@@ -138,7 +148,8 @@ function mapDispatch(dispatch) {
         getCompanyAdsById: (companyId) => dispatch(getCompanyAdsByIdAction(companyId)),
         getApplicationsByCompany: (companyId) => dispatch(getApplicationsByCompanyAction(companyId)),
         checkSubscription: (companyId) => dispatch(checkSubscriptionAction(companyId)),
-        subscribe: (companyId) => dispatch(subscribeAction(companyId))
+        subscribe: (companyId) => dispatch(subscribeAction(companyId)),
+        deleteAd: (adId) => dispatch(deleteAdAction(adId))
     };
 }
 

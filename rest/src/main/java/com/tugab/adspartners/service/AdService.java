@@ -1,5 +1,6 @@
 package com.tugab.adspartners.service;
 
+import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
@@ -26,7 +27,7 @@ public interface AdService {
 
     public ResponseEntity<?> editAd(EditAdBindingModel editAdBindingModel, Errors errors);
 
-    public ResponseEntity<MessageResponse> deleteAd(Long adId);
+    public ResponseEntity<?> deleteAd(Long adId, Company company);
 
     public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
 

@@ -1,4 +1,4 @@
-import { AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
+import { DELETE_AD, AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
     COMPANY_APPLICATIONS_LIST, YOUTUBER_APPLICATIONS } from '../actions/actionTypes';
 
 let adState = {
@@ -11,6 +11,11 @@ let adState = {
 export function adReducer(state = adState, action) {
     console.log(action.data);
     switch (action.type) {
+        case DELETE_AD:
+            let items = state.list.items.filter(a => a.id !== action.data);
+            let list = Object.assign({}, state.list);
+            list.items = items;
+            return Object.assign({}, state, { list });
         case AD_LIST:
             return Object.assign({}, state, { list: action.data });
         case AD_COMPANY_LIST:
