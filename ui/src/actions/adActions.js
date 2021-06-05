@@ -127,25 +127,29 @@ const deleteAdAction = adId => {
     };
 };
 
-function blockAdAction(adId) {
-    return (dispatch) => {
-        return blockAd(adId)
-            .then(json => {
-                dispatch({ type: BLOCK_AD, adId });
-                toast.success(json.message);
-            });
+const blockAdAction = adId => {
+    return async (dispatch) => {
+        try {
+            const json = await blockAd(adId);
+            dispatch({ type: BLOCK_AD, adId });
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
-function unblockAdAction(adId) {
-    return (dispatch) => {
-        return unblockAd(adId)
-            .then(json => {
-                dispatch({ type: UNBLOCK_AD, adId });
-                toast.success(json.message);
-            });
+const unblockAdAction = adId => {
+    return async (dispatch) => {
+        try {
+            const json = await unblockAd(adId);
+            dispatch({ type: UNBLOCK_AD, adId });
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 function getYoutuberApplicationAction(adId) {
     return (dispatch) => {

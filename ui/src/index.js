@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import 'semantic-ui-css/semantic.min.css'
 import "react-alice-carousel/lib/alice-carousel.css";
+import 'rc-slider/assets/index.css';
 import reducers from './reducers/reducers';
 
 import './index.css';

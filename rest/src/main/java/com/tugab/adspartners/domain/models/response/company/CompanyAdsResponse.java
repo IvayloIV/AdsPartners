@@ -17,7 +17,9 @@ public class CompanyAdsResponse {
 
     private String town;
 
-    private Integer totalAdsCount;
+    private String logoUrl;
+
+    private Integer adsCount;
 
     private List<AdByCompanyResponse> ads;
 }

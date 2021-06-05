@@ -19,7 +19,6 @@ export function companyReducer(state = companyState, action) {
         case COMPANIES_BY_RATING:
             return Object.assign({}, state, { list: action.data });
         case COMPANIES_ADS:
-            console.log(action.data);
             return Object.assign({}, state, { list: action.data });
         case COMPANIES_FILTERS:
             return Object.assign({}, state, { filters: action.data });
@@ -46,9 +45,10 @@ export function companyReducer(state = companyState, action) {
         case BLOCK_AD:
         case UNBLOCK_AD:
             let list = Object.assign({}, state.list);
-            let ads = list.items.filter(c => c.ads.some(a => a.id === action.adId))[0].ads;
-            let ad = ads.filter(a => a.id === action.adId)[0];
-            let { isBlocked } = ad;
+            let ad = list.items
+                .filter(c => c.ads.some(a => a.id === action.adId))
+                .map(c => c.ads)[0]
+                .filter(a => a.id === action.adId)[0];
             ad.isBlocked = !ad.isBlocked;
             return Object.assign({}, state, { list });
         default:

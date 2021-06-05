@@ -130,13 +130,13 @@ public class AdController {
         return this.adService.getApplicationsByYoutuberId(youtuber.getId());
     }
 
-    @PostMapping("/block/{id}")
-    public ResponseEntity<MessageResponse> blockAd(@PathVariable("id") Long adId) {
+    @PatchMapping("/block/{id}")
+    public ResponseEntity<?> blockAd(@PathVariable("id") Long adId) {
         return this.adService.changeAdBlockingStatus(adId, true);
     }
 
-    @PostMapping("/unblock/{id}")
-    public ResponseEntity<MessageResponse> unblockAd(@PathVariable("id") Long adId) {
+    @PatchMapping("/unblock/{id}")
+    public ResponseEntity<?> unblockAd(@PathVariable("id") Long adId) {
         return this.adService.changeAdBlockingStatus(adId, false);
     }
 }

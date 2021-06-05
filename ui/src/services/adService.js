@@ -84,11 +84,11 @@ export async function getFilters(params) {
 }
 
 export async function blockAd(adId) {
-    return await requester('/ad/block/' + adId, 'POST', true);
+    return await requester(`/ad/block/${adId}`, 'PATCH', true);
 }
 
 export async function unblockAd(adId) {
-    return await requester('/ad/unblock/' + adId, 'POST', true);
+    return await requester(`/ad/unblock/${adId}`, 'PATCH', true);
 }
 
 function addQueryParams(params) {

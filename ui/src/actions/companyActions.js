@@ -133,25 +133,19 @@ function getCompaniesByRatingAction(pageSize) {
     };
 }
 
-function getCompaniesFiltersAction() {
-    return (dispatch) => {
-        return getCompaniesFilters()
-            .then(json => {
-                dispatch({ type: COMPANIES_FILTERS, data: json });
-                return json;
-            });
+const getCompaniesByAdsAction = (params) => {
+    return async (dispatch) => {
+        const json = await getCompaniesByAds(params);
+        dispatch({ type: COMPANIES_ADS, data: json });
     };
-}
+};
 
-function getCompaniesByAdsAction(params) {
-    return (dispatch) => {
-        return getCompaniesByAds(params)
-            .then(json => {
-                dispatch({ type: COMPANIES_ADS, data: json });
-                return json;
-            });
+const getCompaniesFiltersAction = () => {
+    return async (dispatch) => {
+        const json = await getCompaniesFilters();
+        dispatch({ type: COMPANIES_FILTERS, data: json });
     };
-}
+};
 
 function offerPartnershipAction(adId, youtuberId, description) {
     return (dispatch) => {

@@ -100,7 +100,8 @@ public class AdServiceImpl implements AdService {
         return ad;
     }
 
-    private Ad setAdAverageRating(Ad ad) {
+    @Override
+    public Ad setAdAverageRating(Ad ad) {
         ad.getRatingList()
             .stream()
             .mapToInt(AdRating::getRating)
@@ -346,13 +347,23 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<MessageResponse> changeAdBlockingStatus(Long adId, Boolean isBlocked) {
-        Ad ad = this.adRepository.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
-        ad.setIsBlocked(isBlocked);
+    public ResponseEntity<?> changeAdBlockingStatus(Long adId, Boolean isBlocked) {
+        Ad ad = this.adRepository.findById(adId).orElse(null);
+        if (ad == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("adStatus.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
 
+        if (ad.getIsBlocked() == isBlocked) {
+            String wrongStatus = this.resourceBundleUtil.getMessage("adStatus.wrongStatus");
+            return new ResponseEntity<>(new MessagesResponse(wrongStatus), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        
+        ad.setIsBlocked(isBlocked);
         this.adRepository.save(ad);
-        return ResponseEntity.ok(new MessageResponse("Status updated successfully."));
+
+        String successMessage = this.resourceBundleUtil.getMessage("adStatus.success");
+        return ResponseEntity.ok(new MessageResponse(successMessage));
     }
 
     private ResponseEntity<?> checkForErrors(Errors errors) {

@@ -19,6 +19,7 @@ import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoR
 import com.tugab.adspartners.domain.models.response.company.*;
 import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
+import com.tugab.adspartners.service.AdService;
 import com.tugab.adspartners.service.CloudinaryService;
 import com.tugab.adspartners.service.EmailService;
 import com.tugab.adspartners.service.UserService;
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtils jwtUtils;
     private final ResourceBundleUtil resourceBundleUtil;
     private final EmailService emailService;
+    private final AdService adService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -80,7 +82,8 @@ public class UserServiceImpl implements UserService {
                            ModelMapper modelMapper,
                            JwtUtils jwtUtils,
                            ResourceBundleUtil resourceBundleUtil,
-                           EmailService emailService) {
+                           EmailService emailService,
+                           AdService adService) {
         this.cloudinaryService = cloudinaryService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -93,6 +96,7 @@ public class UserServiceImpl implements UserService {
         this.jwtUtils = jwtUtils;
         this.resourceBundleUtil = resourceBundleUtil;
         this.emailService = emailService;
+        this.adService = adService;
     }
 
     public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors) {
@@ -337,23 +341,16 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel) {
         int page = companyFilterBindingModel.getPage() - 1;
         Integer size = companyFilterBindingModel.getSize();
-        Boolean isBlocked = companyFilterBindingModel.getIsBlocked();
         Pageable companyPageable = PageRequest.of(page, size);
+
         Page<Company> companies = this.companyRepository.findAllByFilters(companyFilterBindingModel, companyPageable);
 
         List<CompanyAdsResponse> companiesResponse = companies
                 .getContent()
                 .stream()
-                .map(c -> this.modelMapper.map(c, CompanyAdsResponse.class))
                 .map(c -> {
-                    c.setTotalAdsCount(c.getAds().size());
-                    if (isBlocked != null) { //TODO: make it with sql query
-                        c.setAds(c.getAds()
-                                .stream()
-                                .filter(a -> a.getIsBlocked() == isBlocked)
-                                .collect(Collectors.toList()));
-                    }
-                    return c;
+                    c.getAds().forEach(this.adService::setAdAverageRating);
+                    return this.modelMapper.map(c, CompanyAdsResponse.class);
                 })
                 .collect(Collectors.toList());
 
@@ -368,13 +365,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters() {
-        List<Company> companies = this.companyRepository.findAll();
-
-        Set<Integer> adCounts = companies
-            .stream()
-            .map(c -> c.getAds().size())
-            .collect(Collectors.toCollection(TreeSet::new));
-
+        List<Long> adCounts = this.companyRepository.countAdsOfCompanies(RegistrationStatus.ALLOWED);
         CompanyFiltersResponse companyFilters = new CompanyFiltersResponse();
         companyFilters.setAdCounts(adCounts);
         return ResponseEntity.ok(companyFilters);

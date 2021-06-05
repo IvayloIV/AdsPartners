@@ -1,5 +1,6 @@
 package com.tugab.adspartners.service;
 
+import com.tugab.adspartners.domain.entities.Ad;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
@@ -41,5 +42,7 @@ public interface AdService {
 
     public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId);
 
-    public ResponseEntity<MessageResponse> changeAdBlockingStatus(Long adId, Boolean isBlocked);
+    public ResponseEntity<?> changeAdBlockingStatus(Long adId, Boolean isBlocked);
+
+    public Ad setAdAverageRating(Ad ad);
 }

@@ -15,7 +15,7 @@ public class CompanyFilterBindingModel {
 
     private Integer maxAdsCount;
 
-    private Integer page = 0;
+    private Integer page = 1;
 
     private Integer size = 10;
 

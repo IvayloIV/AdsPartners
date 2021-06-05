@@ -2,7 +2,7 @@ package com.tugab.adspartners.repository;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.repository.customs.CompanyRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CompanyRepository extends JpaRepository<Company, Long>, CompanyRepositoryCustom {
 
     public Optional<Company> findByUserEmail(String email);
 
@@ -31,11 +31,9 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
             " order by avg(ar.rating) desc")
     public Page<Object[]> findTopCompaniesByRating(Pageable pageable);
 
-    @Query("select c from Company c " +
-            "where (instr(lower(c.user.name), lower(:#{#companyFilter.name})) > 0 or :#{#companyFilter.name} is null) " +
-            " and (instr(lower(c.user.email), lower(:#{#companyFilter.email})) > 0 or :#{#companyFilter.email} is null) " +
-            " and (instr(lower(c.town), lower(:#{#companyFilter.town})) > 0 or :#{#companyFilter.town} is null) " +
-            " and (size(c.ads) >= :#{#companyFilter.minAdsCount} or :#{#companyFilter.minAdsCount} is null) " +
-            " and (size(c.ads) <= :#{#companyFilter.maxAdsCount} or :#{#companyFilter.maxAdsCount} is null) ")
-    public Page<Company> findAllByFilters(@Param("companyFilter") CompanyFilterBindingModel filters, Pageable pageable);
+    @Query("select distinct size(c.ads)" +
+            " from Company c " +
+            " where c.status = :status" +
+            " order by size(c.ads)")
+    public List<Long> countAdsOfCompanies(@Param("status") RegistrationStatus registrationStatus);
 }

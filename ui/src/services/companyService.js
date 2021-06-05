@@ -63,27 +63,24 @@ export async function updateRegisterStatus(companyId, status) {
     return await requester(`/company/register/status/${companyId}`, 'PATCH', true, { status });
 }
 
-export async function getCompaniesFilters() {
-    return await requester('/company/filters', 'GET', true);
-}
-
 export async function getCompaniesByAds(params) {
     let query = addQueryParams(params);
-    console.log(query);
-    return await requester('/company/list/ad' + query, 'GET', true);
+    return await requester(`/company/list/ad${query}`, 'GET', true);
+}
+
+export async function getCompaniesFilters() {
+    return await requester('/company/filters', 'GET', true);
 }
 
 export async function offerPartnership(adId, youtuberId, description) {
     return await requester('/company/offer', 'POST', true, { adId, youtuberId, description });
 }
 
-function addQueryParams(params) {
+function addQueryParams(params) { //TODO: clear code
     let query = '?';
 
     for (let key in params) {
         let value = params[key];
-
-        console.log(value);
 
         if (value != undefined && ((typeof value === 'object' && value.length !== 0) || 
                 (typeof value === 'string' && value != '') || typeof value === 'number')) {

@@ -2,10 +2,10 @@ package com.tugab.adspartners.domain.models.response.company;
 
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 public class CompanyFiltersResponse {
 
-    public Set<Integer> adCounts;
+    public List<Long> adCounts;
 }

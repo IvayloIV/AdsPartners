@@ -9,7 +9,6 @@ let adState = {
 };
 
 export function adReducer(state = adState, action) {
-    console.log(action.data);
     switch (action.type) {
         case DELETE_AD:
             let items = state.list.items.filter(a => a.id !== action.data);
