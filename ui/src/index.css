@@ -679,6 +679,185 @@ body {
     padding-bottom: 15px;
 }
 
+/*** Company details ***/
+
+.company-details {
+    background-color: #e3e6eeb2;
+    padding-bottom: 40px;
+}
+
+.company-details-title h2 {
+    text-align: center;
+    padding-top: 60px;
+    font-size: 27px;
+    color: white;
+    font-weight: 900;
+    text-shadow: 0 0 8px rgb(8 8 8);
+}
+
+.company-details-title hr {
+    width: 50%;
+    margin: 0 auto;
+    height: 3px;
+    background-color: #ffbc00;
+    border: none;
+}
+
+.company-details-info {
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    margin: 20px auto;
+    padding: 40px 0;
+    border: 3px solid #ffbc00;
+    border-radius: 2px;
+    background: white;
+}
+
+.company-details-left-info {
+    width: 450px;
+    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 40%);
+    border-radius: 10px;
+    padding: 40px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.company-details-left-info img {
+    width: 100%;
+    height: 250px;
+    border-radius: 10px;
+}
+
+.company-details-left-info h2 {
+    margin-bottom: 10px;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.company-details-left-info h3 {
+    margin-top: 5px;
+}
+
+.company-details-left-info div {
+    margin: 5px 0;
+}
+
+.company-details-right-info {
+    width: 450px;
+    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 40%);
+    border-radius: 10px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+#company-details-description-textarea {
+    width: 100%;
+    height: 110px;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: none;
+    border: 2px solid #D2D2D2;
+}
+
+.company-details-props {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.company-details-prop {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px 0;
+}
+
+.company-details-props .company-details-prop:nth-child(odd) {
+    text-align: right;
+}
+
+.company-details-prop span:first-child {
+    background-color: #ffbc00;
+    padding: 10px;
+    color: white;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    width: 155px;
+    display: inline-block;
+    text-align: center;
+}
+
+.company-details-prop span:last-child {
+    border: 2px solid #ffbc00;
+    padding: 8px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: inline-block;
+    width: 150px;
+    text-align: right;
+}
+
+.company-details-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.company-available-ads h2, .company-outdate-ads h2,
+.company-blocked-ads h2, .youtuber-applications-to-company h2 {
+    padding-top: 40px;
+}
+
+.company-details-ads-container {
+    background-color: white;
+    width: 90%;
+    margin: 24px auto;
+    border: 2px solid #ffbc00;
+    border-radius: 10px;
+    padding: 10px 0;
+}
+
+.company-details-ads-container .company-ad-block-container {
+    width: 300px;
+}
+
+.company-details-ads-container img {
+    height: 200px;
+}
+
+.company-details-ads-container .company-ad-valid-to {
+    margin: 10px 0 20px 0;   
+}
+
+.company-details-ads-container #copmany-ad-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.company-details-ads-container #ad-form-button {
+    margin: 0;
+}
+
+.company-details-ads-container i {
+    margin: 0 !important;
+}
+
+.company-outdate-ads .company-ad-out-of-date-text {
+    position: absolute;
+    top: 44%;
+    left: 37px;
+}
+
+.company-blocked-ad-icon {
+    position: absolute;
+    top: 40px;
+    left: 83px;
+}
+
+.company-blocked-ad-icon i {
+    text-shadow: 0 0 8px rgb(8 8 8);
+}
+
 /* body {
   margin: 0;
   padding: 0;

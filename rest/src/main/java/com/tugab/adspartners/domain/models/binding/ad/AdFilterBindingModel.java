@@ -42,6 +42,8 @@ public class AdFilterBindingModel {
 
     private Long maxViews;
 
+    private Boolean isBlocked;
+
     private Integer size = 12;
 
     private Integer page = 1;

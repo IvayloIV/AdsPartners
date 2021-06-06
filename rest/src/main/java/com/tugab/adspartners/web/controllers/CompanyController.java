@@ -52,12 +52,12 @@ public class CompanyController {
     }
 
     @GetMapping("/details/{id}")
-    public ResponseEntity<CompanyResponse> getCompany(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getCompany(@PathVariable("id") Long id) {
         return this.userService.getCompanyById(id);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<CompanyResponse> getProfile(Authentication authentication) {
+    public ResponseEntity<?> getProfile(Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
         return this.userService.getCompanyById(company.getId());
     }
@@ -78,9 +78,9 @@ public class CompanyController {
         return this.userService.changeSubscriberStatus(subscriberStatusBindingModel);
     }
 
-    @PostMapping(path = "/subscribe/{id}")
-    public ResponseEntity<MessageResponse> subscribe(@PathVariable("id") Long companyId,
-                                                     Authentication authentication) {
+    @PostMapping(path = "/subscribe/{companyId}")
+    public ResponseEntity<?> subscribe(@PathVariable("companyId") Long companyId,
+                                        Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.userService.subscribe(youtuber, companyId);
     }
@@ -93,8 +93,8 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/subscription/check/{id}")
-    public ResponseEntity<Boolean> checkYoutuberSub(@PathVariable("id") Long companyId,
-                                                    Authentication authentication) {
+    public ResponseEntity<Boolean> checkYoutuberSubscription(@PathVariable("id") Long companyId,
+                                                             Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.userService.checkSubscription(youtuber.getId(), companyId);
     }

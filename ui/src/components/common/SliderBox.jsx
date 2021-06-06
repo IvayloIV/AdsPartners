@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AliceCarousel from 'react-alice-carousel';
 
-const SliderBox = ({ items, moveGap = 3 }) => {
+export default ({ items, moveGap = 3 }) => {
     const [activeIndex, setActiveIndex] = useState(0);
 
     const onPrev = () => {
@@ -39,5 +39,3 @@ const SliderBox = ({ items, moveGap = 3 }) => {
         </div>
     );
 };
-
-export default SliderBox;

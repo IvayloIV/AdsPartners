@@ -12,13 +12,15 @@ import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicatio
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.Errors;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface AdService {
 
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel);
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Collection<? extends GrantedAuthority> authorities);
 
     public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel);
 
@@ -35,8 +37,6 @@ public interface AdService {
     public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel);
 
     public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(Long adId);
-
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(Long companyId);
 
     public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(Long youtuberId, Long companyId);
 

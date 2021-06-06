@@ -2,6 +2,7 @@ package com.tugab.adspartners.service.impl;
 
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.ApplicationType;
+import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.MessagesResponse;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -35,6 +37,7 @@ import org.springframework.validation.ObjectError;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,10 +77,17 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel) {
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Collection<? extends GrantedAuthority> authorities) {
         Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
-        Page<Ad> pageAds = this.adRepository.findAll(adFilterBindingModel, pageable);
-        //TODO: If youtuber make request, return only available ads, without blocked and out of date
+        boolean isYoutuber = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
+
+        if (isYoutuber) {
+            adFilterBindingModel.setIsBlocked(false);
+        }
+
+        Page<Ad> pageAds = this.adRepository.findAllByFilters(adFilterBindingModel, pageable);
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
                 .map(this::setAdsCountToCompany)
@@ -309,19 +319,9 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(Long companyId) {
-        List<AdApplication> applications = this.adApplicationRepository.findById_Ad_Company_Id(companyId);
-        List<AdApplicationResponse> adApplicationResponses = applications
-                .stream()
-                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(adApplicationResponses);
-    }
-
-    @Override
     public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(Long youtuberId, Long companyId) {
         List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_IdAndId_Ad_Company_Id(youtuberId, companyId);
+
         List<AdApplicationResponse> adApplicationResponses = applications
                 .stream()
                 .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))

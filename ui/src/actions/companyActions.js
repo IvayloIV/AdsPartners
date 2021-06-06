@@ -75,25 +75,27 @@ function changeSubscriberStatusAction(youtuberId, newStatus) {
     };
 }
 
-function getCompanyDetailsAction(companyId) {
-    return (dispatch) => {
-        return getCompanyDetails(companyId)
-            .then(json => {
-                dispatch({ type: GET_COMPANY_DETAILS, data: json });
-                return json;
-            });
+const getCompanyDetailsAction = companyId => {
+    return async (dispatch) => {
+        try {
+            const json = await getCompanyDetails(companyId);
+            dispatch({ type: GET_COMPANY_DETAILS, data: json });
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
-function getCompanyProfileAction() {
-    return (dispatch) => {
-        return getCompanyProfile()
-            .then(json => {
-                dispatch({ type: GET_COMPANY_PROFILE, data: json });
-                return json;
-            });
+const getCompanyProfileAction = () => {
+    return async (dispatch) => {
+        try {
+            const json = await getCompanyProfile();
+            dispatch({ type: GET_COMPANY_PROFILE, data: json });
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 const getCompaniesRequests = () => {
     return async (dispatch) => {

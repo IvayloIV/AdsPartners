@@ -15,7 +15,8 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { makeStyles } from '@material-ui/core/styles';
 import { getAdDetailsAction, applyForAdAction, voteForAdAction, getApplicationsAction } from '../../actions/adActions';
 import { getAllCompaniesAction } from '../../actions/companyActions';
-import { getCookie } from '../../utils/CookiesUtil';
+import { hasRole } from '../../utils/AuthUtil';
+import { YOUTUBER, EMPLOYER } from '../../utils/Roles';
 
 class AdDetails extends Component {
     constructor(props) {
@@ -62,10 +63,6 @@ class AdDetails extends Component {
         const { id, title, shortDescription, reward, creationDate, validTo, minVideos, 
             minSubscribers, minViews, isBlocked, pictureUrl, characteristics, averageRating, company } = this.props.ad;
 
-        const roles = JSON.parse(getCookie('roles'));
-        const isYoutuber = roles.includes('YOUTUBER');
-        const isCompany = roles.includes('EMPLOYER');
-
         return (
             <div className="ad-details">
                 <img src={pictureUrl} alt="ad-image" width="250px" height="200px" />
@@ -99,7 +96,7 @@ class AdDetails extends Component {
                     <p>Name - {company.userName}</p>
                     <p>Email - {company.userEmail}</p>
                 </div>
-                {isYoutuber && <form onSubmit={this.onSubmitHandler}>
+                {hasRole(YOUTUBER) && <form onSubmit={this.onSubmitHandler}>
                     <TextField
                         id="outlined-multiline-static"
                         label="Description"
@@ -117,8 +114,8 @@ class AdDetails extends Component {
                         Send
                     </Button>
                 </form>}
-                {isCompany && <h3>Applications</h3>}
-                {isCompany && this.props.applications.map((a, i) => (
+                {hasRole(EMPLOYER) && <h3>Applications</h3>}
+                {hasRole(EMPLOYER) && this.props.applications.map((a, i) => (
                     <div key={i}>
                         <p>{a.type === "YOUTUBER_SENT" ? 'Youtuber -> Company' : 'Company -> Youtuber'}</p>
                         <img src={a.youtuber.profilePicture} alt="youtuber-image" width="250px" height="200px" />

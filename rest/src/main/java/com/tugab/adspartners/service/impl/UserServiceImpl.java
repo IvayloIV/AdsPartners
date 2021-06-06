@@ -209,9 +209,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<CompanyResponse> getCompanyById(Long id) {
-        Company company = this.companyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Incorrect company id."));
+    public ResponseEntity<?> getCompanyById(Long id) {
+        Company company = this.companyRepository.findById(id).orElse(null);
+        if (company == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
 
         CompanyResponse companyResponse = this.modelMapper.map(company, CompanyResponse.class);
         companyResponse.setAdsCount(company.getAds().size());
@@ -242,9 +245,18 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(new MessageResponse("Subscription was changed successfully."));
     }
 
-    public ResponseEntity<MessageResponse> subscribe(Youtuber youtuber, Long companyId) {
-        Company company = this.companyRepository.findById(companyId)
-                .orElseThrow(() -> new IllegalArgumentException("Company does not exist."));
+    public ResponseEntity<?> subscribe(Youtuber youtuber, Long companyId) {
+        Company company = this.companyRepository.findById(companyId).orElseThrow(null);
+        if (company == null) {
+            String wrongCompanyId = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongCompanyId), HttpStatus.NOT_FOUND);
+        }
+
+        Boolean isSubscriber = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuber.getId());
+        if (isSubscriber) {
+            String alreadySubscriberMessage = this.resourceBundleUtil.getMessage("companyProfile.alreadySubscriber");
+            return new ResponseEntity<>(new MessagesResponse(alreadySubscriberMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
 
         Subscription subscription = new Subscription();
         subscription.setId(new SubscriptionId(company, youtuber));
@@ -252,7 +264,8 @@ public class UserServiceImpl implements UserService {
         subscription.setIsBlocked(false);
 
         this.subscriptionRepository.save(subscription);
-        return ResponseEntity.ok(new MessageResponse("You have just subscribed for company."));
+        String successSubMessage = this.resourceBundleUtil.getMessage("companyProfile.subscribedSuccess");
+        return ResponseEntity.ok(new MessageResponse(successSubMessage));
     }
 
     public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId) {

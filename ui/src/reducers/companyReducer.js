@@ -30,7 +30,6 @@ export function companyReducer(state = companyState, action) {
             sub.isBlocked = action.data.newStatus;
             return Object.assign({}, state, { subscribers: subs });
         case GET_COMPANY_DETAILS:
-            return Object.assign({}, state, { details: action.data });
         case GET_COMPANY_PROFILE:
             return Object.assign({}, state, { details: action.data });
         case REGISTER_REQUESTS:

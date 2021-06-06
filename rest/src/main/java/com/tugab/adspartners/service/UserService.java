@@ -34,13 +34,13 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<List<CompanyListResponse>> getCompanyList();
 
-    public ResponseEntity<CompanyResponse> getCompanyById(Long id);
+    public ResponseEntity<?> getCompanyById(Long id);
 
     public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company);
 
     public ResponseEntity<MessageResponse> changeSubscriberStatus(SubscriberStatusBindingModel subscriberStatusBindingModel);
 
-    public ResponseEntity<MessageResponse> subscribe(Youtuber youtuber, Long companyId);
+    public ResponseEntity<?> subscribe(Youtuber youtuber, Long companyId);
 
     public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId);
 

@@ -3,6 +3,8 @@ import { Menu, Dropdown, Icon } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import { googleRequestUrl } from '../../services/requester';
 import { getCookie } from '../../utils/CookiesUtil';
+import { hasRole, isAuthed } from '../../utils/AuthUtil';
+import { YOUTUBER, ADMIN, EMPLOYER } from '../../utils/Roles';
 
 export default class Header extends Component {
     state = { activeItem: 'home' }
@@ -10,14 +12,12 @@ export default class Header extends Component {
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
     render() {
-        const { loggedIn, onLogout } = this.props;
-        const userRoles = JSON.parse(getCookie("roles"));
-        const isYoutuber = userRoles != null && userRoles.some(e => e == 'YOUTUBER');
-        const isAdmin = userRoles != null && userRoles.some(e => e == 'ADMIN');
-        const isEmployer = userRoles != null && userRoles.some(e => e == 'EMPLOYER');
+        const { onLogout } = this.props;
+        const isYoutuber = hasRole(YOUTUBER);
+        const isAdmin = hasRole(ADMIN);
+        const isEmployer = hasRole(EMPLOYER);
 
         const { activeItem } = this.state;
-        console.log(activeItem);
 
         return (
             <header>
@@ -27,7 +27,7 @@ export default class Header extends Component {
                             Ads <Icon color='orange' name='handshake outline'/> Partners
                         </h2>
                     </NavLink>
-                    {loggedIn && <h4 className="menu-welcome">
+                    {isAuthed() && <h4 className="menu-welcome">
                         Добре дошли, {getCookie("username")}
                     </h4>}
                     <Menu.Menu position='right'>
@@ -38,7 +38,7 @@ export default class Header extends Component {
                             as={NavLink}
                             to="/home"
                         >Начало</Menu.Item>
-                        {!loggedIn && <Menu.Item
+                        {!isAuthed() && <Menu.Item
                             active={activeItem === 'login'}>
                             <Dropdown text='Вход' pointing className='link item' style={{padding: 0}}>
                                 <Dropdown.Menu>
@@ -63,7 +63,7 @@ export default class Header extends Component {
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Menu.Item>}
-                        {!loggedIn && <Menu.Item
+                        {!isAuthed() && <Menu.Item
                             name='registerCompany'
                             active={activeItem === 'registerCompany'}
                             onClick={this.handleItemClick}
@@ -126,7 +126,7 @@ export default class Header extends Component {
                             as={NavLink}
                             to="/youtuber/profile"
                         >Профил</Menu.Item>}
-                        {loggedIn && <Menu.Item
+                        {isAuthed() && <Menu.Item
                             name='logout'
                             active={activeItem === 'logout'}
                             onClick={onLogout}

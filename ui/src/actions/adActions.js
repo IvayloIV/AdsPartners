@@ -15,23 +15,19 @@ function getAllAdsAction(params) {
     };
 }
 
-function getCompanyAdsAction() {
-    return (dispatch) => {
-        return getCompanyAds()
-            .then(json => {
-                dispatch({ type: AD_COMPANY_LIST, data: json });
-            });
+const getCompanyAdsAction = () => {
+    return async (dispatch) => {
+        const json = await getCompanyAds();
+        dispatch({ type: AD_COMPANY_LIST, data: json });
     };
-}
+};
 
-function getCompanyAdsByIdAction(companyId) {
-    return (dispatch) => {
-        return getCompanyAdsById(companyId)
-            .then(json => {
-                dispatch({ type: AD_COMPANY_LIST, data: json });
-            });
+const getCompanyAdsByIdAction = companyId => {
+    return async (dispatch) => {
+        const json = await getCompanyAdsById(companyId);
+        dispatch({ type: AD_COMPANY_LIST, data: json });
     };
-}
+};
 
 const getAdDetailsAction = adId => {
     return async (dispatch) => {
@@ -51,14 +47,12 @@ function applyForAdAction(adId, params) {
     };
 }
 
-function getApplicationsByCompanyAction(companyId) {
-    return (dispatch) => {
-        return getApplicationsByCompany(companyId)
-            .then(json => {
-                dispatch({ type: COMPANY_APPLICATIONS_LIST, data: json });
-            });
+const getApplicationsByCompanyAction = companyId => {
+    return async (dispatch) => {
+        const json = await getApplicationsByCompany(companyId);
+        dispatch({ type: COMPANY_APPLICATIONS_LIST, data: json });
     };
-}
+};
 
 function getApplicationsAction(adId) {
     return (dispatch) => {

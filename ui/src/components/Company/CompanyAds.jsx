@@ -49,7 +49,7 @@ export default props => {
                         color='orange'
                         id="company-details-button"
                         as={NavLink}
-                        to={`/company/details/${props.companyId}`}>
+                        to={`/ad/details/${a.id}`}>
                         Детайли
                     </Button>
                 </div>

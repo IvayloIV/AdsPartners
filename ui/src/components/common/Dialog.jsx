@@ -3,7 +3,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
 export default props => {
   const [open, setOpen] = useState(false);
@@ -28,8 +28,11 @@ export default props => {
 
   return (
     <div>
-        <Button variant="outlined" color="blue" id="ad-form-button" onClick={handleInitButton}>
-            {props.buttonAgree}
+        <Button variant="outlined"
+          inverted={props.iconButton != null}
+          color={props.buttonColor || 'blue'} id="ad-form-button"
+          onClick={handleInitButton}>
+            {props.iconButton != null ? <Icon name={props.iconButton} /> : props.buttonAgree}
         </Button>
         <Dialog
             open={open}

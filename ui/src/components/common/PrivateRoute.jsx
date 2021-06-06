@@ -1,19 +1,17 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getCookie } from '../../utils/CookiesUtil';
+import { isAuthed, hasAnyRole } from '../../utils/AuthUtil';
 
 export default props => {
-    if (!getCookie('accessToken')) {
-        toast.error('First you must login.');
+    if (!isAuthed()) {
+        toast.error('Трябва първо да влезете в профила си.');
         return (<Redirect to="/" />);
     }
 
     let authorities = props.authorities;
-    let userRoles = JSON.parse(getCookie('roles'));
-
-    if (!authorities.some(e => userRoles.indexOf(e) != -1)) {
-        toast.error('You don\'t have enough permissions.');
+    if (!hasAnyRole(authorities)) {
+        toast.error('Нямате достатъчно правя за тази страница.');
         return (<Redirect to="/" />);
     }
 

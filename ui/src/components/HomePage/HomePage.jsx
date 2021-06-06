@@ -8,8 +8,9 @@ import CompanyBox from './CompanyBox';
 import YoutuberBox from './YoutuberBox';
 import { getCompaniesByRatingAction } from '../../actions/companyActions';
 import { getYoutubersBySubsAction } from '../../actions/youtubeActions';
+import { isAuthed } from '../../utils/AuthUtil';
 
-export default ({ isAuthed }) => {
+export default () => {
     const [loading, setLoading] = useState(true);
     const companies = useSelector(state => state.company.list);
     const youtubers = useSelector(state => state.youtube.list);
@@ -32,7 +33,7 @@ export default ({ isAuthed }) => {
             <section className="site-logo">
                 <h1>Рекламно партньорство</h1>
                 <hr />
-                {!isAuthed && <div className="login-buttons">
+                {!isAuthed() && <div className="login-buttons">
                     <Button color='orange' className="large" as={NavLink} to="/company/login">
                         <Icon name='briefcase' />  Вход за компания
                     </Button>

@@ -14,7 +14,6 @@ export function youtubeReducer(state = youtubeUser, action) {
         case LOAD_USER_INFO:
             return Object.assign({}, state, { name: action.name });
         case CHECK_SUBSCRIPTION:
-            return Object.assign({}, state, { isSubscriber: action.data });
         case SUBSCRIBE:
             return Object.assign({}, state, { isSubscriber: action.data });
         case YOUTUBERS_BY_SUBS:

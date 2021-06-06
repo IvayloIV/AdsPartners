@@ -51,7 +51,7 @@ export async function getCompanyAds() {
 }
 
 export async function getCompanyAdsById(companyId) {
-    return await requester('/ad/list/company/' + companyId, 'GET', true);
+    return await requester(`/ad/list/company/${companyId}`, 'GET', true);
 }
 
 export async function getAdDetails(adId) {
@@ -67,7 +67,7 @@ export async function getApplicationsByYoutuber(youtuberId) {
 }
 
 export async function getApplicationsByCompany(companyId) {
-    return await requester('/ad/company/applications/' + companyId, 'GET', true);
+    return await requester(`/ad/company/applications/${companyId}`, 'GET', true);
 }
 
 export async function getApplications(adId) {

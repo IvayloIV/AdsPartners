@@ -25,26 +25,24 @@ function refreshUserDataAction() {
     };
 }
 
-function checkSubscriptionAction(companyId) {
-    return (dispatch) => {
-        return checkSubscription(companyId)
-            .then(json => {
-                dispatch({ type: CHECK_SUBSCRIPTION, data: json });
-            });
+const checkSubscriptionAction = companyId => {
+    return async (dispatch) => {
+        const json = await checkSubscription(companyId);
+        dispatch({ type: CHECK_SUBSCRIPTION, data: json });
     };
-}
+};
 
-function subscribeAction(companyId) {
-    return (dispatch) => {
-        return subscribe(companyId)
-            .then(json => {
-                if (json.message != '') {
-                    dispatch({ type: SUBSCRIBE, data: true });
-                }
-                toast.success(json.message);
-            });
+const subscribeAction = companyId => {
+    return async (dispatch) => {
+        try {
+            const json = await subscribe(companyId);
+            dispatch({ type: SUBSCRIBE, data: true });
+            toast.success(json.message);
+        }  catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 const unsubscribeAction = (companyId) => {
     return async () => {

@@ -33,8 +33,9 @@ public class AdController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel) {
-        return this.adService.adsList(adFilterBindingModel);
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel,
+                                                  Authentication authentication) {
+        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
     }
 
     @GetMapping("/list/company")
@@ -43,15 +44,16 @@ public class AdController {
         Company company = (Company) authentication.getPrincipal();
         adFilterBindingModel.setCompanyId(company.getId());
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel);
+        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
     }
 
     @GetMapping("/list/company/{id}")
     public ResponseEntity<AdListResponse> adsListByCompanyId(AdFilterBindingModel adFilterBindingModel,
-                                                           @PathVariable("id") Long companyId) {
+                                                            @PathVariable("id") Long companyId,
+                                                            Authentication authentication) {
         adFilterBindingModel.setCompanyId(companyId);
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel);
+        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
     }
 
     @GetMapping("/filters")
@@ -112,9 +114,11 @@ public class AdController {
         return this.adService.getApplicationsByAdId(adId);
     }
 
-    @GetMapping("/company/applications/{id}")
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(@PathVariable("id") Long companyId) {
-        return this.adService.getApplicationsByCompanyId(companyId);
+    @GetMapping("/company/applications/{companyId}")
+    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(@PathVariable("companyId") Long companyId,
+                                                                                  Authentication authentication) {
+        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+        return this.adService.getApplicationsByYoutuber(youtuber.getId(), companyId);
     }
 
     @GetMapping("/youtuber/applications/{youtuberId}")
