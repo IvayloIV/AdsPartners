@@ -25,9 +25,10 @@ export function companyReducer(state = companyState, action) {
         case GET_SUBSCRIBERS:
             return Object.assign({}, state, { subscribers: action.data });
         case CHANGE_SUBSCRIBER_STATUS:
-            let subs = state.subscribers.slice();
-            let sub = subs.filter(s => s.youtuber.id === action.data.youtuberId)[0];
+            let subs = state.subscribers.filter(s => s.youtuber.id !== action.data.youtuberId);
+            let sub = state.subscribers.filter(s => s.youtuber.id === action.data.youtuberId)[0];
             sub.isBlocked = action.data.newStatus;
+            subs.unshift(sub);
             return Object.assign({}, state, { subscribers: subs });
         case GET_COMPANY_DETAILS:
         case GET_COMPANY_PROFILE:

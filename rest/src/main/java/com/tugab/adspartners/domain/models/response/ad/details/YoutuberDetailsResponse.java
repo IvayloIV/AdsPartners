@@ -10,4 +10,6 @@ public class YoutuberDetailsResponse {
     private String profilePicture;
 
     private String name;
+
+    private String email;
 }

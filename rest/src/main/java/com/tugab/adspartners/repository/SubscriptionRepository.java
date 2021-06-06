@@ -14,6 +14,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Subs
 
     public List<Subscription> findById_Company(Company company);
 
+    public List<Subscription> findById_CompanyAndIsBlocked(Company company, Boolean isBlocked);
+
     public Optional<Subscription> findById_Company_IdAndId_Youtuber_Id(Long companyId, Long YoutuberId);
 
     public Boolean existsById_Company_IdAndId_Youtuber_Id(Long companyId, Long YoutuberId);

@@ -176,7 +176,7 @@ public class AdServiceImpl implements AdService {
         ad.getCharacteristics().forEach(c -> c.setAd(ad));
         this.adRepository.save(ad);
 
-        this.subscriptionRepository.findById_Company(ad.getCompany())
+        this.subscriptionRepository.findById_CompanyAndIsBlocked(ad.getCompany(),false)
             .forEach(s -> {
                 String unsubscribeCompanyUrl = String.format("%s/company/%d/unsubscribe",
                         createAdBindingModel.getRemoteUrl(), ad.getCompany().getId());

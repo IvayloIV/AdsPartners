@@ -9,15 +9,15 @@ export async function refreshUserData() {
 }
 
 export async function checkSubscription(companyId) {
-    return await requester(`/company/subscription/check/${companyId}`, 'GET', true);
+    return await requester(`/subscription/check/${companyId}`, 'GET', true);
 }
 
 export async function subscribe(companyId) {
-    return await requester(`/company/subscribe/${companyId}`, 'POST', true);
+    return await requester(`/subscription/${companyId}`, 'POST', true);
 }
 
 export async function unsubscribe(companyId) {
-    return await requester(`/company/${companyId}/unsubscribe`, 'POST', true);
+    return await requester(`/subscription/${companyId}`, 'DELETE', true);
 }
 
 export async function getYoutubersBySubs(pageSize) {

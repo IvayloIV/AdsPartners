@@ -36,11 +36,14 @@ export async function getCompaniesByRating(pageSize) {
 }
 
 export async function getSubscribers() {
-    return await requester('/company/subscribers', 'GET', true);
+    return await requester('/subscription/list', 'GET', true);
 }
 
 export async function changeSubscriberStatus(youtuberId, newStatus) {
-    return await requester(`/company/subscriber/${youtuberId}/status`, 'POST', true, { isBlocked: newStatus });
+    return await requester(`/subscription`, 'PATCH', true, { 
+        isBlocked: newStatus,
+        youtuberId 
+    });
 }
 
 export async function getCompanyDetails(companyId) {

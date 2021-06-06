@@ -2,17 +2,13 @@ package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.User;
-import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,16 +31,6 @@ public interface UserService extends UserDetailsService {
     public ResponseEntity<List<CompanyListResponse>> getCompanyList();
 
     public ResponseEntity<?> getCompanyById(Long id);
-
-    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company);
-
-    public ResponseEntity<MessageResponse> changeSubscriberStatus(SubscriberStatusBindingModel subscriberStatusBindingModel);
-
-    public ResponseEntity<?> subscribe(Youtuber youtuber, Long companyId);
-
-    public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId);
-
-    public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId);
 
     public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests();
 

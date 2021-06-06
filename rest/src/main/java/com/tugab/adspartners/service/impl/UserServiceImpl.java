@@ -7,7 +7,6 @@ import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
@@ -15,7 +14,6 @@ import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingMo
 import com.tugab.adspartners.domain.models.response.JwtResponse;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.MessagesResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.*;
 import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
@@ -43,7 +41,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,7 +53,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final CompanyRepository companyRepository;
-    private final SubscriptionRepository subscriptionRepository;
     private final AdRepository adRepository;
     private final YoutuberRepository youtuberRepository;
     private final AdApplicationRepository adApplicationRepository;
@@ -75,7 +73,6 @@ public class UserServiceImpl implements UserService {
                            UserRepository userRepository,
                            RoleRepository roleRepository,
                            CompanyRepository companyRepository,
-                           SubscriptionRepository subscriptionRepository,
                            AdRepository adRepository,
                            YoutuberRepository youtuberRepository,
                            AdApplicationRepository adApplicationRepository,
@@ -88,7 +85,6 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.companyRepository = companyRepository;
-        this.subscriptionRepository = subscriptionRepository;
         this.adRepository = adRepository;
         this.youtuberRepository = youtuberRepository;
         this.adApplicationRepository = adApplicationRepository;
@@ -219,72 +215,6 @@ public class UserServiceImpl implements UserService {
         CompanyResponse companyResponse = this.modelMapper.map(company, CompanyResponse.class);
         companyResponse.setAdsCount(company.getAds().size());
         return ResponseEntity.ok(companyResponse);
-    }
-
-    @Override
-    public ResponseEntity<List<SubscriptionInfoResponse>> getCompanySubscribers(Company company) {
-        List<Subscription> subscriptions = this.subscriptionRepository.findById_Company(company);
-        List<SubscriptionInfoResponse> subscriptionInfoResponses = subscriptions
-                .stream()
-                .map(s -> this.modelMapper.map(s, SubscriptionInfoResponse.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(subscriptionInfoResponses);
-    }
-
-    @Override
-    public ResponseEntity<MessageResponse> changeSubscriberStatus(SubscriberStatusBindingModel subscriberStatusBindingModel) {
-        Long companyId = subscriberStatusBindingModel.getCompanyId();
-        Long youtuberId = subscriberStatusBindingModel.getYoutuberId();
-
-        Subscription subscription = this.subscriptionRepository.findById_Company_IdAndId_Youtuber_Id(companyId, youtuberId)
-                .orElseThrow(() -> new IllegalArgumentException("Subscription does not found."));
-        subscription.setIsBlocked(subscriberStatusBindingModel.getIsBlocked());
-
-        this.subscriptionRepository.save(subscription);
-        return ResponseEntity.ok(new MessageResponse("Subscription was changed successfully."));
-    }
-
-    public ResponseEntity<?> subscribe(Youtuber youtuber, Long companyId) {
-        Company company = this.companyRepository.findById(companyId).orElseThrow(null);
-        if (company == null) {
-            String wrongCompanyId = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongCompanyId), HttpStatus.NOT_FOUND);
-        }
-
-        Boolean isSubscriber = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuber.getId());
-        if (isSubscriber) {
-            String alreadySubscriberMessage = this.resourceBundleUtil.getMessage("companyProfile.alreadySubscriber");
-            return new ResponseEntity<>(new MessagesResponse(alreadySubscriberMessage), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        Subscription subscription = new Subscription();
-        subscription.setId(new SubscriptionId(company, youtuber));
-        subscription.setSubscriptionDate(new Date());
-        subscription.setIsBlocked(false);
-
-        this.subscriptionRepository.save(subscription);
-        String successSubMessage = this.resourceBundleUtil.getMessage("companyProfile.subscribedSuccess");
-        return ResponseEntity.ok(new MessageResponse(successSubMessage));
-    }
-
-    public ResponseEntity<?> unsubscribe(Youtuber youtuber, Long companyId) {
-        Subscription subscription = this.subscriptionRepository
-                .findById_Company_IdAndId_Youtuber_Id(companyId, youtuber.getId()).orElse(null);
-
-        if (subscription == null) {
-            String unsubscribeNotExist = this.resourceBundleUtil.getMessage("subscription.unsubscribeNotExist");
-            return new ResponseEntity<>(new MessagesResponse(unsubscribeNotExist), HttpStatus.NOT_FOUND);
-        }
-
-        this.subscriptionRepository.delete(subscription);
-        String unsubscribeSuccessfullyMessage = this.resourceBundleUtil.getMessage("subscription.unsubscribeSuccessfully");
-        return ResponseEntity.ok(new MessageResponse(unsubscribeSuccessfullyMessage));
-    }
-
-    public ResponseEntity<Boolean> checkSubscription(Long youtuberId, Long companyId) {
-        Boolean existSub = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuberId);
-        return ResponseEntity.ok(existSub);
     }
 
     @Override

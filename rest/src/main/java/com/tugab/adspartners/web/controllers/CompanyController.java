@@ -1,16 +1,12 @@
 package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
 import com.tugab.adspartners.domain.models.response.company.*;
 import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,43 +56,6 @@ public class CompanyController {
     public ResponseEntity<?> getProfile(Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
         return this.userService.getCompanyById(company.getId());
-    }
-
-    @GetMapping("/subscribers")
-    public ResponseEntity<List<SubscriptionInfoResponse>> getSubscribers(Authentication authentication) {
-        Company company = (Company) authentication.getPrincipal();
-        return this.userService.getCompanySubscribers(company);
-    }
-
-    @PostMapping("/subscriber/{id}/status")
-    public ResponseEntity<MessageResponse> subscriberStatus(@RequestBody SubscriberStatusBindingModel subscriberStatusBindingModel,
-                                                            @PathVariable("id") Long youtuberId,
-                                                            Authentication authentication) {
-        Company company = (Company) authentication.getPrincipal();
-        subscriberStatusBindingModel.setCompanyId(company.getId());
-        subscriberStatusBindingModel.setYoutuberId(youtuberId);
-        return this.userService.changeSubscriberStatus(subscriberStatusBindingModel);
-    }
-
-    @PostMapping(path = "/subscribe/{companyId}")
-    public ResponseEntity<?> subscribe(@PathVariable("companyId") Long companyId,
-                                        Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.userService.subscribe(youtuber, companyId);
-    }
-
-    @PostMapping(path = "/{id}/unsubscribe")
-    public ResponseEntity<?> unsubscribe(@PathVariable("id") Long companyId,
-                                                       Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.userService.unsubscribe(youtuber, companyId);
-    }
-
-    @GetMapping(path = "/subscription/check/{id}")
-    public ResponseEntity<Boolean> checkYoutuberSubscription(@PathVariable("id") Long companyId,
-                                                             Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.userService.checkSubscription(youtuber.getId(), companyId);
     }
 
     @GetMapping(path = "/register/requests")

@@ -54,26 +54,26 @@ function getAllCompaniesAction(params) {
     };
 }
 
-function getSubscribersAction() {
-    return (dispatch) => {
-        return getSubscribers()
-            .then(json => {
-                dispatch({ type: GET_SUBSCRIBERS, data: json });
-                return json;
-            });
+const getSubscribersAction = () => {
+    return async (dispatch) => {
+        const json = await getSubscribers();
+        dispatch({ type: GET_SUBSCRIBERS, data: json });
     };
-}
+};
 
-function changeSubscriberStatusAction(youtuberId, newStatus) {
-    return (dispatch) => {
-        return changeSubscriberStatus(youtuberId, newStatus)
-            .then(json => {
-                dispatch({ type: CHANGE_SUBSCRIBER_STATUS, data: { youtuberId, newStatus } });
-                toast.info(json.message);
-                return json;
-            });
+const changeSubscriberStatusAction = (youtuberId, newStatus) => {
+    return async (dispatch) => {
+        try {
+            const json = await changeSubscriberStatus(youtuberId, newStatus);
+            dispatch({ type: CHANGE_SUBSCRIBER_STATUS, data: { youtuberId, newStatus } });
+            toast.success(json.message);
+            return json;
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+            return null;
+        }
     };
-}
+};
 
 const getCompanyDetailsAction = companyId => {
     return async (dispatch) => {
