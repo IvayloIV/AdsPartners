@@ -3,11 +3,8 @@ package com.tugab.adspartners.web.controllers;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import com.tugab.adspartners.service.AdService;
@@ -18,7 +15,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/ad")
@@ -97,41 +93,6 @@ public class AdController {
                                                      Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.adService.vote(adId, ratingBindingModel, youtuber);
-    }
-
-    @PostMapping(path = "/applyfor/{id}")
-    public ResponseEntity<MessageResponse> applyFor(@PathVariable("id") Long adId,
-                                                     @RequestBody AdApplicationBindingModel adApplicationBindingModel,
-                                                     Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        adApplicationBindingModel.setAdId(adId);
-        adApplicationBindingModel.setYoutuber(youtuber);
-        return this.adService.applyFor(adApplicationBindingModel);
-    }
-
-    @GetMapping("/applications/{id}")
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(@PathVariable("id") Long adId) {
-        return this.adService.getApplicationsByAdId(adId);
-    }
-
-    @GetMapping("/company/applications/{companyId}")
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByCompanyId(@PathVariable("companyId") Long companyId,
-                                                                                  Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.adService.getApplicationsByYoutuber(youtuber.getId(), companyId);
-    }
-
-    @GetMapping("/youtuber/applications/{youtuberId}")
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(@PathVariable("youtuberId") Long youtuberId,
-                                                                                 Authentication authentication) {
-        Company company = (Company) authentication.getPrincipal();
-        return this.adService.getApplicationsByYoutuber(youtuberId, company.getId());
-    }
-
-    @GetMapping("/youtuber/applications") //TODO: temp method, remove it after finish work
-    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuber(Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        return this.adService.getApplicationsByYoutuberId(youtuber.getId());
     }
 
     @PatchMapping("/block/{id}")

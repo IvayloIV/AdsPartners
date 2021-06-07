@@ -1,14 +1,125 @@
-import React, { Component } from 'react';
-import SliderBox from '../common/SliderBox';
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { getYoutuberProfileAction, refreshUserDataAction, getYoutuberDetailsAction } from '../../actions/youtubeActions';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from 'react-router-dom';
+import { Table, TextArea, Icon, Button } from 'semantic-ui-react';
+import { getYoutuberProfileAction, refreshYoutuberDataAction, getYoutuberDetailsAction } from '../../actions/youtubeActions';
 import { getYoutuberApplicationAction } from '../../actions/adActions';
 import { hasRole } from '../../utils/AuthUtil';
 import { YOUTUBER } from '../../utils/Roles';
 
-class YoutuberDetails extends Component {
+export default props => {
+    const [loading, setLoading] = useState(true);
+
+    const youtuberDetails = useSelector(state => state.youtube.details);
+    const applications = useSelector(state => state.ad.applications);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async () => {
+            if (hasRole(YOUTUBER)) {
+                await dispatch(getYoutuberProfileAction());
+            } else {
+                const youtuberId = props.match.params.youtuberId;
+                await dispatch(getYoutuberDetailsAction(youtuberId));
+                await dispatch(getYoutuberApplicationAction(youtuberId));
+            }
+
+            setLoading(false);
+        })();
+    }, []);
+
+    const updateYoutuberData = async () => {
+        await dispatch(refreshYoutuberDataAction());
+        await dispatch(getYoutuberProfileAction());
+    };
+
+    if (loading) {
+        return <div>{'Loading...'}</div>;
+    }
+
+    let isYoutuber = hasRole(YOUTUBER);
+
+    return (
+        <div className="youtuber-details">
+            <div className="youtuber-details-info-container">
+                <div className="youtuber-details-img-container">
+                    <img src={youtuberDetails.profilePicture} alt="Youtuber picture" />
+                </div>
+                <h2>{youtuberDetails.name}</h2>
+                <h3>{youtuberDetails.email}</h3>
+                <div className="youtuber-details-description">
+                    <h4>Описание:</h4>
+                    <TextArea
+                        id="youtuber-details-description-textarea"
+                        value={youtuberDetails.description}
+                        disabled={true} />
+                </div>
+                <div className="youtuber-details-info">
+                    <p>Абонати - {youtuberDetails.subscriberCount}</p>
+                    <p>Видеа - {youtuberDetails.videoCount}</p>
+                    <p>Показвания - {youtuberDetails.viewCount}</p>
+                    <p>Член от {new Date(youtuberDetails.publishedAt).toLocaleDateString()}</p>
+                    <p>Обновен в {new Date(youtuberDetails.updateDate).toLocaleString()}</p>
+                </div>
+                <div className="youtuber-details-buttons">
+                    {isYoutuber && <Button color='orange'
+                        className="medium"
+                        id="youtuber-details-refresh"
+                        onClick={updateYoutuberData}>
+                            <Icon name="refresh"/> Обнови
+                    </Button>}
+                    <Button color='youtube'
+                        className="medium"
+                        id="youtuber-details-show-channel"
+                        as="a"
+                        href={'https://www.youtube.com/channel/' + youtuberDetails.channelId} target="_blank">
+                            <Icon name='youtube' /> Виж канала
+                    </Button>
+                </div>
+            </div>
+            <div className="youtuber-details-applications">
+                <h2>{`История на предложенията за партнюрства${!isYoutuber ? ' към Вас' : ''}`}</h2>
+                <Table color="orange">
+                    <Table.Header>
+                        <Table.Row textAlign="center">
+                            <Table.HeaderCell>Снимка на обявата</Table.HeaderCell>
+                            <Table.HeaderCell>Заглавие на обявата</Table.HeaderCell>
+                            <Table.HeaderCell>Дата на кандидатстване</Table.HeaderCell>
+                            <Table.HeaderCell>Описание</Table.HeaderCell>
+                            <Table.HeaderCell>Възнаграждение</Table.HeaderCell>
+                            <Table.HeaderCell>Детайли на обявата</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {(isYoutuber ? youtuberDetails.adApplicationList : applications).map(a => (
+                            <Table.Row key={a.ad.id} textAlign="left">
+                                <Table.Cell textAlign="center">
+                                    <span className="youtuber-details-application-img">
+                                        <img src={a.ad.pictureUrl} alt="Ad picture" />
+                                    </span>
+                                </Table.Cell>
+                                <Table.Cell>{a.ad.title}</Table.Cell>
+                                <Table.Cell>{new Date(a.applicationDate).toLocaleDateString()}</Table.Cell>
+                                <Table.Cell>{a.description}</Table.Cell>
+                                <Table.Cell textAlign="right">{a.ad.reward} &euro;</Table.Cell>
+                                <Table.Cell textAlign="center">
+                                    <Button color="orange"
+                                        className="medium"
+                                        as={NavLink}
+                                        to={`/ad/details/${a.ad.id}`}>
+                                            Детайли
+                                    </Button>
+                                </Table.Cell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
+            </div>
+        </div>
+    );
+};
+
+/*class YoutuberDetails extends Component {
     constructor(props) {
         super(props);
 
@@ -117,4 +228,4 @@ function mapDispatch(dispatch) {
     };
 }
 
-export default withRouter(connect(mapState, mapDispatch)(YoutuberDetails));
+export default withRouter(connect(mapState, mapDispatch)(YoutuberDetails));*/

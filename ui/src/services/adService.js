@@ -59,19 +59,19 @@ export async function getAdDetails(adId) {
 }
 
 export async function applyForAd(adId, params) {
-    return await requester('/ad/applyfor/' + adId, 'POST', true, params);
+    return await requester(`/application/applyfor/${adId}`, 'POST', true, params);
 }
 
 export async function getApplicationsByYoutuber(youtuberId) {
-    return await requester('/ad/youtuber/applications/' + youtuberId, 'GET', true);
+    return await requester(`/application/youtuber/${youtuberId}`, 'GET', true);
 }
 
 export async function getApplicationsByCompany(companyId) {
-    return await requester(`/ad/company/applications/${companyId}`, 'GET', true);
+    return await requester(`/application/company/${companyId}`, 'GET', true);
 }
 
 export async function getApplications(adId) {
-    return await requester('/ad/applications/' + adId, 'GET', true);
+    return await requester(`/application/ad/${adId}`, 'GET', true);
 }
 
 export async function voteForAd(adId, rating) {

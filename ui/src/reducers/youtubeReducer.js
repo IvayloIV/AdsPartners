@@ -23,7 +23,6 @@ export function youtubeReducer(state = youtubeUser, action) {
         case YOUTUBERS_FILTERS:
             return Object.assign({}, state, { filters: action.data });
         case YOUTUBER_PROFILE:
-            return Object.assign({}, state, { details: action.data });
         case YOUTUBER_DETAILS:
             return Object.assign({}, state, { details: action.data });
         default:

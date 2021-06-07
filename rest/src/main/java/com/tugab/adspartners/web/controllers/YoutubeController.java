@@ -28,26 +28,20 @@ public class YoutubeController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<YoutuberProfileResponse> getProfile(Authentication authentication) {
-        return this.youtubeService.getProfile(authentication);
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+        Long youtuberId = ((Youtuber) authentication.getPrincipal()).getId();
+        return this.youtubeService.getDetails(youtuberId, false);
     }
 
     @GetMapping("/details/{youtuberId}")
-    public ResponseEntity<YoutuberDetailsResponse> getDetails(@PathVariable("youtuberId") Long youtuberId) {
-        return this.youtubeService.getDetails(youtuberId);
+    public ResponseEntity<?> getDetails(@PathVariable Long youtuberId) {
+        return this.youtubeService.getDetails(youtuberId, true);
     }
 
-    @PostMapping("/profile/update")
-    @PreAuthorize("hasAuthority('YOUTUBER')") //TODO: It should return some response
-    public ResponseEntity<MessageResponse> updateDetails(Authentication authentication) {
+    @PatchMapping("/profile/update")
+    @PreAuthorize("hasAuthority('YOUTUBER')")
+    public ResponseEntity<?> updateProfile(Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-
-        //TODO: How to get jwt token example
-//        OAuth2AuthorizedClient client = this.authClientService
-//                .loadAuthorizedClient(authenticationToken.getAuthorizedClientRegistrationId(),
-//                        authenticationToken.getName());
-//        String token = client.getAccessToken().getTokenValue();
-
         return this.youtubeService.updateYoutubeDetails(youtuber);
     }
 
@@ -57,7 +51,7 @@ public class YoutubeController {
         return this.youtubeService.convertAuthenticationToUserInfo(authentication);
     }
 
-    @GetMapping("/list/subscribers")
+    @GetMapping("/list/subscribers") //TODO: can be removed? not used anywhere
     public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubs(@RequestParam("size") Integer size) {
         return this.youtubeService.getYoutubersBySubscribers(size);
     }

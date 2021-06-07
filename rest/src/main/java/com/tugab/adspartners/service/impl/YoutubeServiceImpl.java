@@ -8,27 +8,27 @@ import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
 import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
+import com.tugab.adspartners.domain.models.response.MessagesResponse;
 import com.tugab.adspartners.domain.models.response.UserInfoResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.*;
 import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.YoutuberRatingRepository;
 import com.tugab.adspartners.repository.YoutuberRepository;
 import com.tugab.adspartners.service.YoutubeService;
+import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.text.ParseException;
@@ -46,7 +46,9 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     private final YoutuberRepository youtuberRepository;
     private final YoutuberRatingRepository youtuberRatingRepository;
     private final RoleRepository roleRepository;
+    private final ResourceBundleUtil resourceBundleUtil;
     private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final JsonParser jsonParser;
     private final ModelMapper modelMapper;
 
@@ -54,13 +56,17 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     public YoutubeServiceImpl(YoutuberRepository youtuberRepository,
                               YoutuberRatingRepository youtuberRatingRepository,
                               RoleRepository roleRepository,
+                              ResourceBundleUtil resourceBundleUtil,
                               WebClient webClient,
+                              RestTemplate restTemplate,
                               JsonParser jsonParser,
                               ModelMapper modelMapper) {
         this.youtuberRepository = youtuberRepository;
         this.youtuberRatingRepository = youtuberRatingRepository;
         this.roleRepository = roleRepository;
+        this.resourceBundleUtil = resourceBundleUtil;
         this.webClient = webClient;
+        this.restTemplate = restTemplate;
         this.jsonParser = jsonParser;
         this.modelMapper = modelMapper;
     }
@@ -77,67 +83,77 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
             youtuber = new Youtuber();
             youtuber.setEmail(email);
             youtuber.setName(oAuth2User.getAttribute("name"));
-
-//            this.youtuberRepository.save(youtuber); //TODO: for test
         }
 
         final String token = oAuth2UserRequest.getAccessToken().getTokenValue();
         youtuber.setToken(token);
         youtuber.setAttributes(oAuth2User.getAttributes());
-        this.updateYoutubeDetails(youtuber);
+
+        ResponseEntity<?> responseEntity = this.updateYoutubeDetails(youtuber);
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            this.youtuberRepository.save(youtuber);
+        }
+
         return youtuber;
     }
 
     @Override
-    public ResponseEntity<MessageResponse> updateYoutubeDetails(Youtuber youtuber) {
-        WebClient.RequestBodySpec requestBodySpec = this.webClient
-                .method(HttpMethod.GET)
-                .uri(BASE_YOUTUBE_URL + "/channels?part=snippet,contentDetails,statistics&mine=true")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + youtuber.getToken());
-        String jsonBlock = requestBodySpec.exchangeToMono(e -> e.bodyToMono(String.class)).block();
+    public ResponseEntity<?> updateYoutubeDetails(Youtuber youtuber) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(youtuber.getToken());
 
-        JsonElement jsonElement = this.jsonParser.parse(jsonBlock);
+        HttpEntity entity = new HttpEntity(headers);
+        final String getYoutuberDataUrl = BASE_YOUTUBE_URL + "/channels?part=snippet,contentDetails,statistics&mine=true";
+        ResponseEntity<String> responseEntity = this.restTemplate
+                .exchange(getYoutuberDataUrl, HttpMethod.GET, entity, String.class);
+
+        if (responseEntity.getStatusCode() != HttpStatus.OK || responseEntity.getBody() == null) {
+            String unavailableServiceMessage = this.resourceBundleUtil.getMessage("youtuberProfile.unavailableService");
+            return new ResponseEntity<>(new MessagesResponse(unavailableServiceMessage), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
+        JsonElement jsonElement = this.jsonParser.parse(responseEntity.getBody());
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonArray jsonItems = jsonObject.getAsJsonArray("items");
-        if (jsonItems == null || jsonItems.size() > 0) {
-            JsonObject jsonObjectDetails = (JsonObject) jsonItems.get(0);
-            JsonObject youtubeStatistics = jsonObjectDetails.getAsJsonObject("statistics");
+        JsonObject jsonObjectDetails = (JsonObject) jsonItems.get(0);
 
-            if (jsonObjectDetails.has("id")) {
-                youtuber.setChannelId(jsonObjectDetails.get("id").getAsString());
-            }
-
-            if (youtubeStatistics.has("subscriberCount")) {
-                youtuber.setSubscriberCount(youtubeStatistics.get("subscriberCount").getAsLong());
-            }
-            if (youtubeStatistics.has("viewCount")) {
-                youtuber.setViewCount(youtubeStatistics.get("viewCount").getAsLong());
-            }
-            if (youtubeStatistics.has("videoCount")) {
-                youtuber.setVideoCount(youtubeStatistics.get("videoCount").getAsLong());
-            }
-
-            JsonObject jsonSnippet = jsonObjectDetails.getAsJsonObject("snippet");
-            if (jsonSnippet.has("description")) {
-                youtuber.setDescription(jsonSnippet.get("description").getAsString());
-            }
-            if (jsonSnippet.has("publishedAt")) {
-                String publishedAtStr = jsonSnippet.get("publishedAt").getAsString();
-                Instant publishedAtInstant = Instant.parse(publishedAtStr);
-                youtuber.setPublishedAt(Date.from(publishedAtInstant));
-            }
-
-            JsonObject jsonThumbnails = jsonSnippet.getAsJsonObject("thumbnails");
-            JsonObject jsonThumbnailHigh = jsonThumbnails.getAsJsonObject("high");
-            if (jsonThumbnailHigh.has("url")) {
-                youtuber.setProfilePicture(jsonThumbnailHigh.get("url").getAsString());
-            }
-
-            youtuber.setUpdateDate(new Date());
-            this.youtuberRepository.save(youtuber); //TODO: after user login i save it, does it needed here??
-            return ResponseEntity.ok(new MessageResponse("Data updated successfully."));
+        if (jsonObjectDetails.has("id")) {
+            youtuber.setChannelId(jsonObjectDetails.get("id").getAsString());
         }
-        return ResponseEntity.ok(new MessageResponse("Fail to update your data."));
+
+        JsonObject youtubeStatistics = jsonObjectDetails.getAsJsonObject("statistics");
+
+        if (youtubeStatistics.has("subscriberCount")) {
+            youtuber.setSubscriberCount(youtubeStatistics.get("subscriberCount").getAsLong());
+        }
+        if (youtubeStatistics.has("viewCount")) {
+            youtuber.setViewCount(youtubeStatistics.get("viewCount").getAsLong());
+        }
+        if (youtubeStatistics.has("videoCount")) {
+            youtuber.setVideoCount(youtubeStatistics.get("videoCount").getAsLong());
+        }
+
+        JsonObject jsonSnippet = jsonObjectDetails.getAsJsonObject("snippet");
+        if (jsonSnippet.has("description")) {
+            youtuber.setDescription(jsonSnippet.get("description").getAsString());
+        }
+        if (jsonSnippet.has("publishedAt")) {
+            String publishedAtStr = jsonSnippet.get("publishedAt").getAsString();
+            Instant publishedAtInstant = Instant.parse(publishedAtStr);
+            youtuber.setPublishedAt(Date.from(publishedAtInstant));
+        }
+
+        JsonObject jsonThumbnails = jsonSnippet.getAsJsonObject("thumbnails");
+        JsonObject jsonThumbnailHigh = jsonThumbnails.getAsJsonObject("high");
+        if (jsonThumbnailHigh.has("url")) {
+            youtuber.setProfilePicture(jsonThumbnailHigh.get("url").getAsString());
+        }
+
+        youtuber.setUpdateDate(new Date());
+        this.youtuberRepository.save(youtuber);
+
+        String successUpdatedMessage = this.resourceBundleUtil.getMessage("youtuberProfile.successUpdated");
+        return ResponseEntity.ok(new MessageResponse(successUpdatedMessage));
     }
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication) {
@@ -223,25 +239,20 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public ResponseEntity<YoutuberProfileResponse> getProfile(Authentication authentication) {
-        Long youtuberId = ((Youtuber) authentication.getPrincipal()).getId();
-        Youtuber youtuber = this.youtuberRepository.findById(youtuberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid youtuber!"));
+    public ResponseEntity<?> getDetails(Long youtuberId, Boolean excludeApplications) {
+        Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElseThrow(null);
+
+        if (youtuber == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("youtuberProfile.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
 
         this.setYoutuberAverageRating(youtuber);
-        YoutuberProfileResponse youtuberProfileResponse = this.modelMapper
-                .map(youtuber, YoutuberProfileResponse.class);
-        return ResponseEntity.ok(youtuberProfileResponse);
-    }
+        YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper.map(youtuber, YoutuberDetailsResponse.class);
+        if (excludeApplications) {
+            youtuberDetailsResponse.setAdApplicationList(null);
+        }
 
-    @Override
-    public ResponseEntity<YoutuberDetailsResponse> getDetails(Long youtuberId) {
-        Youtuber youtuber = this.youtuberRepository.findById(youtuberId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid youtuber!"));
-
-        this.setYoutuberAverageRating(youtuber);
-        YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper
-                .map(youtuber, YoutuberDetailsResponse.class);
         return ResponseEntity.ok(youtuberDetailsResponse);
     }
 

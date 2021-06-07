@@ -26,7 +26,11 @@ public class YoutuberDetailsResponse {
 
     private Date publishedAt;
 
+    private Date updateDate;
+
     private String channelId;
 
     private Double averageRating;
+
+    private List<YoutuberApplicationResponse> adApplicationList;
 }

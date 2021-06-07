@@ -15,6 +15,8 @@ public class AdApplicationResponse {
     @JsonProperty("ad")
     private AdDetailsResponse idAd;
 
+    private String description;
+
     private Date applicationDate;
 
     private ApplicationType type;

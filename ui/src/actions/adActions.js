@@ -145,15 +145,12 @@ const unblockAdAction = adId => {
     };
 };
 
-function getYoutuberApplicationAction(adId) {
-    return (dispatch) => {
-        return getApplicationsByYoutuber(adId)
-            .then(json => {
-                dispatch({ type: YOUTUBER_APPLICATIONS, data: json });
-                toast.success(json.message);
-            });
+const getYoutuberApplicationAction = youtuberId => {
+    return async (dispatch) => {
+        const json = await getApplicationsByYoutuber(youtuberId);
+        dispatch({ type: YOUTUBER_APPLICATIONS, data: json });
     };
-}
+};
 
 export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
     createAdAction, editAdAction, deleteAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, 

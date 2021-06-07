@@ -4,8 +4,8 @@ export async function getUserInfo() {
     return await requester('/youtube/profile/info', 'GET', true);
 }
 
-export async function refreshUserData() {
-    return await requester('/youtube/profile/update', 'POST', true);
+export async function refreshYoutuberData() {
+    return await requester('/youtube/profile/update', 'PATCH', true);
 }
 
 export async function checkSubscription(companyId) {
@@ -44,7 +44,7 @@ export async function getProfile() {
 }
 
 export async function getYoutuberDetails(youtuberId) {
-    return await requester('/youtube/details/' + youtuberId, 'GET', true);
+    return await requester(`/youtube/details/${youtuberId}`, 'GET', true);
 }
 
 function addQueryParams(params) {

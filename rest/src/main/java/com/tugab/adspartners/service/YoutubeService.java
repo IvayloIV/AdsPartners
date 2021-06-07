@@ -22,7 +22,7 @@ public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAu
 
     public Youtuber findByEmail(String email);
 
-    public ResponseEntity<MessageResponse> updateYoutubeDetails(Youtuber youtuber);
+    public ResponseEntity<?> updateYoutubeDetails(Youtuber youtuber);
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication);
 
@@ -34,7 +34,5 @@ public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAu
 
     public ResponseEntity<YoutuberRatingResponse> vote(Long youtuberId, RatingBindingModel ratingBindingModel, Company company);
 
-    public ResponseEntity<YoutuberProfileResponse> getProfile(Authentication authentication);
-
-    public ResponseEntity<YoutuberDetailsResponse> getDetails(Long youtuberId);
+    public ResponseEntity<?> getDetails(Long youtuberId, Boolean excludeApplications);
 }

@@ -947,6 +947,84 @@ body {
     margin: 5px 0;
 }
 
+/*** Youtuber details ***/
+
+.youtuber-details {
+    display: flex;
+}
+
+.youtuber-details-info-container {
+    width: 24%;
+    padding: 50px 40px;
+    border-right: 2px solid #E8E9E9;
+}
+
+.youtuber-details-img-container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.youtuber-details-info-container img {
+    width: 100%;
+    border-radius: 50%;
+}
+
+.youtuber-details-info-container h2,
+.youtuber-details-info-container h3 {
+    text-align: center;
+}
+
+.youtuber-details-description {
+    margin-top: 40px;
+}
+
+#youtuber-details-description-textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    padding: 15px;
+    resize: none;
+}
+
+.youtuber-details-info p {
+    font-size: 16px;
+    padding-left: 4px;
+    margin-top: 20px;
+    padding-bottom: 5px;
+    border-bottom: 2px dotted black;
+}
+
+.youtuber-details-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 85%;
+    margin: 40px auto 0;
+}
+
+#youtuber-details-refresh {
+    margin: 0 0 20px 0;
+}
+
+#youtuber-details-show-channel {
+    margin: 0;
+}
+
+.youtuber-details-applications {
+    width: 76%;
+}
+
+.youtuber-details-applications h2 {
+    margin: 0;
+    padding: 33px 0 6px 26px;
+}
+
+.youtuber-details-application-img img {
+    width: 190px;
+    height: 130px;
+    margin: 0 10px;
+    border-radius: 10px;
+}
+
 /* body {
   margin: 0;
   padding: 0;

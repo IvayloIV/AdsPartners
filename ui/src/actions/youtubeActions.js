@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 import { LOAD_USER_INFO, CHECK_SUBSCRIPTION, SUBSCRIBE, YOUTUBERS_BY_SUBS, YOUTUBERS_LIST,
     YOUTUBERS_FILTERS, YOUTUBER_PROFILE, YOUTUBER_DETAILS } from '../actions/actionTypes';
-import { getUserInfo, refreshUserData, checkSubscription, subscribe, unsubscribe, getYoutubersBySubs,
+import { getUserInfo, refreshYoutuberData, checkSubscription, subscribe, unsubscribe, getYoutubersBySubs,
     getYoutubers, getFilters, voteForYoutuber, getProfile, getYoutuberDetails } from '../services/youtubeService';
 import { setCookie } from '../utils/CookiesUtil';
 
@@ -16,14 +16,16 @@ function loadUserInfoAction() {
     };
 }
 
-function refreshUserDataAction() {
-    return (dispatch) => {
-        return refreshUserData()
-            .then((json) => {
-                toast.success(json.message);
-            });
+const refreshYoutuberDataAction = () => {
+    return async () => {
+        try {
+            const json = await refreshYoutuberData();
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 const checkSubscriptionAction = companyId => {
     return async (dispatch) => {
@@ -94,24 +96,28 @@ function voteForYoutuberAction(youtuberId, rating) {
     };
 }
 
-function getYoutuberProfileAction() {
-    return (dispatch) => {
-        return getProfile()
-            .then(json => {
-                dispatch({ type: YOUTUBER_PROFILE, data: json });
-            });
+const getYoutuberProfileAction = () => {
+    return async (dispatch) => {
+        try {
+            const json = await getProfile();
+            dispatch({ type: YOUTUBER_PROFILE, data: json });
+        } catch (err) {
+            return err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
-function getYoutuberDetailsAction(youtuberId) {
-    return (dispatch) => {
-        return getYoutuberDetails(youtuberId)
-            .then(json => {
-                dispatch({ type: YOUTUBER_DETAILS, data: json });
-            });
+const getYoutuberDetailsAction = youtuberId => {
+    return async (dispatch) => {
+        try {
+            const json = await getYoutuberDetails(youtuberId);
+            dispatch({ type: YOUTUBER_DETAILS, data: json });
+        } catch (err) {
+            return err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
-export { loadUserInfoAction, refreshUserDataAction, checkSubscriptionAction, subscribeAction, unsubscribeAction,
+export { loadUserInfoAction, refreshYoutuberDataAction, checkSubscriptionAction, subscribeAction, unsubscribeAction,
     getYoutubersBySubsAction, getYoutubersAction, getYoutubersFiltersAction, voteForYoutuberAction,
     getYoutuberProfileAction, getYoutuberDetailsAction };

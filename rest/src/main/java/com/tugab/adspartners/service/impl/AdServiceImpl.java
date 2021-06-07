@@ -1,19 +1,15 @@
 package com.tugab.adspartners.service.impl;
 
 import com.tugab.adspartners.domain.entities.*;
-import com.tugab.adspartners.domain.enums.ApplicationType;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.MessagesResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.AdYoutuberApplicationResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
-import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.repository.CharacteristicRepository;
@@ -48,7 +44,6 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final AdRatingRepository adRatingRepository;
     private final CloudinaryService cloudinaryService;
-    private final AdApplicationRepository adApplicationRepository;
     private final ModelMapper modelMapper;
     private final ResourceBundleUtil resourceBundleUtil;
     private final SubscriptionRepository subscriptionRepository;
@@ -59,7 +54,6 @@ public class AdServiceImpl implements AdService {
     public AdServiceImpl(AdRepository adRepository,
                          AdRatingRepository adRatingRepository,
                          CloudinaryService cloudinaryService,
-                         AdApplicationRepository adApplicationRepository,
                          ModelMapper modelMapper,
                          ResourceBundleUtil resourceBundleUtil,
                          SubscriptionRepository subscriptionRepository,
@@ -68,7 +62,6 @@ public class AdServiceImpl implements AdService {
         this.adRepository = adRepository;
         this.adRatingRepository = adRatingRepository;
         this.cloudinaryService = cloudinaryService;
-        this.adApplicationRepository = adApplicationRepository;
         this.modelMapper = modelMapper;
         this.resourceBundleUtil = resourceBundleUtil;
         this.characteristicRepository = characteristicRepository;
@@ -289,61 +282,6 @@ public class AdServiceImpl implements AdService {
         rating.setAdId(ad.getId());
         rating.setYoutubeId(youtuber.getId());
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
-    }
-
-    public ResponseEntity<MessageResponse> applyFor(AdApplicationBindingModel adApplicationBindingModel) {
-        Ad ad = this.adRepository.findById(adApplicationBindingModel.getAdId())
-                .orElseThrow(() -> new IllegalArgumentException("Ad id does not exist."));
-        Youtuber youtuber = adApplicationBindingModel.getYoutuber();
-
-        AdApplication adApplication = new AdApplication();
-        adApplication.setId(new AdApplicationId(ad, youtuber));
-        adApplication.setDescription(adApplicationBindingModel.getDescription());
-        adApplication.setApplicationDate(new Date());
-        adApplication.setMailSent(false); //TODO: send mail here
-        adApplication.setType(ApplicationType.YOUTUBER_SENT);
-
-        this.adApplicationRepository.save(adApplication);
-        return ResponseEntity.ok(new MessageResponse("You have just applied for ad."));
-    }
-
-    @Override
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByAdId(Long adId) {
-        List<AdApplication> applications = this.adApplicationRepository.findById_Ad_Id(adId);
-        List<AdApplicationResponse> adApplicationResponses = applications
-                .stream()
-                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(adApplicationResponses);
-    }
-
-    @Override
-    public ResponseEntity<List<AdApplicationResponse>> getApplicationsByYoutuber(Long youtuberId, Long companyId) {
-        List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_IdAndId_Ad_Company_Id(youtuberId, companyId);
-
-        List<AdApplicationResponse> adApplicationResponses = applications
-                .stream()
-                .map(a -> this.modelMapper.map(a, AdApplicationResponse.class))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(adApplicationResponses);
-    }
-
-    @Override
-    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId) {
-        List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_Id(youtuberId);
-        List<AdYoutuberApplicationResponse> adsResponse = applications
-                .stream()
-                .map(a -> {
-                    AdYoutuberApplicationResponse adApplication =
-                            this.modelMapper.map(a.getId().getAd(), AdYoutuberApplicationResponse.class);
-                    adApplication.setType(a.getType().name());
-                    return adApplication;
-                }) //TODO: not the best way for AdYoutuberApplicationResponse
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(adsResponse);
     }
 
     @Override
