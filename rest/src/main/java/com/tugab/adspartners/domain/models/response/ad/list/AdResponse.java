@@ -1,5 +1,7 @@
 package com.tugab.adspartners.domain.models.response.ad.list;
 
+import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
 import lombok.Data;
 
 import java.util.Date;
@@ -30,4 +32,6 @@ public class AdResponse {
     private Double averageRating;
 
     private Boolean isBlocked;
+
+    private RatingResponse ratingResponse;
 }

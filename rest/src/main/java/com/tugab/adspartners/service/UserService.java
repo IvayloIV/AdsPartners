@@ -28,8 +28,6 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel, Errors errors);
 
-    public ResponseEntity<List<CompanyListResponse>> getCompanyList();
-
     public ResponseEntity<?> getCompanyById(Long id);
 
     public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests();

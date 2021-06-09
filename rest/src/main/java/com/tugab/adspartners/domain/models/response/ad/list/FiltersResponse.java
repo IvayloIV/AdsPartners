@@ -1,5 +1,6 @@
 package com.tugab.adspartners.domain.models.response.ad.list;
 
+import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import lombok.Data;
 
 import java.util.*;
@@ -7,15 +8,13 @@ import java.util.*;
 @Data
 public class FiltersResponse {
 
-    private Set<Double> rewards = new TreeSet<>();
+    private List<Double> rewards;
 
-    private Set<Date> createdDates = new TreeSet<>();
+    private List<Long> minVideos;
 
-    private Set<Date> validToDates = new TreeSet<>();
+    private List<Long> minSubscribers;
 
-    private Set<Long> minVideos = new TreeSet<>();
+    private List<Long> minViews;
 
-    private Set<Long> minSubscribers = new TreeSet<>();
-
-    private Set<Long> minViews = new TreeSet<>();
+    private List<CompanyListResponse> companies;
 }

@@ -1,8 +1,8 @@
 import { toast } from 'react-toastify';
-import { GET_ALL_COMPANIES, GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS,
+import { GET_SUBSCRIBERS, CHANGE_SUBSCRIBER_STATUS,
     GET_COMPANY_DETAILS, GET_COMPANY_PROFILE, REGISTER_REQUESTS,
     REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING, COMPANIES_FILTERS, COMPANIES_ADS } from '../actions/actionTypes';
-import { registerCompany, loginCompany, getAllCompanies, getSubscribers, changeSubscriberStatus, 
+import { registerCompany, loginCompany, getSubscribers, changeSubscriberStatus, 
     getCompanyDetails, getCompanyProfile, registerRequests, registerHistory, updateRegisterStatus, 
     getCompaniesByRating, getCompaniesFilters, getCompaniesByAds, offerPartnership } from '../services/companyService';
 import { setCookie, deleteAllCookies } from '../utils/CookiesUtil';
@@ -40,17 +40,6 @@ function loginCompanyAction(params) {
 function logoutAction() {
     return (dispatch) => {
         deleteAllCookies();
-    };
-}
-
-function getAllCompaniesAction(params) {
-    return (dispatch) => {
-        return getAllCompanies(params)
-            .then(json => {
-                console.log(json);
-                dispatch({ type: GET_ALL_COMPANIES, data: json });
-                return json;
-            });
     };
 }
 
@@ -162,7 +151,7 @@ function offerPartnershipAction(adId, youtuberId, description) {
     };
 }
 
-export { registerCompanyAction, loginCompanyAction, logoutAction, getAllCompaniesAction, getSubscribersAction,
+export { registerCompanyAction, loginCompanyAction, logoutAction, getSubscribersAction,
     changeSubscriberStatusAction, getCompanyDetailsAction, getCompanyProfileAction,
     getCompaniesRequests, getCompaniesHistoryAction, updateCompanyStatusAction,
     getCompaniesByRatingAction, getCompaniesFiltersAction, getCompaniesByAdsAction,

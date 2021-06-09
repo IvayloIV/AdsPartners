@@ -1,21 +1,271 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import Slider from '@material-ui/core/Slider';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { NavLink } from 'react-router-dom';
+import { Select, Input, Rating, Button, Icon } from 'semantic-ui-react';
+import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import Pagination from '@material-ui/lab/Pagination';
-import Rating from '@material-ui/lab/Rating';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
-import { makeStyles } from '@material-ui/core/styles';
+import FilterSlider from '../common/FilterSlider';
 import { getAllAdsAction, getAdsFiltersAction, voteForAdAction } from '../../actions/adActions';
-import { getAllCompaniesAction } from '../../actions/companyActions';
 
-class ListAd extends Component {
+export default () => {
+    const [companyId, setCompanyId] = useState('');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [creationDateRange, setCreationDateRange] = useState(null);
+    const [validToDateRange, setValidToDateRange] = useState(null);
+    const [rewardsRange, setRewardsRange] = useState([]);
+    const [videosRange, setVideosRange] = useState([]);
+    const [subscribersRange, setSubscribersRange] = useState([]);
+    const [viewsRange, setViewsRange] = useState([]);
+    const [size, setSize] = useState(6);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [initAdRender, setInitAdRender] = useState(true);
+    const [initFilterRender, setInitFilterRender] = useState(true);
+
+    const ads = useSelector(state => state.ad.list);
+    const filters = useSelector(state => state.ad.filters);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(getAllAdsAction({ page, size }));
+            await dispatch(getAdsFiltersAction());
+            setLoading(false);
+        })();
+    }, []);
+
+    useEffect(() => {
+        if (initAdRender) {
+            setInitAdRender(false);
+            return;
+        }
+
+        refreshAds();
+    }, [creationDateRange, validToDateRange, rewardsRange, videosRange, subscribersRange, viewsRange, page, size]);
+
+    useEffect(() => {
+        if (initFilterRender) {
+            setInitFilterRender(false);
+            return;
+        }
+
+        setRewardsRange([]);
+        setVideosRange([]);
+        setSubscribersRange([]);
+        setViewsRange([]);
+        dispatch(getAdsFiltersAction({ companyId, title, description }));
+    }, [companyId, title, description]);
+
+    const refreshAds = () => {
+        dispatch(getAllAdsAction({
+            companyId,
+            title,
+            description,
+            startCreationDate: creationDateRange !== null ? creationDateRange[0] : undefined,
+            endCreationDate: creationDateRange !== null ? creationDateRange[1] : undefined,
+            startValidTo: validToDateRange !== null ? validToDateRange[0] : undefined,
+            endValidTo: validToDateRange !== null ? validToDateRange[1] : undefined,
+            minReward: rewardsRange[0],
+            maxReward: rewardsRange[rewardsRange.length - 1],
+            minVideos: videosRange[0],
+            maxVideos: videosRange[videosRange.length - 1],
+            minSubscribers: subscribersRange[0],
+            maxSubscribers: subscribersRange[subscribersRange.length - 1],
+            minViews: viewsRange[0],
+            maxViews: viewsRange[viewsRange.length - 1],
+            size,
+            page,
+            isBlocked: 0
+        }));
+    };
+
+    const onChangeHandler = (v, setValue) => {
+        setValue(v);
+        setPage(1);
+    };
+
+    const onChangeDatepicker = (e, d, setValue) => {
+        if (d == null || d.value == null) {
+            setValue(null);
+        } else {
+            setValue(d.value.map(v => {
+                let date = new Date(v);
+                let timeZoneOffset = date.getTimezoneOffset() * 60000
+                return new Date(date.getTime() - timeZoneOffset).toISOString();
+            }));
+        }
+
+        setPage(1);
+    };
+
+    const onChangePage = (e, v) => {
+        setPage(v);
+    };
+
+    const voteForAdHandler = async (adId, rating) => { 
+        await dispatch(voteForAdAction(adId, rating));
+        refreshAds();
+    };
+
+    if (loading) {
+        return <div>{'Loading...'}</div>;
+    }
+
+    const { companies, rewards, minVideos, minSubscribers, minViews } = filters;
+
+    const companiesSelectOptions = () => {
+        let companiesValues = companies.map(c => {
+            return { value: c.id, text: c.userName }; 
+        });
+
+        companiesValues.unshift({ value: '', text: 'Всички' });
+        return companiesValues;
+    };
+
+    return (
+        <div className="ad-list">
+            <div className="ad-list-filters">
+                <h2>Филтри</h2>
+                <div className="ad-filter-container">
+                    <span>Компания:</span>
+                    <Select 
+                        placeholder='Изберете компания'
+                        onChange={(e, o) => onChangeHandler(o.value, setCompanyId)}
+                        options={companiesSelectOptions()}
+                    />
+                </div>
+                <div className="ad-filter-container">
+                    <span>Заглавие:</span>
+                    <Input placeholder='Търси по заглавие'
+                        onChange={e => onChangeHandler(e.target.value, setTitle)}/>
+                </div>
+                <div className="ad-filter-container">
+                    <span>Описание:</span>
+                    <Input placeholder='Ключова дума'
+                        onChange={e => onChangeHandler(e.target.value, setDescription)}/>
+                </div>
+                {rewards.length > 1 && 
+                <div className="ad-filter-container">
+                    <span>Възнаграждение/&euro;:</span>
+                    <FilterSlider
+                        range={rewards}
+                        onAfterChange={values => setRewardsRange(values)} />
+                </div>}
+                {minVideos.length > 1 && 
+                <div className="ad-filter-container">
+                    <span>Брой видеа:</span>
+                    <FilterSlider
+                        range={minVideos}
+                        onAfterChange={values => setVideosRange(values)} />
+                </div>}
+                {minSubscribers.length > 1 && 
+                <div className="ad-filter-container">
+                    <span>Брой абонати:</span>
+                    <FilterSlider
+                        range={minSubscribers}
+                        onAfterChange={values => setSubscribersRange(values)} />
+                </div>}
+                {minViews.length > 1 && 
+                <div className="ad-filter-container">
+                    <span>Брой показвания:</span>
+                    <FilterSlider
+                        range={minViews}
+                        onAfterChange={values => setViewsRange(values)} />
+                </div>}
+                <div className="ad-filter-container">
+                    <span>Дата на създаване:</span>
+                    <SemanticDatepicker
+                        locale="bg-BG"
+                        format="DD.MM.YYYY"
+                        placeholder="От - До"
+                        pointing="left"
+                        onChange={(e, d) => onChangeDatepicker(e, d, setCreationDateRange)}
+                        type="range"
+                        className="ad-filter-date"
+                    />
+                </div>
+                <div className="ad-filter-container">
+                    <span>Дата на валидност:</span>
+                    <SemanticDatepicker
+                        locale="bg-BG"
+                        format="DD.MM.YYYY"
+                        placeholder="От - До"
+                        pointing="left"
+                        onChange={(e, d) => onChangeDatepicker(e, d, setValidToDateRange)}
+                        type="range"
+                        className="ad-filter-date"
+                    />
+                </div>
+            </div>
+            <div className="ad-list-container">
+                <div className="ad-list-title">
+                    <h2>Рекламни обяви</h2>
+                    <span>({ads.totalElements} предложения за партнюрство)</span>
+                </div>
+                <div className="ad-list-items">
+                    {ads.totalElements === 0 &&
+                        <div className="ad-list-not-found">Не са намерени обяви по зададените критерий.</div>}
+                    {ads.items.map(a => {
+                        const outOfDate = new Date(a.validTo) - new Date() < 0;
+
+                        return (<div key={a.id} className="ad-list-item-wrapper">
+                            <div className="ad-list-img-wrapper">
+                                <img src={a.pictureUrl} alt="Ad picture" className={outOfDate ? "ad-list-item-expired" : ''} />
+                                {outOfDate && <div>Обявата е изтекла</div>}
+                            </div>
+                            <h2>{a.title}</h2>
+                            <div className="ad-list-rating">
+                                <Rating 
+                                    maxRating={5} 
+                                    defaultRating={a.ratingResponse != null ? a.ratingResponse.rating : 0} 
+                                    disabled={a.ratingResponse != null || outOfDate}
+                                    onRate={(e, v) => voteForAdHandler(a.id, v.rating)}
+                                    icon='star'
+                                    size="huge"
+                                /> <span className="ad-list-rating-text">({Number(a.averageRating.toFixed(2))})</span>
+                            </div>
+                            <h3>Възнаграждение: {a.reward} &euro;</h3>
+                            <div className="ad-list-requirements">
+                                <h4>Минимален брой:</h4>
+                                <ul>
+                                    <li>видеа - {a.minVideos || 0}</li>
+                                    <li>абонати - {a.minSubscribers || 0}</li>
+                                    <li>показвания - {a.minViews || 0}</li>
+                                </ul>
+                            </div>
+                            <div className="ad-list-date">
+                                <Icon name="clock outline" /> 
+                                Дата на създаване: <span>{new Date(a.creationDate).toLocaleDateString()}</span></div>
+                            <div className="ad-list-date">
+                                <Icon name="clock outline" /> 
+                                Валидна до: <span>{new Date(a.validTo).toLocaleDateString()}</span>
+                            </div>
+                            <div className="ad-list-details">
+                                <Button inverted 
+                                    color='orange'
+                                    as={NavLink}
+                                    to={`/ad/details/${a.id}`}>
+                                    <Icon name="briefcase" /> Детайли
+                                </Button>
+                            </div>
+                        </div>);
+                    })}
+                </div>
+                {ads.totalElements > 0 && <div className="ad-list-pagination">
+                    <Pagination 
+                        count={ads.totalPages}
+                        page={page}
+                        color="primary"
+                        onChange={onChangePage}
+                    />
+                </div>}
+            </div>
+        </div>
+    );
+};
+
+/*class ListAd extends Component {
     constructor(props) {
         super(props);
 
@@ -96,7 +346,8 @@ class ListAd extends Component {
             minViews: viewsRange[0],
             maxViews: viewsRange[1],
             size,
-            page
+            page,
+            isBlocked: false
         });
     }
 
@@ -316,4 +567,4 @@ function mapDispatch(dispatch) {
     };
 }
 
-export default withRouter(connect(mapState, mapDispatch)(ListAd));
+export default withRouter(connect(mapState, mapDispatch)(ListAd));*/

@@ -1,19 +1,16 @@
 import { toast } from 'react-toastify';
 import { AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
-    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS, DELETE_AD } from '../actions/actionTypes';
+    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS, DELETE_AD, VOTE_FOR_AD } from '../actions/actionTypes';
 import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
     getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd,
     getApplicationsByYoutuber } from '../services/adService';
 
-function getAllAdsAction(params) {
-    return (dispatch) => {
-        return getAds(params)
-            .then(json => {
-                console.log(json);
-                dispatch({ type: AD_LIST, data: json });
-            });
+const getAllAdsAction = params => {
+    return async (dispatch) => {
+        const json = await getAds(params);
+        dispatch({ type: AD_LIST, data: json });
     };
-}
+};
 
 const getCompanyAdsAction = () => {
     return async (dispatch) => {
@@ -63,25 +60,24 @@ function getApplicationsAction(adId) {
     };
 }
 
-function getAdsFiltersAction(params) {
-    return (dispatch) => {
-        return getFilters(params)
-            .then(json => {
-                console.log(json);
-                dispatch({ type: AD_FILTERS, data: json });
-            });
+const getAdsFiltersAction = params => {
+    return async (dispatch) => {
+        const json = await getFilters(params);
+        dispatch({ type: AD_FILTERS, data: json });
     };
-}
+};
 
-function voteForAdAction(adId, rating) {
-    return (dispatch) => {
-        return voteForAd(adId, rating)
-            .then(json => {
-                // dispatch({ type: CREATE_AD, data: json });
-                toast.success(`You vote for add successfully.`);
-            });
+const voteForAdAction = (adId, rating) => {
+    return async (dispatch) => {
+        try {
+            const json = await voteForAd(adId, rating);
+            dispatch({ type: VOTE_FOR_AD, data: json });
+            toast.success(`Благодарим за вашата оценка.`);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 const createAdAction = params => {
     return async () => {

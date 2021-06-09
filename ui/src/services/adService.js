@@ -43,7 +43,7 @@ export async function deleteAd(adId) {
 
 export async function getAds(params) {
     let query = addQueryParams(params);
-    return await requester('/ad/list' + query, 'GET', true);
+    return await requester(`/ad/list${query}`, 'GET', true);
 }
 
 export async function getCompanyAds() {
@@ -75,12 +75,12 @@ export async function getApplications(adId) {
 }
 
 export async function voteForAd(adId, rating) {
-    return await requester('/ad/vote/' + adId, 'POST', true, { rating });
+    return await requester(`/ad/vote/${adId}`, 'POST', true, { rating });
 }
 
 export async function getFilters(params) {
     let query = addQueryParams(params);
-    return await requester('/ad/filters' + query, 'GET', true);
+    return await requester(`/ad/filters${query}`, 'GET', true);
 }
 
 export async function blockAd(adId) {
@@ -97,7 +97,7 @@ function addQueryParams(params) {
     for (let key in params) {
         let value = params[key];
 
-        if (value && ((typeof value === 'object' && value.length !== 0) || value != '')) {
+        if (value !== undefined && ((typeof value === 'object' && value.length !== 0) || value !== '')) {
             if (query.length !== 1) {
                 query += '&';
             }

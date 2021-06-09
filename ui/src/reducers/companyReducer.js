@@ -1,4 +1,4 @@
-import { GET_ALL_COMPANIES, GET_SUBSCRIBERS, 
+import { GET_SUBSCRIBERS, 
     CHANGE_SUBSCRIBER_STATUS, GET_COMPANY_DETAILS, GET_COMPANY_PROFILE,
     REGISTER_REQUESTS, REGISTER_HISTORY, UPDATE_REGISTER_STATUS, COMPANIES_BY_RATING,
     COMPANIES_FILTERS, COMPANIES_ADS, BLOCK_AD, UNBLOCK_AD } from '../actions/actionTypes';
@@ -14,8 +14,6 @@ let companyState = {
 
 export function companyReducer(state = companyState, action) {
     switch (action.type) {
-        case GET_ALL_COMPANIES:
-            return Object.assign({}, state, { list: action.data });
         case COMPANIES_BY_RATING:
             return Object.assign({}, state, { list: action.data });
         case COMPANIES_ADS:

@@ -42,11 +42,6 @@ public class CompanyController {
         return this.userService.loginCompany(loginCompanyBindingModel, errors);
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<CompanyListResponse>> getCompanies() {
-        return this.userService.getCompanyList();
-    }
-
     @GetMapping("/details/{id}")
     public ResponseEntity<?> getCompany(@PathVariable("id") Long id) {
         return this.userService.getCompanyById(id);

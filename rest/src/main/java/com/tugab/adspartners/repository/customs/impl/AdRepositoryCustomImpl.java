@@ -1,27 +1,20 @@
 package com.tugab.adspartners.repository.customs.impl;
 
 import com.tugab.adspartners.domain.entities.Ad;
-import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.domain.models.binding.ad.AdFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
-import com.tugab.adspartners.repository.AdRepository;
+import com.tugab.adspartners.domain.models.binding.ad.FiltersBindingModel;
+import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
 import com.tugab.adspartners.repository.customs.AdRepositoryCustom;
-import com.tugab.adspartners.repository.customs.CompanyRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AdRepositoryCustomImpl implements AdRepositoryCustom {
 
@@ -53,43 +46,47 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         }
 
         if (filters.getMinReward() != null) {
-            predicates.add(cb.ge(ad.get("reward"), filters.getMinReward()));
+            predicates.add(cb.ge(cb.coalesce(ad.get("reward"), 0), filters.getMinReward()));
         }
 
         if (filters.getMaxReward() != null) {
-            predicates.add(cb.le(ad.get("reward"), filters.getMaxReward()));
+            predicates.add(cb.le(cb.coalesce(ad.get("reward"), 0), filters.getMaxReward()));
         }
 
         if (filters.getMinVideos() != null) {
-            predicates.add(cb.ge(ad.get("minVideos"), filters.getMinVideos()));
+            predicates.add(cb.ge(cb.coalesce(ad.get("minVideos"), 0), filters.getMinVideos()));
         }
 
         if (filters.getMaxVideos() != null) {
-            predicates.add(cb.le(ad.get("minVideos"), filters.getMaxVideos()));
+            predicates.add(cb.le(cb.coalesce(ad.get("minVideos"), 0), filters.getMaxVideos()));
         }
 
         if (filters.getMinSubscribers() != null) {
-            predicates.add(cb.ge(ad.get("minSubscribers"), filters.getMinSubscribers()));
+            predicates.add(cb.ge(cb.coalesce(ad.get("minSubscribers"), 0), filters.getMinSubscribers()));
         }
 
         if (filters.getMaxSubscribers() != null) {
-            predicates.add(cb.le(ad.get("minSubscribers"), filters.getMaxSubscribers()));
+            predicates.add(cb.le(cb.coalesce(ad.get("minSubscribers"), 0), filters.getMaxSubscribers()));
         }
 
         if (filters.getMinViews() != null) {
-            predicates.add(cb.ge(ad.get("minViews"), filters.getMinViews()));
+            predicates.add(cb.ge(cb.coalesce(ad.get("minViews"), 0), filters.getMinViews()));
         }
 
         if (filters.getMaxViews() != null) {
-            predicates.add(cb.le(ad.get("minViews"), filters.getMaxViews()));
+            predicates.add(cb.le(cb.coalesce(ad.get("minViews"), 0), filters.getMaxViews()));
         }
 
         if (filters.getStartCreationDate() != null) {
             predicates.add(cb.greaterThanOrEqualTo(ad.get("creationDate"), filters.getStartCreationDate()));
         }
 
+        Calendar c = Calendar.getInstance();
+
         if (filters.getEndCreationDate() != null) {
-            predicates.add(cb.lessThanOrEqualTo(ad.get("creationDate"), filters.getEndCreationDate()));
+            c.setTime(filters.getEndCreationDate());
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            predicates.add(cb.lessThan(ad.get("creationDate"), c.getTime()));
         }
 
         if (filters.getStartValidTo() != null) {
@@ -97,7 +94,9 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         }
 
         if (filters.getEndValidTo() != null) {
-            predicates.add(cb.lessThanOrEqualTo(ad.get("validTo"), filters.getEndValidTo()));
+            c.setTime(filters.getEndValidTo());
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            predicates.add(cb.lessThan(ad.get("validTo"), c.getTime()));
         }
 
         query.where(predicates.toArray(new Predicate[0]));
@@ -116,6 +115,85 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         Long count = this.entityManager.createQuery(countQuery).getSingleResult();
 
         return new PageImpl<>(ads, pageable, count);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Double> findAdRewards(FiltersBindingModel filtersBindingModel) {
+        return (List<Double>) findGroupAdProp(filtersBindingModel, "reward");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> findAdVideos(FiltersBindingModel filtersBindingModel) {
+        return (List<Long>) findGroupAdProp(filtersBindingModel, "minVideos");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> findAdSubscribers(FiltersBindingModel filtersBindingModel) {
+        return (List<Long>) findGroupAdProp(filtersBindingModel, "minSubscribers");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Long> findAdViews(FiltersBindingModel filtersBindingModel) {
+        return (List<Long>) findGroupAdProp(filtersBindingModel, "minViews");
+    }
+
+    @Override
+    public List<CompanyListResponse> findAdCompanies() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CompanyListResponse> query = cb.createQuery(CompanyListResponse.class);
+        Root<Ad> ad = query.from(Ad.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.isFalse(ad.get("isBlocked")));
+
+        Path<Object> companyId = ad.get("company").get("id");
+        Path<Object> companyName = ad.get("company").get("user").get("name");
+
+        query.where(predicates.toArray(new Predicate[0]));
+        query.groupBy(companyId, companyName);
+        query.orderBy(cb.asc(companyName));
+        query.multiselect(companyId, companyName);
+
+        return this.entityManager.createQuery(query).getResultList();
+    }
+
+    private List<? extends Number> findGroupAdProp(FiltersBindingModel filtersBindingModel, String prop) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<Ad> ad = query.from(Ad.class);
+
+        List<Predicate> predicates = this.createFilters(cb, ad, filtersBindingModel);
+
+        query.where(predicates.toArray(new Predicate[0]));
+        query.groupBy(ad.get(prop));
+        query.orderBy(cb.asc(ad.get(prop)));
+        query.select(ad.get(prop));
+
+        return this.entityManager.createQuery(query).getResultList();
+    }
+
+    private List<Predicate> createFilters(CriteriaBuilder cb, Root<Ad> ad, FiltersBindingModel filters) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.isFalse(ad.get("isBlocked")));
+
+        if (filters.getCompanyId() != null) {
+            predicates.add(cb.equal(ad.get("company").get("id"), filters.getCompanyId()));
+        }
+
+        if (filters.getTitle() != null) {
+            predicates.add(cb.like(cb.lower(ad.get("title")), likeToLower(filters.getTitle())));
+        }
+
+        if (filters.getDescription() != null) {
+            predicates.add(cb.like(cb.lower(ad.get("shortDescription")), likeToLower(filters.getDescription())));
+        }
+
+        return predicates;
     }
 
     private String likeToLower(String value) {

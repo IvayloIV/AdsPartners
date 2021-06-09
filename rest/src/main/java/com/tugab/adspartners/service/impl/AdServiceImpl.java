@@ -9,7 +9,8 @@ import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.repository.CharacteristicRepository;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -33,7 +35,6 @@ import org.springframework.validation.ObjectError;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,9 +71,9 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Collection<? extends GrantedAuthority> authorities) {
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Authentication authentication) {
         Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
-        boolean isYoutuber = authorities.stream()
+        boolean isYoutuber = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
 
@@ -86,6 +87,7 @@ public class AdServiceImpl implements AdService {
                 .map(this::setAdsCountToCompany)
                 .map(this::setAdAverageRating)
                 .map(a -> this.modelMapper.map(a, AdResponse.class))
+                .map(a -> this.setYoutuberApplication(a, isYoutuber, authentication))
                 .collect(Collectors.toList());
 
         AdListResponse adListResponse = new AdListResponse();
@@ -114,32 +116,29 @@ public class AdServiceImpl implements AdService {
         return ad;
     }
 
-    @Override
-    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel) {
-        final SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
+    private AdResponse setYoutuberApplication(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
+        if (isYoutuber) {
+            Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+            AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adResponse.getId(), youtuber.getId())
+                    .orElse(null);
 
-        List<Ad> ads = this.adRepository.findAllByFilters(filtersBindingModel);
-        FiltersResponse filtersResponse = new FiltersResponse();
-
-        for (Ad ad : ads) {
-            filtersResponse.getRewards().add(ad.getReward());
-            try {
-                filtersResponse.getCreatedDates().add(formater.parse(formater.format(ad.getCreationDate())));
-                filtersResponse.getValidToDates().add(formater.parse(formater.format(ad.getValidTo())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            if (ad.getMinVideos() != null) {
-                filtersResponse.getMinVideos().add(ad.getMinVideos());
-            }
-            if (ad.getMinSubscribers() != null) {
-                filtersResponse.getMinSubscribers().add(ad.getMinSubscribers());
-            }
-            if (ad.getMinViews() != null) {
-                filtersResponse.getMinViews().add(ad.getMinViews());
+            if (adRating != null) {
+                RatingResponse ratingResponse = this.modelMapper.map(adRating, RatingResponse.class);
+                adResponse.setRatingResponse(ratingResponse);
             }
         }
+
+        return adResponse;
+    }
+
+    @Override
+    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel) {
+        FiltersResponse filtersResponse = new FiltersResponse();
+        filtersResponse.setCompanies(this.adRepository.findAdCompanies());
+        filtersResponse.setRewards(this.adRepository.findAdRewards(filtersBindingModel));
+        filtersResponse.setMinVideos(this.adRepository.findAdVideos(filtersBindingModel));
+        filtersResponse.setMinSubscribers(this.adRepository.findAdSubscribers(filtersBindingModel));
+        filtersResponse.setMinViews(this.adRepository.findAdViews(filtersBindingModel));
 
         return ResponseEntity.ok(filtersResponse);
     }
@@ -269,18 +268,26 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(new MessageResponse(successMessage));
     }
 
-    public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {
-        Ad ad = this.adRepository.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Incorrect ad id."));
+    public ResponseEntity<?> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {
+        Boolean alreadyVote = this.adRatingRepository.existsById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId());
+        if (alreadyVote) {
+            String alreadyVoteMessage = this.resourceBundleUtil.getMessage("adList.alreadyVote");
+            return new ResponseEntity<>(new MessagesResponse(alreadyVoteMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        Ad ad = this.adRepository.findById(adId).orElse(null);
+        if (ad == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("adList.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
+
         AdRating adRating = new AdRating();
         adRating.setId(new AdRatingId(ad, youtuber));
         adRating.setRating(ratingBindingModel.getRating());
         adRating.setCreationDate(new Date());
-        this.adRatingRepository.save(adRating);
+        adRating = this.adRatingRepository.save(adRating);
 
-        CreateRatingResponse rating = this.modelMapper.map(adRating, CreateRatingResponse.class);
-        rating.setAdId(ad.getId());
-        rating.setYoutubeId(youtuber.getId());
+        RatingResponse rating = this.modelMapper.map(adRating, RatingResponse.class);
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
     }
 

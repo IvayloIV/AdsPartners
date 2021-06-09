@@ -7,16 +7,13 @@ import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
-
-import java.util.Collection;
 
 public interface AdService {
 
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Collection<? extends GrantedAuthority> authorities);
+    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Authentication authentication);
 
     public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel);
 
@@ -28,7 +25,7 @@ public interface AdService {
 
     public ResponseEntity<?> deleteAd(Long adId, Company company);
 
-    public ResponseEntity<CreateRatingResponse> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
+    public ResponseEntity<?> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
 
     public ResponseEntity<?> changeAdBlockingStatus(Long adId, Boolean isBlocked);
 

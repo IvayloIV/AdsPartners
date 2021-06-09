@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class CreateRatingResponse {
+public class RatingResponse {
 
     private Long adId;
 

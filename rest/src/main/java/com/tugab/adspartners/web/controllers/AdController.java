@@ -6,7 +6,7 @@ import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.CreateRatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
 import com.tugab.adspartners.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class AdController {
     @GetMapping("/list")
     public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel,
                                                   Authentication authentication) {
-        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
+        return this.adService.adsList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company")
@@ -40,7 +40,7 @@ public class AdController {
         Company company = (Company) authentication.getPrincipal();
         adFilterBindingModel.setCompanyId(company.getId());
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
+        return this.adService.adsList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company/{id}")
@@ -49,7 +49,7 @@ public class AdController {
                                                             Authentication authentication) {
         adFilterBindingModel.setCompanyId(companyId);
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel, authentication.getAuthorities());
+        return this.adService.adsList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/filters")
@@ -87,10 +87,10 @@ public class AdController {
         return this.adService.deleteAd(adId, company);
     }
 
-    @PostMapping(path = "/vote/{id}")
-    public ResponseEntity<CreateRatingResponse> vote(@PathVariable("id") Long adId,
-                                                     @RequestBody RatingBindingModel ratingBindingModel,
-                                                     Authentication authentication) {
+    @PostMapping(path = "/vote/{adId}")
+    public ResponseEntity<?> vote(@PathVariable Long adId,
+                                  @RequestBody RatingBindingModel ratingBindingModel,
+                                  Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.adService.vote(adId, ratingBindingModel, youtuber);
     }

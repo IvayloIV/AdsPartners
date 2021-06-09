@@ -195,16 +195,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<List<CompanyListResponse>> getCompanyList() {
-        List<Company> companies = this.companyRepository.findAllByOrderByUserName();
-        List<CompanyListResponse> companyResponse = companies
-                .stream()
-                .map(c -> this.modelMapper.map(c, CompanyListResponse.class))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(companyResponse);
-    }
-
-    @Override
     public ResponseEntity<?> getCompanyById(Long id) {
         Company company = this.companyRepository.findById(id).orElse(null);
         if (company == null) {

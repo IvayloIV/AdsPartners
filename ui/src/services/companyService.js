@@ -27,10 +27,6 @@ export async function loginCompany(params) {
     return await requester('/company/login', 'POST', false, params);
 }
 
-export async function getAllCompanies() {
-    return await requester('/company/list', 'GET', true);
-}
-
 export async function getCompaniesByRating(pageSize) {
     return await requester('/company/list/rating?size=' + pageSize, 'GET', false);
 }
