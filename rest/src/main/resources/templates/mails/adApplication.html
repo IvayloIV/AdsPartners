@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ad application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="background-color: #b7e9f8; margin: 0;">
+<div style="width: 600px; margin: 0 auto;">
+    <div style="text-align: center; background: linear-gradient(rgba(26,145,231,0.4),rgba(73,138,239,0.4)),url(https://res.cloudinary.com/dbeoyblgx/image/upload/v1621801856/coffe-background_elul7a.jpg) no-repeat center; background-size: cover; padding: 30px 0">
+        <img th:src="${adImage}" style="border-radius: 10px;" width="240px" height="170px" alt="Image logo">
+        <p style="width: 500px; color: white; font-family: Arial; font-size: 30px; font-weight: bold; margin: 20px auto 10px; text-shadow: 4px 4px 2px rgba(150,150,150,0.38);">
+            Ново предложение за партньорство на "<span th:text="${adTitle}"></span>"
+        </p>
+    </div>
+    <div style="padding: 30px 0 50px 0; background-color: #ffffff; font-family: Courier;">
+        <div style="border: 2px solid #1A91E7; border-radius: 5px; margin: 0 auto; padding: 30px; width: 350px; font-size: 15px;">
+            <h2 style="border-bottom: 2px solid black; margin-bottom: 40px;">Изпратено от: </h2>
+            <div style="text-align: center;">
+                <img th:src="${youtuberPicture}"
+                     style="width: 200px; height: 200px; border-radius: 50%" alt="Youtuber picture" />
+            </div>
+            <h2 style="text-align: center;" th:text="${youtuberName}"></h2>
+            <h3 style="text-align: center;" th:text="${youtuberEmail}"></h3>
+            <div>
+                <p style="border-bottom: 1px solid #1A91E7; padding-bottom: 3px;">
+                    Брой видеа - <span th:text="${youtuberVideos} ?: '0'"></span>
+                </p>
+                <p style="border-bottom: 1px solid #1A91E7; padding-bottom: 3px;">
+                    Брой абонати - <span th:text="${youtuberSubs} ?: '0'"></span>
+                </p>
+                <p style="border-bottom: 1px solid #1A91E7; padding-bottom: 3px;">
+                    Брой показвания - <span th:text="${youtuberViews} ?: '0'"></span>
+                </p>
+            </div>
+            <div style="margin-top: 25px">
+                <h3>Описание:</h3>
+                <textarea disabled style="display:block; border: 1px solid #1A91E7; padding: 10px 15px; width: 310px; height: 100px; resize: none; border-radius: 5px" th:text="${adAppDescription}"></textarea>
+            </div>
+            <div style="margin: 40px 0 10px 0; text-align: center;">
+                <a th:href="${'https://www.youtube.com/channel/' + youtuberChannelId}" target="_blank" style="cursor: pointer; text-decoration: none; padding: 11px 30px; background: red; color: white; border-radius: 10px; font-weight: bold; font-family: Arial;">
+                    Виж канала
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="width: 600px; background: white; padding: 30px 0 10px 0; margin: 0 auto; border-top: 2px solid #1A91E7;">
+    <p style="font-family: Cambria; font-size: 12px; width: 450px; margin: 0 auto;">
+        Моля не отговаряйте на това съобщение. Може да се свържете с нас на следния адрес: <a href="mailto::adspartners@gmail.com" style="color:#86adea; text-decoration: none;">adspartners@gmail.com</a>
+    </p>
+    <p style="font-family: Cambria; font-size: 12px; width: 450px; margin: 15px auto;">
+        &copy; copyright 2021 AdsPartners
+    </p>
+</div>
+</body>
+
+</html>

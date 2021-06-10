@@ -13,6 +13,7 @@ import com.tugab.adspartners.domain.models.response.youtuber.YoutuberApplication
 import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.service.ApplicationService;
+import com.tugab.adspartners.service.EmailService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,19 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
 
+    private final EmailService emailService;
     private final AdApplicationRepository adApplicationRepository;
     private final AdRepository adRepository;
     private final ResourceBundleUtil resourceBundleUtil;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApplicationServiceImpl(AdApplicationRepository adApplicationRepository,
+    public ApplicationServiceImpl(EmailService emailService,
+                                  AdApplicationRepository adApplicationRepository,
                                   AdRepository adRepository,
                                   ResourceBundleUtil resourceBundleUtil,
                                   ModelMapper modelMapper) {
+        this.emailService = emailService;
         this.adApplicationRepository = adApplicationRepository;
         this.adRepository = adRepository;
         this.resourceBundleUtil = resourceBundleUtil;
@@ -103,10 +107,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         adApplication.setId(new AdApplicationId(ad, youtuber));
         adApplication.setDescription(adApplicationBindingModel.getDescription());
         adApplication.setApplicationDate(new Date());
-        adApplication.setMailSent(false); //TODO: send mail here
+        adApplication.setMailSent(true); //TODO: remove that field
         adApplication.setType(ApplicationType.YOUTUBER_SENT);
 
         this.adApplicationRepository.save(adApplication);
+        this.emailService.sendAdApplicationNotification(adApplication);
+
         String applyForSuccessMessage = this.resourceBundleUtil.getMessage("adDetails.applyForSuccess");
         return ResponseEntity.ok(new MessageResponse(applyForSuccessMessage));
     }

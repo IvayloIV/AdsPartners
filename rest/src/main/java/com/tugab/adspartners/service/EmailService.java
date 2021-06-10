@@ -1,6 +1,7 @@
 package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Ad;
+import com.tugab.adspartners.domain.entities.AdApplication;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
 
@@ -17,4 +18,6 @@ public interface EmailService {
     public void sendCompanyStatusChanged(String companyEmail, RegistrationStatus status);
 
     public void sendAdSubscription(Ad ad, String youtuberEmail, String unsubscribeCompanyUrl);
+
+    public void sendAdApplicationNotification(AdApplication adApplication);
 }

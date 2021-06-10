@@ -1,9 +1,6 @@
 package com.tugab.adspartners.service.impl;
 
-import com.tugab.adspartners.domain.entities.Ad;
-import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.Role;
-import com.tugab.adspartners.domain.entities.User;
+import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.repository.RoleRepository;
@@ -96,6 +93,14 @@ public class EmailServiceImpl implements EmailService {
         this.sendMail(template, youtuberEmail, mailSubject);
     }
 
+    @Override
+    public void sendAdApplicationNotification(AdApplication adApplication) {
+        final String mailSubject = this.resourceBundleUtil.getMessage("adDetails.mailSubject");
+        final String companyEmail = adApplication.getId().getAd().getCompany().getUser().getEmail();
+        String template = this.createAdApplicationTemplate(adApplication);
+        this.sendMail(template, companyEmail, mailSubject);
+    }
+
     private String createCompanyStatusChangedTemplate(RegistrationStatus status) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("requestAllowed", RegistrationStatus.ALLOWED.equals(status));
@@ -134,5 +139,21 @@ public class EmailServiceImpl implements EmailService {
         variables.put("unsubscribeCompanyUrl", unsubscribeCompanyUrl);
 
         return this.createTemplate("adSubscribers", variables);
+    }
+
+    private String createAdApplicationTemplate(AdApplication adApplication) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("adImage", adApplication.getId().getAd().getPicture().getUrl());
+        variables.put("adTitle", adApplication.getId().getAd().getTitle());
+        variables.put("youtuberPicture", adApplication.getId().getYoutuber().getProfilePicture());
+        variables.put("youtuberName", adApplication.getId().getYoutuber().getName());
+        variables.put("youtuberEmail", adApplication.getId().getYoutuber().getEmail());
+        variables.put("youtuberVideos", adApplication.getId().getYoutuber().getVideoCount());
+        variables.put("youtuberSubs", adApplication.getId().getYoutuber().getSubscriberCount());
+        variables.put("youtuberViews", adApplication.getId().getYoutuber().getViewCount());
+        variables.put("adAppDescription", adApplication.getDescription());
+        variables.put("youtuberChannelId", adApplication.getId().getYoutuber().getChannelId());
+
+        return this.createTemplate("adApplication", variables);
     }
 }
