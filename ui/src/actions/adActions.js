@@ -28,21 +28,25 @@ const getCompanyAdsByIdAction = companyId => {
 
 const getAdDetailsAction = adId => {
     return async (dispatch) => {
-        const json = await getAdDetails(adId);
-        dispatch({ type: AD_DETAILS, data: json });
-        return json;
+        try {
+            const json = await getAdDetails(adId);
+            dispatch({ type: AD_DETAILS, data: json });
+        } catch(err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
 };
 
-function applyForAdAction(adId, params) {
-    return (dispatch) => {
-        return applyForAd(adId, params)
-            .then(json => {
-                // dispatch({ type: AD_FILTERS, data: json });
-                toast.success(json.message);
-            });
+const applyForAdAction = (adId, params) => {
+    return async () => {
+        try {
+            const json = await applyForAd(adId, params);
+            toast.success(json.message);
+        } catch (err) {
+            err.messages.forEach(e => toast.error(e));
+        }
     };
-}
+};
 
 const getApplicationsByCompanyAction = companyId => {
     return async (dispatch) => {
@@ -51,14 +55,12 @@ const getApplicationsByCompanyAction = companyId => {
     };
 };
 
-function getApplicationsAction(adId) {
-    return (dispatch) => {
-        return getApplications(adId)
-            .then(json => {
-                dispatch({ type: AD_APPLICATIONS, data: json });
-            });
+const getApplicationsAction = adId => {
+    return async (dispatch) => {
+        const json = await getApplications(adId);
+        dispatch({ type: AD_APPLICATIONS, data: json });
     };
-}
+};
 
 const getAdsFiltersAction = params => {
     return async (dispatch) => {

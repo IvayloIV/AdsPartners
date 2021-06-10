@@ -55,7 +55,7 @@ export async function getCompanyAdsById(companyId) {
 }
 
 export async function getAdDetails(adId) {
-    return await requester('/ad/details/' + adId, 'GET', true);
+    return await requester(`/ad/details/${adId}`, 'GET', true);
 }
 
 export async function applyForAd(adId, params) {

@@ -3,10 +3,8 @@ package com.tugab.adspartners.web.controllers;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
-import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
 import com.tugab.adspartners.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +55,10 @@ public class AdController {
         return this.adService.getFilters(filtersBindingModel);
     }
 
-    @GetMapping("/details/{id}")
-    public ResponseEntity<AdDetailsResponse> getDetails(@PathVariable("id") Long id) {
-        return this.adService.getDetails(id);
+    @GetMapping("/details/{adId}")
+    public ResponseEntity<?> getDetails(@PathVariable Long adId,
+                                        Authentication authentication) {
+        return this.adService.getDetails(adId, authentication);
     }
 
     @PostMapping(path = "/create")

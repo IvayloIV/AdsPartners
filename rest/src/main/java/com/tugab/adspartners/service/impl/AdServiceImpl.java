@@ -73,9 +73,7 @@ public class AdServiceImpl implements AdService {
     @Override
     public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Authentication authentication) {
         Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
-        boolean isYoutuber = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
+        boolean isYoutuber = this.checkYoutuberRole(authentication);
 
         if (isYoutuber) {
             adFilterBindingModel.setIsBlocked(false);
@@ -99,6 +97,12 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(adListResponse);
     }
 
+    private Boolean checkYoutuberRole(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
+    }
+
     private Ad setAdsCountToCompany(Ad ad) {
         Integer adsCount = ad.getCompany().getAds().size();
         ad.getCompany().setAdsCount(adsCount);
@@ -117,18 +121,23 @@ public class AdServiceImpl implements AdService {
     }
 
     private AdResponse setYoutuberApplication(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
+        RatingResponse ratingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
+        adResponse.setRatingResponse(ratingResponse);
+        return adResponse;
+    }
+
+    private RatingResponse getRatingResponse(Boolean isYoutuber, Authentication authentication, Long adId) {
         if (isYoutuber) {
             Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-            AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adResponse.getId(), youtuber.getId())
+            AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId())
                     .orElse(null);
 
             if (adRating != null) {
-                RatingResponse ratingResponse = this.modelMapper.map(adRating, RatingResponse.class);
-                adResponse.setRatingResponse(ratingResponse);
+                return this.modelMapper.map(adRating, RatingResponse.class);
             }
         }
 
-        return adResponse;
+        return null;
     }
 
     @Override
@@ -144,12 +153,21 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<AdDetailsResponse> getDetails(Long adId) {
-        Ad ad = this.adRepository.findById(adId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid ad id."));
-        this.setAdAverageRating(ad);
+    public ResponseEntity<?> getDetails(Long adId, Authentication authentication) {
+        Ad ad = this.adRepository.findById(adId).orElseThrow(null);
+        if (ad == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("adDetails.wrongId");
+            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        }
 
+        this.setAdAverageRating(ad);
         AdDetailsResponse adResponse = this.modelMapper.map(ad, AdDetailsResponse.class);
+
+        Boolean isYoutuber = this.checkYoutuberRole(authentication);
+        RatingResponse ratingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
+        adResponse.setRatingResponse(ratingResponse);
+        adResponse.setApplicationCount(ad.getApplicationList().size());
+
         return ResponseEntity.ok(adResponse);
     }
 
@@ -279,6 +297,12 @@ public class AdServiceImpl implements AdService {
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adList.wrongId");
             return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        } else if (ad.getIsBlocked()) {
+            String blockedAdMessage = this.resourceBundleUtil.getMessage("adDetails.blocked");
+            return new ResponseEntity<>(new MessagesResponse(blockedAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+        } else if (ad.getValidTo().compareTo(new Date()) < 0) {
+            String expiredAdMessage = this.resourceBundleUtil.getMessage("adDetails.expired");
+            return new ResponseEntity<>(new MessagesResponse(expiredAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         AdRating adRating = new AdRating();

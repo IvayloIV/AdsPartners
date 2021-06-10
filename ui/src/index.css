@@ -1188,6 +1188,223 @@ body {
     margin: 15px 0;
 }
 
+/*** Ad details ***/
+
+.ad-details {
+    background-color: #7599ff;
+    padding: 50px 0 10px 0;
+}
+
+.ad-details > h2 {
+    border: 3px solid white;
+    width: 500px;
+    color: white;
+    padding: 8px 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ad-details-container {
+    display: flex;
+    margin: 60px 0;
+    justify-content: center;
+}
+
+.ad-details-left-container {
+    background-color: white;
+    padding: 30px;
+    width: 450px;
+    box-shadow: 0px 0px 15px -1px rgb(0 0 0 / 75%);
+    margin-right: 40px;
+}
+
+.ad-details-img {
+    position: relative;
+}
+
+.ad-details-img img {
+    width: 100%;
+    border-radius: 10px;
+    height: 235px;
+}
+
+#ad-details-out-of-date {
+    filter: blur(3px);
+}
+
+.ad-details-out-of-date-text {
+    position: absolute;
+    top: 44%;
+    left: 56px;
+    color: red;
+    font-size: 26px;
+    font-weight: 900;
+    text-shadow: 4px 3px 5px rgb(8 8 8);
+    transform: rotate(23deg);
+}
+
+.ad-details-blocked-icon {
+    position: absolute;
+    top: 27%;
+    left: 133px;
+}
+
+#ad-details-blocked-ban-icon {
+    text-shadow: 0 0 8px rgb(8 8 8);
+}
+
+.ad-details-left-container > h2 {
+    font-size: 30px;
+    text-align: center;
+}
+
+.ad-details-rating {
+    margin-top: 20px;
+}
+
+.ad-details-rating span {
+    font-size: 18px;
+}
+
+.ad-details-left-container > h3 {
+    margin: 15px 0;
+}
+
+.ad-details-requirements ul {
+    padding: 0 30px;
+}
+
+.ad-details-yotuber-diff {
+    color: red;
+}
+
+.ad-details-date {
+    margin: 5px 0;
+}
+
+.ad-details-date > span {
+    font-weight: 900;
+}
+
+.ad-details-description {
+    margin-top: 25px;
+}
+
+.ad-details-description textarea {
+    padding: 10px 15px;
+    resize: none;
+    width: 100%;
+    height: 120px;
+}
+
+.ad-details-characteristics {
+    margin-top: 18px;
+}
+
+.ad-details-characteristics ul {
+    padding: 0 30px;
+}
+
+.ad-details-right-container {
+    width: 450px;
+}
+
+.ad-details-company-info {
+    background-color: white;
+    box-shadow: 0px 0px 15px -1px rgb(0 0 0 / 75%);
+    padding: 30px;
+    text-align: center;
+}
+
+.ad-details-company-info img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.ad-details-company-info h3:first-of-type {
+    border-bottom: 3px solid black;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+    font-size: 28px;
+}
+
+.ad-details-company-info h3:last-of-type {
+    margin: 15px 0 18px 0;
+    font-size: 20px;
+}
+
+.ad-details-apply-for {
+    background-color: white;
+    box-shadow: 0px 0px 15px -1px rgb(0 0 0 / 75%);
+    padding: 30px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.ad-details-apply-for-validation {
+    color: red;
+    font-style: italic;
+}
+
+.ad-details-apply-for textarea {
+    width: 100%;
+    resize: none;
+    padding: 10px 15px;
+    height: 160px;
+    font-size: 17px;
+    margin: 15px 0;
+    background-color: #F8F8F8;
+}
+
+.youtuber-applications-to-ad {
+    width: 63%;
+    margin: 10px auto;
+}
+
+.youtuber-applications-to-ad h2 {
+    border: 3px solid white;
+    width: 500px;
+    color: white;
+    padding: 8px 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ad-details-applicatoins-container {
+    background-color: white;
+    margin: 40px auto;
+    border: 2px solid #044283;
+    border-radius: 10px;
+    padding: 10px 0;
+}
+
+.ad-details-applicatoins-wrapper {
+    margin: 20px 0;
+    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 40%);
+    border-radius: 10px;
+    width: 300px;
+}
+
+.ad-details-applicatoins-wrapper img {
+    width: 100%;
+    height: 200px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.ad-details-application-info {
+    padding: 20px
+}
+
+.ad-details-application-info h3 {
+    font-size: 22px;
+}
+
+.ad-details-application-button {
+    text-align: center;
+    margin: 15px 0px 5px 0;
+}
+
 /* body {
   margin: 0;
   padding: 0;

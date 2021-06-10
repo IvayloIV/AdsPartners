@@ -4,7 +4,6 @@ import com.tugab.adspartners.domain.entities.Ad;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
-import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ public interface AdService {
 
     public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel);
 
-    public ResponseEntity<AdDetailsResponse> getDetails(Long adId);
+    public ResponseEntity<?> getDetails(Long adId, Authentication authentication);
 
     public ResponseEntity<?> createAd(CreateAdBindingModel createAdBindingModel, Errors errors);
 

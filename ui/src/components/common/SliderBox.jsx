@@ -18,7 +18,7 @@ export default ({ items, moveGap = 3 }) => {
 
     const responsive = {
         0: {
-            items: 3
+            items: moveGap
         }
     };
 

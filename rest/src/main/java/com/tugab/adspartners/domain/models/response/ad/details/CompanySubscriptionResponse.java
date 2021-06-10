@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class CompanySubscriptionResponse {
 
+    private Long id;
+
     private String logoUrl;
 
     private String userName;

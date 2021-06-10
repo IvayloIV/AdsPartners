@@ -3,7 +3,6 @@ package com.tugab.adspartners.web.controllers;
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.AdApplicationBindingModel;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
 import com.tugab.adspartners.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,9 @@ public class ApplicationController {
     }
 
     @PostMapping(path = "/applyfor/{adId}")
-    public ResponseEntity<MessageResponse> applyFor(@PathVariable Long adId,
-                                                    @RequestBody AdApplicationBindingModel adApplicationBindingModel,
-                                                    Authentication authentication) {
+    public ResponseEntity<?> applyFor(@PathVariable Long adId,
+                                      @RequestBody AdApplicationBindingModel adApplicationBindingModel,
+                                      Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         adApplicationBindingModel.setAdId(adId);
         adApplicationBindingModel.setYoutuber(youtuber);

@@ -52,7 +52,7 @@ class App extends Component {
                     <AnonymousRoute path="/admin/login" component={LoginAdmin} />
                     <AnonymousRoute path="/oauth2/redirect" component={OAuth2RedirectHandler} />
                     <PrivateRoute authorities={[YOUTUBER]} path="/ad/list" component={ListAd} />
-                    <PrivateRoute authorities={[YOUTUBER, EMPLOYER]} path="/ad/details/:adId" component={AdDetails} />
+                    <PrivateRoute authorities={[YOUTUBER, EMPLOYER, ADMIN]} path="/ad/details/:adId" component={AdDetails} />
                     <PrivateRoute authorities={[YOUTUBER]} path="/youtuber/profile" component={YoutuberDetails} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/details/:youtuberId" component={YoutuberDetails} />
                     <PrivateRoute authorities={[ADMIN, EMPLOYER]} path="/ad/create" component={CreateAd} />

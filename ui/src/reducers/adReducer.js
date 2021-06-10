@@ -20,9 +20,11 @@ export function adReducer(state = adState, action) {
         case VOTE_FOR_AD:
             let adList = Object.assign({}, state.list);
             let adItems = adList.items;
-            let ad = adItems.filter(i => i.id == action.data.adId)[0];
-            ad.ratingResponse = action.data;
-            adList.items = adItems;
+            if (adItems !== undefined) {
+                let ad = adItems.filter(i => i.id == action.data.adId)[0];
+                ad.ratingResponse = action.data;
+                adList.items = adItems;
+            }
             return Object.assign({}, state, { list: adList });
         case AD_COMPANY_LIST:
             return Object.assign({}, state, { list: action.data });
