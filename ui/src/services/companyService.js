@@ -1,7 +1,7 @@
 import requester, { baseUrl } from './requester';
 import toBase64 from './fileConverter';
 
-export async function registerCompany(params) {
+export const registerCompany = async (params) => {
     let logoBase64 = null;
 
     if (params.logo != null) {
@@ -21,59 +21,44 @@ export async function registerCompany(params) {
         logoBase64,
         adminRedirectUrl: baseUrl + "/company/requests"
     });
-}
+};
 
-export async function loginCompany(params) {
+export const loginCompany = async (params) => {
     return await requester('/company/login', 'POST', false, params);
-}
+};
 
-export async function getCompaniesByRating(pageSize) {
-    return await requester('/company/list/rating?size=' + pageSize, 'GET', false);
-}
-
-export async function getSubscribers() {
-    return await requester('/subscription/list', 'GET', true);
-}
-
-export async function changeSubscriberStatus(youtuberId, newStatus) {
-    return await requester(`/subscription`, 'PATCH', true, { 
-        isBlocked: newStatus,
-        youtuberId 
-    });
-}
-
-export async function getCompanyDetails(companyId) {
-    return await requester(`/company/details/${companyId}`, 'GET', true);
-}
-
-export async function getCompanyProfile() {
-    return await requester('/company/profile', 'GET', true);
-}
-
-export async function registerRequests() {
-    return await requester('/company/register/requests', 'GET', true);
-}
-
-export async function registerHistory() {
-    return await requester('/company/register/history', 'GET', true);
-}
-
-export async function updateRegisterStatus(companyId, status) {
-    return await requester(`/company/register/status/${companyId}`, 'PATCH', true, { status });
-}
-
-export async function getCompaniesByAds(params) {
+export const getList = async (params) => {
     let query = addQueryParams(params);
-    return await requester(`/company/list/ad${query}`, 'GET', true);
-}
+    return await requester(`/company/list${query}`, 'GET', true);
+};
 
-export async function getCompaniesFilters() {
+export const getCompaniesByRating = async (pageSize) => {
+    return await requester('/company/list/rating?size=' + pageSize, 'GET', false);
+};
+
+export const getCompaniesFilters = async () => {
     return await requester('/company/filters', 'GET', true);
-}
+};
 
-export async function offerPartnership(adId, youtuberId, description) {
-    return await requester('/company/offer', 'POST', true, { adId, youtuberId, description });
-}
+export const getCompanyProfile = async () => {
+    return await requester('/company/profile', 'GET', true);
+};
+
+export const getCompanyDetails = async (companyId) => {
+    return await requester(`/company/details/${companyId}`, 'GET', true);
+};
+
+export const getRegisterRequests = async () => {
+    return await requester('/company/register/requests', 'GET', true);
+};
+
+export const getRegisterHistory = async () => {
+    return await requester('/company/register/history', 'GET', true);
+};
+
+export const updateRegisterStatus = async (companyId, status) => {
+    return await requester(`/company/register/status/${companyId}`, 'PATCH', true, { status });
+};
 
 function addQueryParams(params) { //TODO: clear code
     let query = '?';

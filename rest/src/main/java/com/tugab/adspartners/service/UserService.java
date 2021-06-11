@@ -36,11 +36,9 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<?> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
 
-    public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size);
+    public ResponseEntity<List<CompanyInfoResponse>> getCompaniesByRating(Integer size);
 
-    public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel);
+    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFilterBindingModel companyFilterBindingModel);
 
     public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters();
-
-    public ResponseEntity<MessageResponse> companyOffer(CompanyOfferBindingModel companyOfferBindingModel, Company company);
 }

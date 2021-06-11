@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
 import { Button } from 'semantic-ui-react';
-import validations from '../../validations/login';
+import * as validations from '../../validations/login';
 import { loginCompanyAction } from '../../actions/companyActions';
 
 export default props => {
@@ -25,7 +25,7 @@ export default props => {
         setValue(value);
     };
 
-    const onSubmitHandler = e => {
+    const onSubmitHandler = async (e) => {
         e.preventDefault();
         let haveError = false;
 
@@ -38,13 +38,11 @@ export default props => {
         }
 
         const params = { email, password };
+        const json = await dispatch(loginCompanyAction(params))
 
-        dispatch(loginCompanyAction(params))
-            .then(json => {
-                if (json !== null) {
-                    props.history.push("/");
-                }
-            })
+        if (json !== null) {
+            props.history.push("/");
+        }
     };
 
     const validateField = (name, value, setValidation) => {

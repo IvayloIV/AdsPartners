@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { getSubscribersAction, changeSubscriberStatusAction } from '../../actions/companyActions';
+import { getSubscribersAction, updateSubscriberStatusAction } from '../../actions/subscriptionActions';
 import YoutuberCard from '../Youtube/YoutuberCard';
 
 export default () => {
     const [tabValue, setTabValue] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const subscribers = useSelector(state => state.company.subscribers);
+    const subscribers = useSelector(state => state.subscription.list);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -18,7 +18,7 @@ export default () => {
     }, []);
 
     const onChangeStatus = async (e, youtuberId) => {
-        const result = await dispatch(changeSubscriberStatusAction(youtuberId, e.target.checked));
+        const result = await dispatch(updateSubscriberStatusAction(youtuberId, e.target.checked));
         if (result != null) {
             setTabValue((tabValue + 1) % 2);
         }

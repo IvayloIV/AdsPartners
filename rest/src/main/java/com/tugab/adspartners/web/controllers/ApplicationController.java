@@ -52,10 +52,4 @@ public class ApplicationController {
         adApplicationBindingModel.setYoutuber(youtuber);
         return this.applicationService.applyFor(adApplicationBindingModel);
     }
-
-//    @GetMapping("/youtuber/applications") //TODO: temp method, remove it after finish work
-//    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuber(Authentication authentication) {
-//        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-//        return this.adService.getApplicationsByYoutuberId(youtuber.getId());
-//    }
 }

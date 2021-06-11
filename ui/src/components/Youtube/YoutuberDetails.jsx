@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from 'react-router-dom';
 import { Table, TextArea, Icon, Button } from 'semantic-ui-react';
 import { getYoutuberProfileAction, refreshYoutuberDataAction, getYoutuberDetailsAction } from '../../actions/youtubeActions';
-import { getYoutuberApplicationAction } from '../../actions/adActions';
+import { getApplicationsByYoutuberAction } from '../../actions/applicationActions';
 import { hasRole } from '../../utils/AuthUtil';
 import { YOUTUBER } from '../../utils/Roles';
 
@@ -11,7 +11,7 @@ export default props => {
     const [loading, setLoading] = useState(true);
 
     const youtuberDetails = useSelector(state => state.youtube.details);
-    const applications = useSelector(state => state.ad.applications);
+    const applications = useSelector(state => state.application.list);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -21,7 +21,7 @@ export default props => {
             } else {
                 const youtuberId = props.match.params.youtuberId;
                 await dispatch(getYoutuberDetailsAction(youtuberId));
-                await dispatch(getYoutuberApplicationAction(youtuberId));
+                await dispatch(getApplicationsByYoutuberAction(youtuberId));
             }
 
             setLoading(false);
@@ -59,7 +59,7 @@ export default props => {
                     <p>Видеа - {youtuberDetails.videoCount}</p>
                     <p>Показвания - {youtuberDetails.viewCount}</p>
                     <p>Член от {new Date(youtuberDetails.publishedAt).toLocaleDateString()}</p>
-                    <p>Обновен в {new Date(youtuberDetails.updateDate).toLocaleString()}</p>
+                    <p>Обновен на {new Date(youtuberDetails.updateDate).toLocaleString()}</p>
                 </div>
                 <div className="youtuber-details-buttons">
                     {isYoutuber && <Button color='orange'
@@ -73,7 +73,7 @@ export default props => {
                         id="youtuber-details-show-channel"
                         as="a"
                         href={'https://www.youtube.com/channel/' + youtuberDetails.channelId} target="_blank">
-                            <Icon name='youtube' /> Виж канала
+                            <Icon name='youtube' /> Виж в YouTube
                     </Button>
                 </div>
             </div>

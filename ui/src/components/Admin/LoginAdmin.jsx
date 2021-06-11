@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { toast } from 'react-toastify';
 import TextField from '@material-ui/core/TextField';
 import { Button } from 'semantic-ui-react';
-import validations from '../../validations/login';
+import * as validations from '../../validations/login';
 import { loginAdminAction } from '../../actions/adminActions';
 
 export default props => {

@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { TextArea, Icon, Button } from 'semantic-ui-react';
 import SliderBox from '../common/SliderBox';
 import AdCard from './../Ad/AdCard';
-import { getCompanyAdsAction, getApplicationsByCompanyAction, getCompanyAdsByIdAction } from '../../actions/adActions';
+import { getCompanyAdsAction, getCompanyAdsByIdAction } from '../../actions/adActions';
+import { getApplicationsByCompanyAction } from '../../actions/applicationActions';
 import { getCompanyDetailsAction, getCompanyProfileAction } from '../../actions/companyActions';
-import { checkSubscriptionAction, subscribeAction } from '../../actions/youtubeActions';
+import { subscribeAction, checkSubscriptionAction } from '../../actions/subscriptionActions';
 import { hasRole } from '../../utils/AuthUtil';
 import { EMPLOYER, YOUTUBER } from '../../utils/Roles';
 
@@ -14,8 +15,8 @@ export default props => {
 
     const companyDetails = useSelector(state => state.company.details);
     const ads = useSelector(state => state.ad.list.items);
-    const applications = useSelector(state => state.ad.applications);
-    const isSubscriber = useSelector(state => state.youtube.isSubscriber);
+    const applications = useSelector(state => state.application.list);
+    const isSubscriber = useSelector(state => state.subscription.isSubscriber);
     const dispatch = useDispatch();
 
     useEffect(() => {

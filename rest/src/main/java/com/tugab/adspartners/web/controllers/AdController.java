@@ -27,27 +27,27 @@ public class AdController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel,
+    public ResponseEntity<AdListResponse> list(AdFilterBindingModel adFilterBindingModel,
                                                   Authentication authentication) {
-        return this.adService.adsList(adFilterBindingModel, authentication);
+        return this.adService.getList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company")
-    public ResponseEntity<AdListResponse> adsListByCompany(AdFilterBindingModel adFilterBindingModel,
-                                                           Authentication authentication) {
+    public ResponseEntity<AdListResponse> companyAds(AdFilterBindingModel adFilterBindingModel,
+                                                    Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
         adFilterBindingModel.setCompanyId(company.getId());
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel, authentication);
+        return this.adService.getList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company/{id}")
-    public ResponseEntity<AdListResponse> adsListByCompanyId(AdFilterBindingModel adFilterBindingModel,
-                                                            @PathVariable("id") Long companyId,
-                                                            Authentication authentication) {
+    public ResponseEntity<AdListResponse> companyAdsById(AdFilterBindingModel adFilterBindingModel,
+                                                        @PathVariable("id") Long companyId,
+                                                        Authentication authentication) {
         adFilterBindingModel.setCompanyId(companyId);
         adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.adsList(adFilterBindingModel, authentication);
+        return this.adService.getList(adFilterBindingModel, authentication);
     }
 
     @GetMapping("/filters")
@@ -96,11 +96,11 @@ public class AdController {
 
     @PatchMapping("/block/{id}")
     public ResponseEntity<?> blockAd(@PathVariable("id") Long adId) {
-        return this.adService.changeAdBlockingStatus(adId, true);
+        return this.adService.updateAdBlockingStatus(adId, true);
     }
 
     @PatchMapping("/unblock/{id}")
     public ResponseEntity<?> unblockAd(@PathVariable("id") Long adId) {
-        return this.adService.changeAdBlockingStatus(adId, false);
+        return this.adService.updateAdBlockingStatus(adId, false);
     }
 }

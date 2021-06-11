@@ -26,13 +26,7 @@ public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAu
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication);
 
-    public ResponseEntity<List<YoutuberInfoResponse>> getYoutubersBySubscribers(Integer size);
-
-    public ResponseEntity<YoutuberListResponse> getYoutubersList(YoutuberFilterBindingModel youtuberFilterBindingModel);
-
-    public ResponseEntity<FiltersResponse> getYoutuberFilters();
-
-    public ResponseEntity<YoutuberRatingResponse> vote(Long youtuberId, RatingBindingModel ratingBindingModel, Company company);
+    public ResponseEntity<List<YoutuberInfoResponse>> getList(Integer size);
 
     public ResponseEntity<?> getDetails(Long youtuberId, Boolean excludeApplications);
 }

@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Button, Rating, Icon, TextArea } from 'semantic-ui-react';
 import SliderBox from '../common/SliderBox';
-import { getAdDetailsAction, applyForAdAction, voteForAdAction, getApplicationsAction } from '../../actions/adActions';
+import { getAdDetailsAction, voteForAdAction } from '../../actions/adActions';
+import { getApplicationsByAdAction, applyForAdAction } from '../../actions/applicationActions';
 import { getYoutuberProfileAction } from '../../actions/youtubeActions';
 import { hasRole, hasAnyRole } from '../../utils/AuthUtil';
 import { YOUTUBER, EMPLOYER, ADMIN } from '../../utils/Roles';
@@ -13,7 +14,7 @@ export default props => {
     const [loading, setLoading] = useState(true);
 
     const ad = useSelector(state => state.ad.details);
-    const applications = useSelector(state => state.ad.applications);
+    const applications = useSelector(state => state.application.list);
     const youtuber = useSelector(state => state.youtube.details);
     const dispatch = useDispatch();
 
@@ -25,7 +26,7 @@ export default props => {
             if (hasRole(YOUTUBER)) {
                 await dispatch(getYoutuberProfileAction());
             } else {
-                await dispatch(getApplicationsAction(adId));
+                await dispatch(getApplicationsByAdAction(adId));
             }
             
             setLoading(false);
@@ -132,7 +133,7 @@ export default props => {
                         </div>
                     </div>
                     {notApplied && <div className="ad-details-apply-for">
-                        <h2>Изпрати предложение за парьорство:</h2>
+                        <h2>Изпрати предложение за партньорство:</h2>
                         {ad.isBlocked && <p className="ad-details-apply-for-validation">Рекламната обява е блокирана.</p>}
                         {outOfDate && <p className="ad-details-apply-for-validation">Рекламната обява е изтекла.</p>}
                         {(!haveEnoughtVideos || !haveEnoughtSubs || !haveEnoughtViews) && 

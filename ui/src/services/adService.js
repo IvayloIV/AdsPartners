@@ -1,7 +1,29 @@
 import requester, { baseUrl } from './requester';
 import toBase64 from './fileConverter';
 
-export async function createAd(params) {
+export const getAds = async (params) => {
+    let query = addQueryParams(params);
+    return await requester(`/ad/list${query}`, 'GET', true);
+};
+
+export const getCompanyAds = async () => {
+    return await requester('/ad/list/company', 'GET', true);
+};
+
+export const getCompanyAdsById = async (companyId) => {
+    return await requester(`/ad/list/company/${companyId}`, 'GET', true);
+};
+
+export const getFilters = async (params) => {
+    let query = addQueryParams(params);
+    return await requester(`/ad/filters${query}`, 'GET', true);
+};
+
+export const getAdDetails = async (adId) => {
+    return await requester(`/ad/details/${adId}`, 'GET', true);
+};
+
+export const createAd = async (params) => {
     let pictureBase64 = await toBase64(params.picture);
 
     return await requester('/ad/create', 'POST', true, {
@@ -16,9 +38,9 @@ export async function createAd(params) {
         characteristics: params.characteristics,
         remoteUrl: baseUrl
     });
-}
+};
 
-export async function editAd(adId, params) {
+export const editAd = async (adId, params) => {
     let pictureBase64 = null;
     if (params.picture != null) {
         pictureBase64 = await toBase64(params.picture);
@@ -35,61 +57,23 @@ export async function editAd(adId, params) {
         pictureBase64,
         characteristics: params.characteristics
     });
-}
+};
 
-export async function deleteAd(adId) {
+export const deleteAd = async (adId) => {
     return await requester(`/ad/delete/${adId}`, 'DELETE', true);
-}
+};
 
-export async function getAds(params) {
-    let query = addQueryParams(params);
-    return await requester(`/ad/list${query}`, 'GET', true);
-}
-
-export async function getCompanyAds() {
-    return await requester('/ad/list/company', 'GET', true);
-}
-
-export async function getCompanyAdsById(companyId) {
-    return await requester(`/ad/list/company/${companyId}`, 'GET', true);
-}
-
-export async function getAdDetails(adId) {
-    return await requester(`/ad/details/${adId}`, 'GET', true);
-}
-
-export async function applyForAd(adId, params) {
-    return await requester(`/application/applyfor/${adId}`, 'POST', true, params);
-}
-
-export async function getApplicationsByYoutuber(youtuberId) {
-    return await requester(`/application/youtuber/${youtuberId}`, 'GET', true);
-}
-
-export async function getApplicationsByCompany(companyId) {
-    return await requester(`/application/company/${companyId}`, 'GET', true);
-}
-
-export async function getApplications(adId) {
-    return await requester(`/application/ad/${adId}`, 'GET', true);
-}
-
-export async function voteForAd(adId, rating) {
+export const voteForAd = async (adId, rating) => {
     return await requester(`/ad/vote/${adId}`, 'POST', true, { rating });
-}
+};
 
-export async function getFilters(params) {
-    let query = addQueryParams(params);
-    return await requester(`/ad/filters${query}`, 'GET', true);
-}
-
-export async function blockAd(adId) {
+export const blockAd = async (adId) => {
     return await requester(`/ad/block/${adId}`, 'PATCH', true);
-}
+};
 
-export async function unblockAd(adId) {
+export const unblockAd = async (adId) => {
     return await requester(`/ad/unblock/${adId}`, 'PATCH', true);
-}
+};
 
 function addQueryParams(params) {
     let query = '?';

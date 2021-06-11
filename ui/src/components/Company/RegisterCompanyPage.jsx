@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Button } from 'semantic-ui-react';
-import validations from '../../validations/register';
+import * as validations from '../../validations/register';
 import {  registerCompanyAction } from '../../actions/companyActions';
 
 export default props => {

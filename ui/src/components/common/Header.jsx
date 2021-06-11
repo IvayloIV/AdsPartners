@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Menu, Dropdown, Icon } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
+import handshake from '../../images/handshake.png';
 import { googleRequestUrl } from '../../services/requester';
 import { getCookie } from '../../utils/CookiesUtil';
 import { hasRole, isAuthed } from '../../utils/AuthUtil';
@@ -21,7 +22,50 @@ export default class Header extends Component {
 
         return (
             <header>
-                <Menu color='blue' inverted>
+                <nav className="navigation">
+                    <div className="nav-text">
+                        <NavLink to="/">
+                            <h1>
+                                <span>Ads</span>
+                                <img src={handshake} alt="Handshake logo"/>
+                                <span>Partners</span>
+                            </h1>
+                        </NavLink>
+                        {isAuthed() && <h2>Добре дошли, {getCookie("username")}!</h2>}
+                    </div>
+                    <div className="nav-items">
+                        <ul>
+                            <li><NavLink to="/" activeClassName="active-tab" exact={true}>Начало</NavLink></li>
+                            {!isAuthed() && 
+                                <Dropdown text='Вход' pointing className='link item' id="menu-dropdown">
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item
+                                            as={NavLink}
+                                            to="/company/login"
+                                        >За компании</Dropdown.Item>
+                                        <Dropdown.Item
+                                            as='a'
+                                            href={googleRequestUrl}
+                                        >За ютубъри</Dropdown.Item>
+                                        <Dropdown.Item
+                                            as={NavLink}
+                                            to="/admin/login"
+                                        >За администратори</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>}
+                            {!isAuthed() && <li><NavLink to="/company/register" activeClassName="active-tab">Регистрирай компания</NavLink></li>}
+                            {isEmployer && <li><NavLink to="/ad/create" activeClassName="active-tab">Създай реклама</NavLink></li>}
+                            {isEmployer && <li><NavLink to="/company/subscribers" activeClassName="active-tab">Абонати</NavLink></li>}
+                            {isEmployer && <li><NavLink to="/company/profile" activeClassName="active-tab">Профил</NavLink></li>}
+                            {isAdmin && <li><NavLink to="/company/requests" activeClassName="active-tab">Заявки на компаниите</NavLink></li>}
+                            {isAdmin && <li><NavLink to="/company/block" activeClassName="active-tab">Управление на обявите</NavLink></li>}
+                            {isYoutuber && <li><NavLink to="/ad/list" activeClassName="active-tab">Списък на обявите</NavLink></li>}
+                            {isYoutuber && <li><NavLink to="/youtuber/profile" activeClassName="active-tab">Профил</NavLink></li>}
+                            {isAuthed() && <li><span onClick={onLogout}>Изход</span></li>}
+                        </ul>
+                    </div>
+                </nav>
+                {/* <Menu color='blue' inverted>
                     <NavLink to="/">
                         <h2 id="menu-logo">
                             Ads <Icon color='orange' name='handshake outline'/> Partners
@@ -132,7 +176,7 @@ export default class Header extends Component {
                             onClick={onLogout}
                         >Изход</Menu.Item>}
                     </Menu.Menu>
-                </Menu>
+                </Menu> */}
             </header>
         );
     }

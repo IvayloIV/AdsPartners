@@ -1,12 +1,12 @@
-function userName(value) {
+export const userName = value => {
     if (value.length < 3 || value.length > 256) {
         return 'Името трябва да е между 2 и 257 символа.';
     }
 
     return '';
-}
+};
 
-function userEmail(value) {
+export const userEmail = value => {
     if (value.length < 5 || value.length > 256) {
         return 'Мейлът трябва да е между 4 и 257 символа.';
     }
@@ -16,25 +16,25 @@ function userEmail(value) {
     }
 
     return '';
-}
+};
 
-function userPassword(value) {
+export const userPassword = value => {
     if (value.length < 3) {
         return 'Паролата трябва да е поне 3 символа.';
     }
 
     return '';
-}
+};
 
-function phone(value) {
+export const phone = value => {
     if (value.length < 3 || value.length > 64) {
         return 'Телефонът трябва да е между 2 и 65 символа.';
     }
 
     return '';
-}
+};
 
-function incomeLastYear(value) {
+export const incomeLastYear = value => {
     if (value === null) {
         return 'Задължително е да има стойност.';
     }
@@ -44,17 +44,17 @@ function incomeLastYear(value) {
     }
 
     return '';
-}
+};
 
-function town(value) {
+export const town = value => {
     if (value.length < 3 || value.length > 256) {
         return 'Градът трябва да е между 2 и 257 символа.';
     }
 
     return '';
-}
+};
 
-function description(value) {
+export const description = value => {
     if (value.length === 0) {
         return 'Описанието е задължително.';
     }
@@ -64,22 +64,20 @@ function description(value) {
     }
 
     return '';
-}
+};
 
-function companyCreationDate(value) {
+export const companyCreationDate = value => {
     if (value === '') {
         return 'Задължително е да зададете дата.';
     }
 
     return '';
-}
+};
 
-function logo(value) {
+export const logo = value => {
     if (value === null) {
         return 'Задължително е да въведете лого.';
     }
 
     return '';
-}
-
-export default { userName, userEmail, userPassword, phone, incomeLastYear, town, description, companyCreationDate, logo };
+};

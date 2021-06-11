@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Button } from 'semantic-ui-react'
-import { getCompaniesRequests, getCompaniesHistoryAction, updateCompanyStatusAction } from '../../actions/companyActions';
+import { getCompanyRequestsAction, getCompaniesHistoryAction, updateCompanyStatusAction } from '../../actions/companyActions';
 
 export default () => {
     const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ export default () => {
 
     useEffect(() => {
         (async () => {
-            await dispatch(getCompaniesRequests());
+            await dispatch(getCompanyRequestsAction());
             await dispatch(getCompaniesHistoryAction());
             setLoading(false);
         })();
@@ -60,7 +60,7 @@ export default () => {
             </Table>
             <hr/>
             <h2 id="company-history-title">История на обработените заявки</h2>
-            <Table id="company-history-table" color='green' key='company-history-table'>
+            <Table id="company-history-table" color='yellow' key='company-history-table'>
                 <Table.Header>
                     <Table.Row textAlign="center">
                         <Table.HeaderCell>Име</Table.HeaderCell>

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import { logoutAction } from './actions/companyActions';
+import { logoutAction } from './actions/commonActions';
 
 import Header from './components/common/Header';
+import Footer from './components/common/Footer';
 import RegisterCompanyPage from './components/Company/RegisterCompanyPage';
 import LoginCompanyPage from './components/Company/LoginCompanyPage';
 import LoginAdmin from './components/Admin/LoginAdmin';
@@ -21,8 +22,6 @@ import CompanyDetailsPage from './components/Company/CompanyDetailsPage';
 import RegisterRequests from './components/Company/RegisterRequests';
 import CompanyBlockPage from './components/Company/CompanyBlockPage';
 import EditAd from './components/Ad/EditAd';
-import ListYoutuber from './components/Youtube/ListYoutuber';
-import OfferPartnership from './components/Company/OfferPartnership';
 import YoutuberDetails from './components/Youtube/YoutuberDetails';
 import { YOUTUBER, EMPLOYER, ADMIN } from './utils/Roles';
 
@@ -57,15 +56,14 @@ class App extends Component {
                     <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/details/:youtuberId" component={YoutuberDetails} />
                     <PrivateRoute authorities={[ADMIN, EMPLOYER]} path="/ad/create" component={CreateAd} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/ad/edit/:adId" component={EditAd} />
-                    <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/offer/:youtuberId" component={OfferPartnership} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/company/subscribers" component={SubscribersPage} />
                     <PrivateRoute authorities={[YOUTUBER]} path="/company/:companyId/unsubscribe" component={UnsubscribePage} />
                     <PrivateRoute authorities={[YOUTUBER, ADMIN]} path="/company/details/:companyId" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/company/profile" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={[ADMIN]} path="/company/requests" component={RegisterRequests} />
                     <PrivateRoute authorities={[ADMIN]} path="/company/block" component={CompanyBlockPage} />
-                    <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/list" component={ListYoutuber} />
                 </Switch>
+                <Footer />
             </div>
         );
     }

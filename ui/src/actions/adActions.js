@@ -1,156 +1,88 @@
 import { toast } from 'react-toastify';
-import { AD_LIST, AD_DETAILS, AD_FILTERS, AD_APPLICATIONS, AD_COMPANY_LIST, 
-    COMPANY_APPLICATIONS_LIST, BLOCK_AD, UNBLOCK_AD, YOUTUBER_APPLICATIONS, DELETE_AD, VOTE_FOR_AD } from '../actions/actionTypes';
-import { createAd, editAd, getAds, getAdDetails, getFilters, voteForAd, applyForAd, getApplications, 
-    getCompanyAds, getApplicationsByCompany, getCompanyAdsById, blockAd, unblockAd, deleteAd,
-    getApplicationsByYoutuber } from '../services/adService';
+import * as types from '../actions/actionTypes';
+import * as adService from '../services/adService';
+import { handleException } from './commonActions';
 
-const getAllAdsAction = params => {
+export const getAllAdsAction = params => {
     return async (dispatch) => {
-        const json = await getAds(params);
-        dispatch({ type: AD_LIST, data: json });
+        const json = await adService.getAds(params);
+        dispatch({ type: types.AD_LIST, data: json });
     };
 };
 
-const getCompanyAdsAction = () => {
+export const getCompanyAdsAction = () => {
     return async (dispatch) => {
-        const json = await getCompanyAds();
-        dispatch({ type: AD_COMPANY_LIST, data: json });
+        const json = await adService.getCompanyAds();
+        dispatch({ type: types.AD_COMPANY_LIST, data: json });
     };
 };
 
-const getCompanyAdsByIdAction = companyId => {
+export const getCompanyAdsByIdAction = companyId => {
     return async (dispatch) => {
-        const json = await getCompanyAdsById(companyId);
-        dispatch({ type: AD_COMPANY_LIST, data: json });
+        const json = await adService.getCompanyAdsById(companyId);
+        dispatch({ type: types.AD_COMPANY_LIST, data: json });
     };
 };
 
-const getAdDetailsAction = adId => {
+export const getAdFiltersAction = params => {
     return async (dispatch) => {
-        try {
-            const json = await getAdDetails(adId);
-            dispatch({ type: AD_DETAILS, data: json });
-        } catch(err) {
-            err.messages.forEach(e => toast.error(e));
-        }
+        const json = await adService.getFilters(params);
+        dispatch({ type: types.AD_FILTERS, data: json });
     };
 };
 
-const applyForAdAction = (adId, params) => {
-    return async () => {
-        try {
-            const json = await applyForAd(adId, params);
-            toast.success(json.message);
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-        }
-    };
+export const getAdDetailsAction = adId => {
+    return handleException(async (dispatch) => {
+        const json = await adService.getAdDetails(adId);
+        dispatch({ type: types.AD_DETAILS, data: json });
+        return json;
+    });
 };
 
-const getApplicationsByCompanyAction = companyId => {
-    return async (dispatch) => {
-        const json = await getApplicationsByCompany(companyId);
-        dispatch({ type: COMPANY_APPLICATIONS_LIST, data: json });
-    };
+export const createAdAction = params => {
+    return handleException(async () => {
+        const json = await adService.createAd(params);
+        toast.success(json.message);
+        return json;
+    });
 };
 
-const getApplicationsAction = adId => {
-    return async (dispatch) => {
-        const json = await getApplications(adId);
-        dispatch({ type: AD_APPLICATIONS, data: json });
-    };
+export const editAdAction = (adId, params) => {
+    return handleException(async () => {
+        const json = await adService.editAd(adId, params);
+        toast.success(json.message);
+        return json;
+    });
 };
 
-const getAdsFiltersAction = params => {
-    return async (dispatch) => {
-        const json = await getFilters(params);
-        dispatch({ type: AD_FILTERS, data: json });
-    };
+export const deleteAdAction = adId => {
+    return handleException(async (dispatch) => {
+        const json = await adService.deleteAd(adId);
+        dispatch({ type: types.DELETE_AD, data: adId });
+        toast.success(json.message);
+    });
 };
 
-const voteForAdAction = (adId, rating) => {
-    return async (dispatch) => {
-        try {
-            const json = await voteForAd(adId, rating);
-            dispatch({ type: VOTE_FOR_AD, data: json });
-            toast.success(`Благодарим за вашата оценка.`);
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-        }
-    };
+export const voteForAdAction = (adId, rating) => {
+    return handleException(async (dispatch) => {
+        const json = await adService.voteForAd(adId, rating);
+        dispatch({ type: types.VOTE_FOR_AD, data: json });
+        toast.success(`Благодарим за вашата оценка.`);
+    });
 };
 
-const createAdAction = params => {
-    return async () => {
-        try {
-            const json = await createAd(params);
-            toast.success(json.message);
-            return json;
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-            return null;
-        }
-    };
+export const blockAdAction = adId => {
+    return handleException(async (dispatch) => {
+        const json = await adService.blockAd(adId);
+        dispatch({ type: types.BLOCK_AD, adId });
+        toast.success(json.message);
+    });
 };
 
-const editAdAction = (adId, params) => {
-    return async () => {
-        try {
-            const json = await editAd(adId, params);
-            toast.success(json.message);
-            return json;
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-            return null;
-        }
-    };
+export const unblockAdAction = adId => {
+    return handleException(async (dispatch) => {
+        const json = await adService.unblockAd(adId);
+        dispatch({ type: types.UNBLOCK_AD, adId });
+        toast.success(json.message);
+    });
 };
-
-const deleteAdAction = adId => {
-    return async (dispatch) => {
-        try {
-            const json = await deleteAd(adId);
-            dispatch({ type: DELETE_AD, data: adId });
-            toast.success(json.message);
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-        }
-    };
-};
-
-const blockAdAction = adId => {
-    return async (dispatch) => {
-        try {
-            const json = await blockAd(adId);
-            dispatch({ type: BLOCK_AD, adId });
-            toast.success(json.message);
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-        }
-    };
-};
-
-const unblockAdAction = adId => {
-    return async (dispatch) => {
-        try {
-            const json = await unblockAd(adId);
-            dispatch({ type: UNBLOCK_AD, adId });
-            toast.success(json.message);
-        } catch (err) {
-            err.messages.forEach(e => toast.error(e));
-        }
-    };
-};
-
-const getYoutuberApplicationAction = youtuberId => {
-    return async (dispatch) => {
-        const json = await getApplicationsByYoutuber(youtuberId);
-        dispatch({ type: YOUTUBER_APPLICATIONS, data: json });
-    };
-};
-
-export { getAllAdsAction, getCompanyAdsAction, getAdDetailsAction, getAdsFiltersAction, 
-    createAdAction, editAdAction, deleteAdAction, voteForAdAction, applyForAdAction, getApplicationsAction, 
-    getApplicationsByCompanyAction, getCompanyAdsByIdAction, blockAdAction, unblockAdAction,
-    getYoutuberApplicationAction };

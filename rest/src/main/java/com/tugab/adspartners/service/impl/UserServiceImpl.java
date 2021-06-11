@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<List<CompanyInfoResponse>> getCompanyList(Integer size) {
+    public ResponseEntity<List<CompanyInfoResponse>> getCompaniesByRating(Integer size) {
         Pageable companyPageable = PageRequest.of(0, size);
         Page<Object[]> companiesPage = this.companyRepository.findTopCompaniesByRating(companyPageable);
 
@@ -271,7 +271,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<CompanyAdsListResponse> getCompaniesAds(CompanyFilterBindingModel companyFilterBindingModel) {
+    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFilterBindingModel companyFilterBindingModel) {
         int page = companyFilterBindingModel.getPage() - 1;
         Integer size = companyFilterBindingModel.getSize();
         Pageable companyPageable = PageRequest.of(page, size);
@@ -302,41 +302,6 @@ public class UserServiceImpl implements UserService {
         CompanyFiltersResponse companyFilters = new CompanyFiltersResponse();
         companyFilters.setAdCounts(adCounts);
         return ResponseEntity.ok(companyFilters);
-    }
-
-    @Override
-    public ResponseEntity<MessageResponse> companyOffer(CompanyOfferBindingModel companyOfferBindingModel, Company company) {
-        final Long youtuberId = companyOfferBindingModel.getYoutuberId();
-        final Long adId = companyOfferBindingModel.getAdId();
-
-        Ad ad = this.adRepository.findById(adId).orElse(null);
-        if (ad == null) {
-            return new ResponseEntity<>(new MessageResponse("Ad not found."), HttpStatus.NOT_FOUND);
-        }
-
-        if (!ad.getCompany().getId().equals(company.getId())) {
-            return new ResponseEntity<>(new MessageResponse("You are not owner of the ad."), HttpStatus.FORBIDDEN);
-        }
-
-        Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElse(null);
-
-        if (youtuber == null) {
-            return new ResponseEntity<>(new MessageResponse("Youtuber not found."), HttpStatus.NOT_FOUND);
-        }
-
-        if (ad.getApplicationList().stream().anyMatch(a -> a.getId().getYoutuber().getId().equals(youtuberId) && a.getId().getAd().getId().equals(adId))) {
-            return new ResponseEntity<>(new MessageResponse("Youtuber already received offer or applied for this ad."), HttpStatus.FORBIDDEN);
-        }
-
-        AdApplication adApplication = new AdApplication();
-        adApplication.setId(new AdApplicationId(ad, youtuber));
-        adApplication.setDescription(companyOfferBindingModel.getDescription());
-        adApplication.setApplicationDate(new Date());
-        adApplication.setMailSent(false); //TODO: send mail here
-        adApplication.setType(ApplicationType.COMPANY_SENT);
-
-        this.adApplicationRepository.save(adApplication);
-        return ResponseEntity.ok(new MessageResponse("You have just offered new partnership."));
     }
 
     @Override

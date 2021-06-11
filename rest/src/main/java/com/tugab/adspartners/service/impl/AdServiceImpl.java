@@ -71,7 +71,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Authentication authentication) {
+    public ResponseEntity<AdListResponse> getList(AdFilterBindingModel adFilterBindingModel, Authentication authentication) {
         Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
         boolean isYoutuber = this.checkYoutuberRole(authentication);
 
@@ -316,7 +316,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<?> changeAdBlockingStatus(Long adId, Boolean isBlocked) {
+    public ResponseEntity<?> updateAdBlockingStatus(Long adId, Boolean isBlocked) {
         Ad ad = this.adRepository.findById(adId).orElse(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adStatus.wrongId");

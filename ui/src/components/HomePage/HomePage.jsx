@@ -45,33 +45,33 @@ export default () => {
             <section className="about-us">
                 <h2>За нас</h2>
                 <hr />
-                <p>Сайтът е създаден през 2021, като разработка на дипломна работа в ТУ-Габрово.
-                    Нащата цел е да свърже по най-лесния и успешен начин инициативни компании и активни ютубъри.
-                    Осигурявайки сигурност, лоялност и печалба от двете страни на партньорство.
+                <p>Сайтът е създаден през 2021 г, като разработка на дипломна работа в ТУ- Габрово.
+                    Нашата цел е да свърже по най-лесния и успешен начин инициативни компании и активни ютубъри,
+                    осигурявайки сигурност, лоялност и печалба от двете страни на партньорството.
                 </p>
             </section>
             <section className="company-home-container">
                 <div className="company-title">
-                    <h2>Топ 10 Компании с най-добър рейтинг</h2>
+                    <h2><span>Топ 10</span> Компании с най-добър рейтинг</h2>
                     <hr />
                 </div>
                 <SliderBox items={companies.map(c => <CompanyBox company={c} />)} />
             </section>
             <section className="about-you">
-                <h2>Както ще направим за Вас</h2>
+                <h2>Какво ще направим за Вас</h2>
                 <hr />
-                <p>Създаваме най-добрите маркетинг партньори в 3 лесни стъпки</p>
+                <p>Създаваме най-добрите маркетинг партньори в три лесни стъпки</p>
                 <div>
                     <span>правилен избор на партньор</span>
                     <Icon name='long arrow alternate right' size="huge" color="blue" />
-                    <span>осъществен контант</span>
+                    <span>осъществен контакт</span>
                     <Icon name='long arrow alternate right' size="huge" color="blue" />
                     <span>успешен бизнес</span>
                 </div>
             </section>
             <section className="youtber-home-container">
                 <div className="youtuber-title">
-                    <h2>Топ 10 Ютубъри с най-много абонати</h2>
+                    <h2><span>Топ 10</span> Ютубъри с най-много абонати</h2>
                     <hr />
                 </div>
                 <SliderBox items={youtubers.map(y => <YoutuberBox youtuber={y} />)} />

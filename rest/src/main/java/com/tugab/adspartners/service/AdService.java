@@ -12,7 +12,7 @@ import org.springframework.validation.Errors;
 
 public interface AdService {
 
-    public ResponseEntity<AdListResponse> adsList(AdFilterBindingModel adFilterBindingModel, Authentication authentication);
+    public ResponseEntity<AdListResponse> getList(AdFilterBindingModel adFilterBindingModel, Authentication authentication);
 
     public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel);
 
@@ -26,7 +26,7 @@ public interface AdService {
 
     public ResponseEntity<?> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber);
 
-    public ResponseEntity<?> changeAdBlockingStatus(Long adId, Boolean isBlocked);
+    public ResponseEntity<?> updateAdBlockingStatus(Long adId, Boolean isBlocked);
 
     public Ad setAdAverageRating(Ad ad);
 }

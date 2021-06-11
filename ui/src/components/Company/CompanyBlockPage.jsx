@@ -4,7 +4,7 @@ import { Select, Input } from 'semantic-ui-react';
 import { Range } from 'rc-slider';
 import Pagination from '@material-ui/lab/Pagination';
 import CompanyInfo from './CompanyInfo';
-import { getCompaniesByAdsAction, getCompaniesFiltersAction } from '../../actions/companyActions';
+import { getCompanyListAction, getCompaniesFiltersAction } from '../../actions/companyActions';
 
 export default () => {
     const [name, setName] = useState('');
@@ -24,7 +24,7 @@ export default () => {
 
     useEffect(() => {
         (async () => {
-            await dispatch(getCompaniesByAdsAction({ page, size }));
+            await dispatch(getCompanyListAction({ page, size }));
             await dispatch(getCompaniesFiltersAction());
             setLoading(false);
         })();
@@ -36,7 +36,7 @@ export default () => {
             return;
         }
 
-        dispatch(getCompaniesByAdsAction({
+        dispatch(getCompanyListAction({
             name,
             email,
             town,

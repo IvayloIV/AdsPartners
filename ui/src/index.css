@@ -3,6 +3,102 @@ body {
     padding: 0 !important;
 }
 
+/*** New Menu ***/
+
+.navigation {
+    display: flex;
+    background-color: #0070c0;
+    border-bottom: 8px solid #ffc000;
+    justify-content: space-between;
+}
+
+.nav-text {
+    display: flex;
+    align-items: center;
+}
+
+.nav-text h1 {
+    display: flex;
+    align-items: flex-end;
+    background-color: #ffc000;
+    padding: 8px 40px;
+    color: white;
+    text-shadow: 4px 3px 5px rgba(8, 8, 8, 0.3);
+    font-family: cursive;
+}
+
+.nav-text h1 span {
+    margin: 0 10px;
+}
+
+.nav-text h2 {
+    font-size: 18px;
+    color: white;
+    margin: 0 0 0 18px;
+}
+
+.nav-text img {
+    width: 50px;
+    height: 28px;
+}
+
+.nav-items ul {
+    display: flex;
+    padding: 0;
+    list-style: none;
+    font-size: 16px;
+}
+
+.nav-items li {
+    padding: 0 15px;
+    border-left: 1px solid #ffc000;
+    color: white;
+}
+
+#menu-dropdown {
+    color: white;
+    padding: 0 15px;
+    border-left: 1px solid #ffc000;
+}
+
+.ui.pointing.dropdown > .menu {
+    left: -10px;
+}
+
+.nav-items li a {
+    color: white;
+}
+
+.nav-items li span {
+    cursor: pointer;
+}
+
+.nav-items li:first-of-type {
+    border-left: none;
+}
+
+.active-tab {
+    padding-bottom: 3px;
+    border-bottom: 2px solid #ffc000;
+}
+
+/*** Footer ***/
+
+footer {
+    padding: 13px;
+    text-align: center;
+    background: #0070c0;
+    color: white;
+    font-size: 17px;
+    border-top: 6px solid #ffc000;
+    text-shadow: 4px 3px 5px rgba(8, 8, 8, 0.3);
+    font-weight: 700;
+}
+
+footer span {
+    color: #ffc000;
+}
+
 /*** Menu ***/
 #menu-logo {
     margin: 10px 20px;
@@ -58,8 +154,8 @@ body {
 }
 
 .about-us p {
-    font-size: 15px;
-    width: 640px;
+    font-size: 16px;
+    width: 750px;
     margin: 10px auto 0;
 }
 
@@ -109,6 +205,13 @@ body {
 .company-title hr, .youtuber-title hr {
     width: 700px;
     border: 1px solid rgb(3, 174, 255);
+}
+
+.company-title h2 span, .youtuber-title h2 span {
+    border: 3px solid red;
+    padding: 5px;
+    margin-right: 5px;
+    color: red;
 }
 
 .company-home img, .youtuber-home img {
@@ -170,8 +273,10 @@ body {
 .about-you {
     text-align: center;
     padding: 100px 0;
-    background: linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),url(./images/about-you.jpg) no-repeat center;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/home-how-work.jpg) no-repeat fixed;
     background-size: cover;
+    color: white;
+    text-shadow: 4px 3px 5px rgb(8, 8, 8, 0.4);
 }
 
 .about-you h2 {
@@ -193,6 +298,7 @@ body {
     font-style: italic;
     font-size: 19px;
     text-transform: uppercase;
+    font-weight: 700;
 }
 
 /*** Register company ***/
@@ -458,6 +564,10 @@ body {
 
 /*** Company requests ***/
 
+.company-requests {
+    padding-bottom: 35px;
+}
+
 #company-register-table, #company-history-table {
     width: 80%;
     margin: 10px auto;
@@ -480,19 +590,20 @@ body {
 .company-requests hr {
     margin-top: 63px;
     height: 2px;
-    background: linear-gradient(to right,  #2185D0 50%,#21BA45 50%);
+    background: linear-gradient(to right,  #2185D0 50%,#ffc000 50%);
 }
 
 #company-history-title {
-    color: #21BA45;
+    color: #ffc000;
 }
 
 #company-history-row.allowed  {
-    background-color: #abffab;
+    background-color: #EFF2F9;
 }
 
 #company-history-row.blocked  {
-    background-color: #ffabab;
+    background-color: #ff4f4f;
+    color: white;
 }
 
 /*** Ad block ***/
@@ -957,7 +1068,7 @@ body {
     width: 24%;
     padding: 50px 40px;
     border-right: 2px solid #E8E9E9;
-    background-color: #fef1e4;
+    background-color: #f6f7fcb2;
 }
 
 .youtuber-details-img-container {
@@ -985,6 +1096,7 @@ body {
     border-radius: 10px;
     padding: 15px;
     resize: none;
+    background: white;
 }
 
 .youtuber-details-info p {
@@ -1191,7 +1303,7 @@ body {
 /*** Ad details ***/
 
 .ad-details {
-    background-color: #7599ff;
+    background-color: #60b4f2;
     padding: 50px 0 10px 0;
 }
 
@@ -1283,7 +1395,7 @@ body {
 }
 
 .ad-details-date > span {
-    font-weight: 900;
+    font-weight: 700;
 }
 
 .ad-details-description {

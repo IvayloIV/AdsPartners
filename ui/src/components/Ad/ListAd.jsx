@@ -5,7 +5,7 @@ import { Select, Input, Rating, Button, Icon } from 'semantic-ui-react';
 import SemanticDatepicker from 'react-semantic-ui-datepickers';
 import Pagination from '@material-ui/lab/Pagination';
 import FilterSlider from '../common/FilterSlider';
-import { getAllAdsAction, getAdsFiltersAction, voteForAdAction } from '../../actions/adActions';
+import { getAllAdsAction, getAdFiltersAction, voteForAdAction } from '../../actions/adActions';
 
 export default () => {
     const [companyId, setCompanyId] = useState('');
@@ -30,7 +30,7 @@ export default () => {
     useEffect(() => {
         (async () => {
             await dispatch(getAllAdsAction({ page, size }));
-            await dispatch(getAdsFiltersAction());
+            await dispatch(getAdFiltersAction());
             setLoading(false);
         })();
     }, []);
@@ -54,7 +54,7 @@ export default () => {
         setVideosRange([]);
         setSubscribersRange([]);
         setViewsRange([]);
-        dispatch(getAdsFiltersAction({ companyId, title, description }));
+        dispatch(getAdFiltersAction({ companyId, title, description }));
     }, [companyId, title, description]);
 
     const refreshAds = () => {
