@@ -1,7 +1,7 @@
 package com.tugab.adspartners.service;
 
-import com.tugab.adspartners.domain.models.binding.ad.AdApplicationBindingModel;
-import com.tugab.adspartners.domain.models.response.ad.details.AdApplicationResponse;
+import com.tugab.adspartners.domain.models.binding.application.AdApplicationBindingModel;
+import com.tugab.adspartners.domain.models.response.application.AdApplicationResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

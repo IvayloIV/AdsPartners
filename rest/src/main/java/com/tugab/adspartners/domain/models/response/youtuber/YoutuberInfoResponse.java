@@ -2,14 +2,19 @@ package com.tugab.adspartners.domain.models.response.youtuber;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class YoutuberInfoResponse {
 
     private String name;
 
-    private Long subscriberCount;
+    private String email;
 
-    private String profilePicture;
+    private List<String> authorities = new ArrayList<>();
 
-    private String channelId;
+    public void addAuthority(String authority) {
+        this.authorities.add(authority);
+    }
 }

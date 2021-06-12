@@ -16,9 +16,9 @@ public class Subscription {
     @EmbeddedId
     private SubscriptionId id;
 
-    @Column(name = "subscription_date")
+    @Column(name = "subscription_date", nullable = false)
     private Date subscriptionDate;
 
-    @Column(name = "is_blocked")
+    @Column(name = "is_blocked", nullable = false)
     private Boolean isBlocked;
 }

@@ -28,7 +28,7 @@ export const createAd = async (params) => {
 
     return await requester('/ad/create', 'POST', true, {
         title: params.title,
-        shortDescription: params.shortDescription,
+        description: params.description,
         reward: params.reward,
         validTo: params.validTo,
         minVideos: params.minVideos,
@@ -48,7 +48,7 @@ export const editAd = async (adId, params) => {
 
     return await requester('/ad/edit/' + adId, 'PUT', true, {
         title: params.title,
-        shortDescription: params.shortDescription,
+        description: params.description,
         reward: params.reward,
         validTo: params.validTo,
         minVideos: params.minVideos,

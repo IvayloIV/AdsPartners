@@ -1,7 +1,7 @@
 package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberListResponse;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class YoutubeController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<YoutuberInfoResponse>> list(@RequestParam("size") Integer size) {
+    public ResponseEntity<List<YoutuberListResponse>> list(@RequestParam("size") Integer size) {
         return this.youtubeService.getList(size);
     }
 

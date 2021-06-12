@@ -16,37 +16,31 @@ import java.util.*;
 @Table(name = "youtuber")
 public class Youtuber extends UserInfo implements OAuth2User {
 
-    @Column(name = "subscriber_count")
+    @Column(name = "subscriber_count", nullable = false)
     private Long subscriberCount;
 
-    @Column(name = "video_count")
+    @Column(name = "video_count", nullable = false)
     private Long videoCount;
 
-    @Column(name = "view_count")
+    @Column(name = "view_count", nullable = false)
     private Long viewCount;
 
-    @Column(name = "update_date")
+    @Column(name = "update_date", nullable = false)
     private Date updateDate;
 
-    @Column(name = "profile_picture")
+    @Column(name = "profile_picture", nullable = false)
     private String profilePicture;
 
     private String description;
 
-    @Column(name = "published_at")
+    @Column(name = "published_at", nullable = false)
     private Date publishedAt;
 
-    @Column(name = "channel_id")
+    @Column(name = "channel_id", nullable = false)
     private String channelId;
-
-    @OneToMany(mappedBy = "id.youtuber", targetEntity = YoutuberRating.class)
-    private List<YoutuberRating> ratingList;
 
     @OneToMany(mappedBy = "id.youtuber", targetEntity = AdApplication.class)
     private List<AdApplication> adApplicationList;
-
-    @Transient
-    private Double averageRating = 0.0;
 
     @Transient
     private Map<String, Object> attributes;

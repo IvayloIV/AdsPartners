@@ -18,8 +18,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, Company
 
     public Optional<Company> findByUserEmail(String email);
 
-    public List<Company> findAllByOrderByUserName();
-
     public List<Company> findAllByStatusOrderByUser_CreatedDateDesc(RegistrationStatus status);
 
     public List<Company> findAllByStatusNotOrderByStatusModifyDateDesc(RegistrationStatus status);

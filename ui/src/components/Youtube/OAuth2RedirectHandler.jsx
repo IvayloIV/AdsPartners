@@ -24,11 +24,10 @@ class OAuth2RedirectHandler extends Component {
     };
 
     render() {
-        const token = this.props.location.search.split("=")[1];
-        //const error = this.getUrlParameter('error');
+        const [name, token] = this.props.location.search.split("=");
+        const hasError = name === '?error';
 
-        if (this.state.loading && token) {
-            
+        if (this.state.loading && !hasError) {
             setCookie("accessToken", token, 1);
 
             this.props.loadUserInfo().then(() => {
@@ -38,10 +37,10 @@ class OAuth2RedirectHandler extends Component {
             return "Loading...";
         }
 
-        if(token) {
-            toast.success("Login with youtube successful.");
+        if(hasError) {
+            toast.error("Неуспешно влизане.");
         } else {
-            toast.error("Fail to login.");
+            toast.success("Успешно влязохте като ютубър.");
         }
 
         return <Redirect to={{

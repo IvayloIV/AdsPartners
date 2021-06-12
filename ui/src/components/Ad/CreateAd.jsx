@@ -11,7 +11,7 @@ import { createAdAction } from '../../actions/adActions';
 
 export default props => {
     const [title, setTitle] = useState('');
-    const [shortDescription, setShortDescription] = useState('');
+    const [description, setDescription] = useState('');
     const [reward, setReward] = useState('');
     const [validTo, setValidTo] = useState('');
     const [minVideos, setMinVideos] = useState('');
@@ -21,7 +21,7 @@ export default props => {
     const [characteristics, setCharacteristics] = useState([]);
 
     const [titleValidation, setTitleValidation] = useState('');
-    const [shortDescriptionValidation, setShortDescriptionValidation] = useState('');
+    const [descriptionValidation, setDescriptionValidation] = useState('');
     const [rewardValidation, setRewardValidation] = useState('');
     const [validToValidation, setValidToValidation] = useState('');
     const [minVideosValidation, setMinVideosValidation] = useState('');
@@ -59,7 +59,7 @@ export default props => {
     };
 
     const onSubmitHandler = () => {
-        const params = { title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics };
+        const params = { title, description, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics };
 
         dispatch(createAdAction(params))
             .then(json => {
@@ -73,7 +73,7 @@ export default props => {
         let haveError = false;
 
         haveError = validateField('title', title, setTitleValidation) || haveError;
-        haveError = validateField('shortDescription', shortDescription, setShortDescriptionValidation) || haveError;
+        haveError = validateField('description', description, setDescriptionValidation) || haveError;
         haveError = validateField('reward', reward, setRewardValidation) || haveError;
         haveError = validateField('validTo', validTo, setValidToValidation) || haveError;
         haveError = validateField('minVideos', minVideos, setMinVideosValidation) || haveError;
@@ -115,11 +115,11 @@ export default props => {
                             rowsMax={4}
                             rows={4}
                             label="Кратко описание"
-                            value={shortDescription}
-                            name="shortDescription"
-                            onChange={e => onChangeHandler(e, setShortDescription, setShortDescriptionValidation)}
+                            value={description}
+                            name="description"
+                            onChange={e => onChangeHandler(e, setDescription, setDescriptionValidation)}
                         />
-                        <span>{shortDescriptionValidation}</span>
+                        <span>{descriptionValidation}</span>
                     </div>
                     <div className="ad-form-field">
                         <TextField

@@ -18,18 +18,18 @@ public class CloudinaryResource {
     @Id
     private String id;
 
-    @Column(name = "size")
+    @Column(name = "size", nullable = false)
     private Long size;
 
     @Column(name = "format")
     private String format;
 
-    @Column(name = "resource_type")
+    @Column(name = "resource_type", nullable = false)
     private String resourceType;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
-    @Column(name = "url")
+    @Column(name = "url", nullable = false)
     private String url;
 }

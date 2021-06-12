@@ -4,15 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tugab.adspartners.domain.entities.*;
-import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
-import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.MessagesResponse;
-import com.tugab.adspartners.domain.models.response.UserInfoResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.*;
+import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberDetailsResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
+import com.tugab.adspartners.domain.models.response.youtuber.YoutuberListResponse;
 import com.tugab.adspartners.repository.RoleRepository;
-import com.tugab.adspartners.repository.YoutuberRatingRepository;
 import com.tugab.adspartners.repository.YoutuberRepository;
 import com.tugab.adspartners.service.YoutubeService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
@@ -29,10 +27,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -44,28 +39,22 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     private final String BASE_YOUTUBE_URL = "https://youtube.googleapis.com/youtube/v3";
 
     private final YoutuberRepository youtuberRepository;
-    private final YoutuberRatingRepository youtuberRatingRepository;
     private final RoleRepository roleRepository;
     private final ResourceBundleUtil resourceBundleUtil;
-    private final WebClient webClient;
     private final RestTemplate restTemplate;
     private final JsonParser jsonParser;
     private final ModelMapper modelMapper;
 
     @Autowired
     public YoutubeServiceImpl(YoutuberRepository youtuberRepository,
-                              YoutuberRatingRepository youtuberRatingRepository,
                               RoleRepository roleRepository,
                               ResourceBundleUtil resourceBundleUtil,
-                              WebClient webClient,
                               RestTemplate restTemplate,
                               JsonParser jsonParser,
                               ModelMapper modelMapper) {
         this.youtuberRepository = youtuberRepository;
-        this.youtuberRatingRepository = youtuberRatingRepository;
         this.roleRepository = roleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
-        this.webClient = webClient;
         this.restTemplate = restTemplate;
         this.jsonParser = jsonParser;
         this.modelMapper = modelMapper;
@@ -109,7 +98,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
         if (responseEntity.getStatusCode() != HttpStatus.OK || responseEntity.getBody() == null) {
             String unavailableServiceMessage = this.resourceBundleUtil.getMessage("youtuberProfile.unavailableService");
-            return new ResponseEntity<>(new MessagesResponse(unavailableServiceMessage), HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<>(new ErrorResponse(unavailableServiceMessage), HttpStatus.SERVICE_UNAVAILABLE);
         }
 
         JsonElement jsonElement = this.jsonParser.parse(responseEntity.getBody());
@@ -158,7 +147,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        UserInfoResponse userInfo = this.modelMapper.map(youtuber, UserInfoResponse.class);
+        YoutuberInfoResponse userInfo = this.modelMapper.map(youtuber, YoutuberInfoResponse.class);
         userInfo.getAuthorities().clear();
         youtuber.getAuthorities().forEach(r -> userInfo.addAuthority(r.getAuthority()));
         return ResponseEntity.ok(userInfo);
@@ -170,14 +159,14 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public ResponseEntity<List<YoutuberInfoResponse>> getList(Integer size) {
+    public ResponseEntity<List<YoutuberListResponse>> getList(Integer size) {
         Pageable youtuberPageable = PageRequest.of(0, size);
         Page<Youtuber> youtuberPage = this.youtuberRepository
                 .findAllByOrderBySubscriberCountDesc(youtuberPageable);
 
-        List<YoutuberInfoResponse> youtubersInfo = youtuberPage
+        List<YoutuberListResponse> youtubersInfo = youtuberPage
                 .getContent()
-                .stream().map(y -> this.modelMapper.map(y, YoutuberInfoResponse.class))
+                .stream().map(y -> this.modelMapper.map(y, YoutuberListResponse.class))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(youtubersInfo);
     }
@@ -188,25 +177,14 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
         if (youtuber == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("youtuberProfile.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
-        this.setYoutuberAverageRating(youtuber);
         YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper.map(youtuber, YoutuberDetailsResponse.class);
         if (excludeApplications) {
             youtuberDetailsResponse.setAdApplicationList(null);
         }
 
         return ResponseEntity.ok(youtuberDetailsResponse);
-    }
-
-    private Youtuber setYoutuberAverageRating(Youtuber youtuber) {
-        youtuber.getRatingList()
-                .stream()
-                .mapToInt(YoutuberRating::getRating)
-                .average()
-                .ifPresent(youtuber::setAverageRating);
-
-        return youtuber;
     }
 }

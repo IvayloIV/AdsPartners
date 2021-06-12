@@ -12,10 +12,6 @@ public interface AdApplicationRepository extends JpaRepository<AdApplication, Ad
 
     public List<AdApplication> findById_Ad_Id(Long adId);
 
-    public List<AdApplication> findById_Ad_Company_Id(Long company);
-
-    public List<AdApplication> findById_Youtuber_Id(Long youtuberId);
-
     public List<AdApplication> findById_Youtuber_IdAndId_Ad_Company_Id(Long youtuberId, Long companyId);
 
     public AdApplication findById_Youtuber_IdAndId_Ad_Id(Long youtuberId, Long adId);

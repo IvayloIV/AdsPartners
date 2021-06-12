@@ -18,21 +18,18 @@ public class Ad {
     private Long id;
 
     @Column(name = "title", nullable = false)
-    @Length(min = 4, message = "Title cannot be less than 3 symbols.")
     private String title;
 
-    @Column(name = "short_description")
-    private String shortDescription;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "reward", nullable = false)
-    @NotNull(message = "Reward cannot be empty.")
     private Double reward;
 
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
     @Column(name = "valid_to", nullable = false)
-    @NotNull(message = "Valid to cannot be empty.")
     private Date validTo;
 
     @Column(name = "min_videos")
@@ -44,7 +41,7 @@ public class Ad {
     @Column(name = "min_views")
     private Long minViews;
 
-    @Column(name = "is_blocked")
+    @Column(name = "is_blocked", nullable = false)
     private Boolean isBlocked;
 
     @ManyToOne(targetEntity = Company.class)
@@ -53,7 +50,6 @@ public class Ad {
 
     @ManyToOne(targetEntity = CloudinaryResource.class, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "picture_id", referencedColumnName = "id")
-    @NotNull(message = "Picture is required.")
     private CloudinaryResource picture;
 
     @OneToMany(mappedBy = "ad", targetEntity = Characteristic.class, cascade = CascadeType.ALL, orphanRemoval = true)

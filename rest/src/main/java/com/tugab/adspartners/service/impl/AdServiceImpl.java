@@ -3,14 +3,13 @@ package com.tugab.adspartners.service.impl;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.ad.*;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.MessagesResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
 import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
+import com.tugab.adspartners.domain.models.response.ad.AdRatingResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
-import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.filter.AdFiltersResponse;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.repository.CharacteristicRepository;
@@ -32,8 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,15 +68,15 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<AdListResponse> getList(AdFilterBindingModel adFilterBindingModel, Authentication authentication) {
-        Pageable pageable = PageRequest.of(adFilterBindingModel.getPage() - 1, adFilterBindingModel.getSize());
+    public ResponseEntity<AdListResponse> getList(AdListFilterBindingModel adListFilterBindingModel, Authentication authentication) {
+        Pageable pageable = PageRequest.of(adListFilterBindingModel.getPage() - 1, adListFilterBindingModel.getSize());
         boolean isYoutuber = this.checkYoutuberRole(authentication);
 
         if (isYoutuber) {
-            adFilterBindingModel.setIsBlocked(false);
+            adListFilterBindingModel.setIsBlocked(false);
         }
 
-        Page<Ad> pageAds = this.adRepository.findAllByFilters(adFilterBindingModel, pageable);
+        Page<Ad> pageAds = this.adRepository.findAllByFilters(adListFilterBindingModel, pageable);
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
                 .map(this::setAdsCountToCompany)
@@ -121,19 +118,19 @@ public class AdServiceImpl implements AdService {
     }
 
     private AdResponse setYoutuberApplication(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
-        RatingResponse ratingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
-        adResponse.setRatingResponse(ratingResponse);
+        AdRatingResponse adRatingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
+        adResponse.setRatingResponse(adRatingResponse);
         return adResponse;
     }
 
-    private RatingResponse getRatingResponse(Boolean isYoutuber, Authentication authentication, Long adId) {
+    private AdRatingResponse getRatingResponse(Boolean isYoutuber, Authentication authentication, Long adId) {
         if (isYoutuber) {
             Youtuber youtuber = (Youtuber) authentication.getPrincipal();
             AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId())
                     .orElse(null);
 
             if (adRating != null) {
-                return this.modelMapper.map(adRating, RatingResponse.class);
+                return this.modelMapper.map(adRating, AdRatingResponse.class);
             }
         }
 
@@ -141,15 +138,15 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel) {
-        FiltersResponse filtersResponse = new FiltersResponse();
-        filtersResponse.setCompanies(this.adRepository.findAdCompanies());
-        filtersResponse.setRewards(this.adRepository.findAdRewards(filtersBindingModel));
-        filtersResponse.setMinVideos(this.adRepository.findAdVideos(filtersBindingModel));
-        filtersResponse.setMinSubscribers(this.adRepository.findAdSubscribers(filtersBindingModel));
-        filtersResponse.setMinViews(this.adRepository.findAdViews(filtersBindingModel));
+    public ResponseEntity<AdFiltersResponse> getFilters(AdFiltersBindingModel adFiltersBindingModel) {
+        AdFiltersResponse adFiltersResponse = new AdFiltersResponse();
+        adFiltersResponse.setCompanies(this.adRepository.findAdCompanies());
+        adFiltersResponse.setRewards(this.adRepository.findAdRewards(adFiltersBindingModel));
+        adFiltersResponse.setMinVideos(this.adRepository.findAdVideos(adFiltersBindingModel));
+        adFiltersResponse.setMinSubscribers(this.adRepository.findAdSubscribers(adFiltersBindingModel));
+        adFiltersResponse.setMinViews(this.adRepository.findAdViews(adFiltersBindingModel));
 
-        return ResponseEntity.ok(filtersResponse);
+        return ResponseEntity.ok(adFiltersResponse);
     }
 
     @Override
@@ -157,15 +154,15 @@ public class AdServiceImpl implements AdService {
         Ad ad = this.adRepository.findById(adId).orElseThrow(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adDetails.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
         this.setAdAverageRating(ad);
         AdDetailsResponse adResponse = this.modelMapper.map(ad, AdDetailsResponse.class);
 
         Boolean isYoutuber = this.checkYoutuberRole(authentication);
-        RatingResponse ratingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
-        adResponse.setRatingResponse(ratingResponse);
+        AdRatingResponse adRatingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
+        adResponse.setRatingResponse(adRatingResponse);
         adResponse.setApplicationCount(ad.getApplicationList().size());
 
         return ResponseEntity.ok(adResponse);
@@ -189,7 +186,7 @@ public class AdServiceImpl implements AdService {
         this.subscriptionRepository.findById_CompanyAndIsBlocked(ad.getCompany(),false)
             .forEach(s -> {
                 String unsubscribeCompanyUrl = String.format("%s/company/%d/unsubscribe",
-                        createAdBindingModel.getRemoteUrl(), ad.getCompany().getId());
+                        createAdBindingModel.getRemoteUrl(), ad.getCompany().getUser().getId());
                 String youtuberEmail = s.getId().getYoutuber().getEmail();
                 this.emailService.sendAdSubscription(ad, youtuberEmail, unsubscribeCompanyUrl);
             });
@@ -207,10 +204,10 @@ public class AdServiceImpl implements AdService {
         Ad ad = this.adRepository.findById(editAdBindingModel.getId()).orElse(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("editAd.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
-        } else if (!ad.getCompany().getId().equals(editAdBindingModel.getCompany().getId())) {
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        } else if (!ad.getCompany().getUser().getId().equals(editAdBindingModel.getCompany().getUser().getId())) {
             String wrongCompanyMessage = this.resourceBundleUtil.getMessage("editAd.wrongCompany");
-            return new ResponseEntity<>(new MessagesResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new ErrorResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
         }
 
         CloudinaryResource oldAdPicture = null;
@@ -226,7 +223,7 @@ public class AdServiceImpl implements AdService {
         }
 
         ad.setTitle(editAdBindingModel.getTitle());
-        ad.setShortDescription(editAdBindingModel.getShortDescription());
+        ad.setDescription(editAdBindingModel.getDescription());
         ad.setReward(editAdBindingModel.getReward());
         ad.setValidTo(editAdBindingModel.getValidTo());
         ad.setMinVideos(editAdBindingModel.getMinVideos());
@@ -256,7 +253,7 @@ public class AdServiceImpl implements AdService {
             List<String> errorCharDistinctMessages = errorCharMessages.stream()
                 .distinct()
                 .collect(Collectors.toList());
-            return new ResponseEntity<>(new MessagesResponse(errorCharDistinctMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(errorCharDistinctMessages), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         this.adRepository.save(ad);
@@ -273,10 +270,10 @@ public class AdServiceImpl implements AdService {
 
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("deleteAd.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
-        } else if (!ad.getCompany().getId().equals(company.getId())) {
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        } else if (!ad.getCompany().getUser().getId().equals(company.getUser().getId())) {
             String wrongCompanyMessage = this.resourceBundleUtil.getMessage("deleteAd.wrongCompany");
-            return new ResponseEntity<>(new MessagesResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new ErrorResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
         }
 
         this.adRepository.delete(ad);
@@ -290,19 +287,19 @@ public class AdServiceImpl implements AdService {
         Boolean alreadyVote = this.adRatingRepository.existsById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId());
         if (alreadyVote) {
             String alreadyVoteMessage = this.resourceBundleUtil.getMessage("adList.alreadyVote");
-            return new ResponseEntity<>(new MessagesResponse(alreadyVoteMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(alreadyVoteMessage), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         Ad ad = this.adRepository.findById(adId).orElse(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adList.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         } else if (ad.getIsBlocked()) {
             String blockedAdMessage = this.resourceBundleUtil.getMessage("adDetails.blocked");
-            return new ResponseEntity<>(new MessagesResponse(blockedAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(blockedAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
         } else if (ad.getValidTo().compareTo(new Date()) < 0) {
             String expiredAdMessage = this.resourceBundleUtil.getMessage("adDetails.expired");
-            return new ResponseEntity<>(new MessagesResponse(expiredAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(expiredAdMessage), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         AdRating adRating = new AdRating();
@@ -311,7 +308,7 @@ public class AdServiceImpl implements AdService {
         adRating.setCreationDate(new Date());
         adRating = this.adRatingRepository.save(adRating);
 
-        RatingResponse rating = this.modelMapper.map(adRating, RatingResponse.class);
+        AdRatingResponse rating = this.modelMapper.map(adRating, AdRatingResponse.class);
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
     }
 
@@ -320,12 +317,12 @@ public class AdServiceImpl implements AdService {
         Ad ad = this.adRepository.findById(adId).orElse(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adStatus.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
         if (ad.getIsBlocked() == isBlocked) {
             String wrongStatus = this.resourceBundleUtil.getMessage("adStatus.wrongStatus");
-            return new ResponseEntity<>(new MessagesResponse(wrongStatus), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(wrongStatus), HttpStatus.UNPROCESSABLE_ENTITY);
         }
         
         ad.setIsBlocked(isBlocked);
@@ -343,7 +340,7 @@ public class AdServiceImpl implements AdService {
                     .distinct()
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         return null;

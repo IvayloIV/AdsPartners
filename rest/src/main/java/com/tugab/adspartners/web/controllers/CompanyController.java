@@ -1,11 +1,15 @@
 package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.LoginCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.company.*;
+import com.tugab.adspartners.domain.models.response.company.filter.CompanyFiltersResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsListResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyInfoResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterRequestResponse;
 import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +45,8 @@ public class CompanyController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<CompanyAdsListResponse> list(CompanyFilterBindingModel companyFilterBindingModel) {
-        return this.userService.getList(companyFilterBindingModel);
+    public ResponseEntity<CompanyAdsListResponse> list(CompanyFiltersBindingModel companyFiltersBindingModel) {
+        return this.userService.getList(companyFiltersBindingModel);
     }
 
     @GetMapping(path = "/list/rating")
@@ -58,7 +62,7 @@ public class CompanyController {
     @GetMapping("/profile")
     public ResponseEntity<?> profile(Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
-        return this.userService.getCompanyById(company.getId());
+        return this.userService.getCompanyById(company.getUser().getId());
     }
 
     @GetMapping("/details/{id}")

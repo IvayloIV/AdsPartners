@@ -2,8 +2,8 @@ package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
+import com.tugab.adspartners.domain.models.binding.subscription.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.response.subscription.SubscriptionInfoResponse;
 import com.tugab.adspartners.service.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +41,7 @@ public class SubscriptionController {
     public ResponseEntity<?> updateStatus(@RequestBody SubscriberStatusBindingModel subscriberStatusBindingModel,
                                           Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
-        subscriberStatusBindingModel.setCompanyId(company.getId());
+        subscriberStatusBindingModel.setCompanyId(company.getUser().getId());
         return this.subscriptionService.updateStatus(subscriberStatusBindingModel);
     }
 

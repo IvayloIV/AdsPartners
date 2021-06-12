@@ -16,6 +16,6 @@ public class AdRating {
     @Column(name = "rating", nullable = false)
     private Integer rating;
 
-    @Column(name = "creation_date")
+    @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 }

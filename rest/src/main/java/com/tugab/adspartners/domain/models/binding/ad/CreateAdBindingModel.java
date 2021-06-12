@@ -20,7 +20,7 @@ public class CreateAdBindingModel {
     private String title;
 
     @Length(max = 1024, message = "{createAd.descriptionLength}")
-    private String shortDescription;
+    private String description;
 
     @NotNull(message = "{createAd.nullReward}")
     @DecimalMin(value = "0.01", message = "{createAd.negativeReward}")

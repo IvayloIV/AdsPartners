@@ -16,10 +16,10 @@ import java.io.Serializable;
 public class AdApplicationId implements Serializable {
 
     @ManyToOne(targetEntity = Ad.class)
-    @JoinColumn(name = "ad_id", referencedColumnName = "id")
+    @JoinColumn(name = "ad_id", referencedColumnName = "id", nullable = false)
     private Ad ad;
 
     @ManyToOne(targetEntity = Youtuber.class)
-    @JoinColumn(name = "youtuber_id", referencedColumnName = "id")
+    @JoinColumn(name = "youtuber_id", referencedColumnName = "id", nullable = false)
     private Youtuber youtuber;
 }

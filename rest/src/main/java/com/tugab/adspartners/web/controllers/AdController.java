@@ -4,7 +4,7 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
+import com.tugab.adspartners.domain.models.response.ad.filter.AdFiltersResponse;
 import com.tugab.adspartners.service.AdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,32 +27,32 @@ public class AdController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<AdListResponse> list(AdFilterBindingModel adFilterBindingModel,
-                                                  Authentication authentication) {
-        return this.adService.getList(adFilterBindingModel, authentication);
+    public ResponseEntity<AdListResponse> list(AdListFilterBindingModel adListFilterBindingModel,
+                                               Authentication authentication) {
+        return this.adService.getList(adListFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company")
-    public ResponseEntity<AdListResponse> companyAds(AdFilterBindingModel adFilterBindingModel,
-                                                    Authentication authentication) {
+    public ResponseEntity<AdListResponse> companyAds(AdListFilterBindingModel adListFilterBindingModel,
+                                                     Authentication authentication) {
         Company company = (Company) authentication.getPrincipal();
-        adFilterBindingModel.setCompanyId(company.getId());
-        adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.getList(adFilterBindingModel, authentication);
+        adListFilterBindingModel.setCompanyId(company.getUser().getId());
+        adListFilterBindingModel.setSize(Integer.MAX_VALUE);
+        return this.adService.getList(adListFilterBindingModel, authentication);
     }
 
     @GetMapping("/list/company/{id}")
-    public ResponseEntity<AdListResponse> companyAdsById(AdFilterBindingModel adFilterBindingModel,
-                                                        @PathVariable("id") Long companyId,
-                                                        Authentication authentication) {
-        adFilterBindingModel.setCompanyId(companyId);
-        adFilterBindingModel.setSize(Integer.MAX_VALUE);
-        return this.adService.getList(adFilterBindingModel, authentication);
+    public ResponseEntity<AdListResponse> companyAdsById(AdListFilterBindingModel adListFilterBindingModel,
+                                                         @PathVariable("id") Long companyId,
+                                                         Authentication authentication) {
+        adListFilterBindingModel.setCompanyId(companyId);
+        adListFilterBindingModel.setSize(Integer.MAX_VALUE);
+        return this.adService.getList(adListFilterBindingModel, authentication);
     }
 
     @GetMapping("/filters")
-    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel) {
-        return this.adService.getFilters(filtersBindingModel);
+    public ResponseEntity<AdFiltersResponse> getFilters(AdFiltersBindingModel adFiltersBindingModel) {
+        return this.adService.getFilters(adFiltersBindingModel);
     }
 
     @GetMapping("/details/{adId}")

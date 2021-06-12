@@ -1,9 +1,9 @@
 package com.tugab.adspartners.repository.customs.impl;
 
 import com.tugab.adspartners.domain.entities.Ad;
-import com.tugab.adspartners.domain.models.binding.ad.AdFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.ad.FiltersBindingModel;
-import com.tugab.adspartners.domain.models.response.company.CompanyListResponse;
+import com.tugab.adspartners.domain.models.binding.ad.AdListFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.ad.AdFiltersBindingModel;
+import com.tugab.adspartners.domain.models.response.ad.filter.AdFilterCompanyResponse;
 import com.tugab.adspartners.repository.customs.AdRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,7 +22,7 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<Ad> findAllByFilters(AdFilterBindingModel filters, Pageable pageable) {
+    public Page<Ad> findAllByFilters(AdListFilterBindingModel filters, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Ad> query = cb.createQuery(Ad.class);
         Root<Ad> ad = query.from(Ad.class);
@@ -42,7 +42,7 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         }
 
         if (filters.getDescription() != null) {
-            predicates.add(cb.like(cb.lower(ad.get("shortDescription")), likeToLower(filters.getDescription())));
+            predicates.add(cb.like(cb.lower(ad.get("description")), likeToLower(filters.getDescription())));
         }
 
         if (filters.getMinReward() != null) {
@@ -119,32 +119,32 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Double> findAdRewards(FiltersBindingModel filtersBindingModel) {
-        return (List<Double>) findGroupAdProp(filtersBindingModel, "reward");
+    public List<Double> findAdRewards(AdFiltersBindingModel adFiltersBindingModel) {
+        return (List<Double>) findGroupAdProp(adFiltersBindingModel, "reward");
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Long> findAdVideos(FiltersBindingModel filtersBindingModel) {
-        return (List<Long>) findGroupAdProp(filtersBindingModel, "minVideos");
+    public List<Long> findAdVideos(AdFiltersBindingModel adFiltersBindingModel) {
+        return (List<Long>) findGroupAdProp(adFiltersBindingModel, "minVideos");
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Long> findAdSubscribers(FiltersBindingModel filtersBindingModel) {
-        return (List<Long>) findGroupAdProp(filtersBindingModel, "minSubscribers");
+    public List<Long> findAdSubscribers(AdFiltersBindingModel adFiltersBindingModel) {
+        return (List<Long>) findGroupAdProp(adFiltersBindingModel, "minSubscribers");
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Long> findAdViews(FiltersBindingModel filtersBindingModel) {
-        return (List<Long>) findGroupAdProp(filtersBindingModel, "minViews");
+    public List<Long> findAdViews(AdFiltersBindingModel adFiltersBindingModel) {
+        return (List<Long>) findGroupAdProp(adFiltersBindingModel, "minViews");
     }
 
     @Override
-    public List<CompanyListResponse> findAdCompanies() {
+    public List<AdFilterCompanyResponse> findAdCompanies() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<CompanyListResponse> query = cb.createQuery(CompanyListResponse.class);
+        CriteriaQuery<AdFilterCompanyResponse> query = cb.createQuery(AdFilterCompanyResponse.class);
         Root<Ad> ad = query.from(Ad.class);
 
         List<Predicate> predicates = new ArrayList<>();
@@ -161,12 +161,12 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         return this.entityManager.createQuery(query).getResultList();
     }
 
-    private List<? extends Number> findGroupAdProp(FiltersBindingModel filtersBindingModel, String prop) {
+    private List<? extends Number> findGroupAdProp(AdFiltersBindingModel adFiltersBindingModel, String prop) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<Ad> ad = query.from(Ad.class);
 
-        List<Predicate> predicates = this.createFilters(cb, ad, filtersBindingModel);
+        List<Predicate> predicates = this.createFilters(cb, ad, adFiltersBindingModel);
 
         query.where(predicates.toArray(new Predicate[0]));
         query.groupBy(ad.get(prop));
@@ -176,7 +176,7 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         return this.entityManager.createQuery(query).getResultList();
     }
 
-    private List<Predicate> createFilters(CriteriaBuilder cb, Root<Ad> ad, FiltersBindingModel filters) {
+    private List<Predicate> createFilters(CriteriaBuilder cb, Root<Ad> ad, AdFiltersBindingModel filters) {
         List<Predicate> predicates = new ArrayList<>();
 
         predicates.add(cb.isFalse(ad.get("isBlocked")));
@@ -190,7 +190,7 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         }
 
         if (filters.getDescription() != null) {
-            predicates.add(cb.like(cb.lower(ad.get("shortDescription")), likeToLower(filters.getDescription())));
+            predicates.add(cb.like(cb.lower(ad.get("description")), likeToLower(filters.getDescription())));
         }
 
         return predicates;

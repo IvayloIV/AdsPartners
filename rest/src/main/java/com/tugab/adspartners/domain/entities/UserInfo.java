@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @MappedSuperclass
-public class UserInfo {
+public abstract class UserInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

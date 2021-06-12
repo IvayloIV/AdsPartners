@@ -2,7 +2,7 @@ package com.tugab.adspartners.repository.customs.impl;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
 import com.tugab.adspartners.repository.customs.CompanyRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,7 +24,7 @@ public class CompanyRepositoryCustomImpl implements CompanyRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<Company> findAllByFilters(CompanyFilterBindingModel filters, Pageable pageable) {
+    public Page<Company> findAllByFilters(CompanyFiltersBindingModel filters, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Company> query = cb.createQuery(Company.class);
         Root<Company> company = query.from(Company.class);

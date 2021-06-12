@@ -1,9 +1,11 @@
 package com.tugab.adspartners.domain.entities;
 
-import com.tugab.adspartners.domain.enums.ApplicationType;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Data
@@ -16,12 +18,6 @@ public class AdApplication {
 
     private String description;
 
-    @Column(name = "application_date")
+    @Column(name = "application_date", nullable = false)
     private Date applicationDate;
-
-    @Column(name = "mail_sent")
-    private Boolean mailSent;
-
-    @Enumerated(EnumType.STRING)
-    private ApplicationType type;
 }

@@ -16,10 +16,10 @@ import java.io.Serializable;
 public class SubscriptionId implements Serializable {
 
     @ManyToOne(targetEntity = Company.class)
-    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    @JoinColumn(name = "company_id", referencedColumnName = "id", nullable = false)
     private Company company;
 
     @ManyToOne(targetEntity = Youtuber.class)
-    @JoinColumn(name = "youtuber_id", referencedColumnName = "id")
+    @JoinColumn(name = "youtuber_id", referencedColumnName = "id", nullable = false)
     private Youtuber youtuber;
 }

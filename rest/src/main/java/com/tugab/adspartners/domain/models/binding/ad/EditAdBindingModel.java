@@ -22,7 +22,7 @@ public class EditAdBindingModel {
     private String title;
 
     @Length(max = 1024, message = "{editAd.descriptionLength}")
-    private String shortDescription;
+    private String description;
 
     @NotNull(message = "{editAd.nullReward}")
     @DecimalMin(value = "0.01", message = "{editAd.negativeReward}")

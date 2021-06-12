@@ -1,20 +1,23 @@
 package com.tugab.adspartners.service.impl;
 
 import com.tugab.adspartners.domain.entities.*;
-import com.tugab.adspartners.domain.enums.ApplicationType;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
-import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
-import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyResponse;
+import com.tugab.adspartners.domain.models.binding.admin.LoginAdminBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.LoginCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
+import com.tugab.adspartners.domain.models.response.company.details.CompanyProfileResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.JwtResponse;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.MessagesResponse;
-import com.tugab.adspartners.domain.models.response.company.*;
+import com.tugab.adspartners.domain.models.response.common.JwtResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.company.filter.CompanyFiltersResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsListResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyInfoResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterRequestResponse;
 import com.tugab.adspartners.repository.*;
 import com.tugab.adspartners.security.jwt.JwtUtils;
 import com.tugab.adspartners.service.AdService;
@@ -102,12 +105,12 @@ public class UserServiceImpl implements UserService {
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         if (userRepository.existsByEmail(registerCompanyBindingModel.getUserEmail())) {
             return ResponseEntity.badRequest()
-                    .body(new MessagesResponse(this.resourceBundleUtil.getMessage("registerCompany.emailNotExist")));
+                    .body(new ErrorResponse(this.resourceBundleUtil.getMessage("registerCompany.emailNotExist")));
         }
 
         Company company = this.modelMapper.map(registerCompanyBindingModel, Company.class);
@@ -122,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
         Role employerRole = this.roleRepository.findByAuthority(Authority.EMPLOYER).orElse(null);
         if (employerRole == null) {
-            return new ResponseEntity<>(new MessagesResponse(this.resourceBundleUtil.getMessage("registerCompany.roleNotFound")),
+            return new ResponseEntity<>(new ErrorResponse(this.resourceBundleUtil.getMessage("registerCompany.roleNotFound")),
                     HttpStatus.UNPROCESSABLE_ENTITY);
         }
         user.addRole(employerRole);
@@ -140,7 +143,7 @@ public class UserServiceImpl implements UserService {
             Company company = this.companyRepository.findByUserEmail(email).orElse(null);
             if (company != null && !RegistrationStatus.ALLOWED.equals(company.getStatus())) {
                 String badCompanyStatusMessage = this.resourceBundleUtil.getMessage("companyLogin.badCompanyStatus");
-                return new ResponseEntity<>(new MessagesResponse(badCompanyStatusMessage), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(new ErrorResponse(badCompanyStatusMessage), HttpStatus.UNAUTHORIZED);
             }
             return null;
         };
@@ -163,7 +166,7 @@ public class UserServiceImpl implements UserService {
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.toList());
 
-            return new ResponseEntity<>(new MessagesResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(errorMessages), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         Authentication authentication;
@@ -172,7 +175,7 @@ public class UserServiceImpl implements UserService {
             authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException ex) {
             String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
-            return new ResponseEntity<>(new MessagesResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ErrorResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
         }
 
         if (checkCompanyStatus != null) {
@@ -199,12 +202,12 @@ public class UserServiceImpl implements UserService {
         Company company = this.companyRepository.findById(id).orElse(null);
         if (company == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
-        CompanyResponse companyResponse = this.modelMapper.map(company, CompanyResponse.class);
-        companyResponse.setAdsCount(company.getAds().size());
-        return ResponseEntity.ok(companyResponse);
+        CompanyProfileResponse companyProfileResponse = this.modelMapper.map(company, CompanyProfileResponse.class);
+        companyProfileResponse.setAdsCount(company.getAds().size());
+        return ResponseEntity.ok(companyProfileResponse);
     }
 
     @Override
@@ -237,7 +240,7 @@ public class UserServiceImpl implements UserService {
 
         if (company == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("companyRequest.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
         company.setStatus(updateStatusBindingModel.getStatus());
@@ -271,12 +274,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFilterBindingModel companyFilterBindingModel) {
-        int page = companyFilterBindingModel.getPage() - 1;
-        Integer size = companyFilterBindingModel.getSize();
+    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFiltersBindingModel companyFiltersBindingModel) {
+        int page = companyFiltersBindingModel.getPage() - 1;
+        Integer size = companyFiltersBindingModel.getSize();
         Pageable companyPageable = PageRequest.of(page, size);
 
-        Page<Company> companies = this.companyRepository.findAllByFilters(companyFilterBindingModel, companyPageable);
+        Page<Company> companies = this.companyRepository.findAllByFilters(companyFiltersBindingModel, companyPageable);
 
         List<CompanyAdsResponse> companiesResponse = companies
                 .getContent()

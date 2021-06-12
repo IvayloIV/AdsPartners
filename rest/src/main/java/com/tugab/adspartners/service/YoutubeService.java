@@ -1,10 +1,6 @@
 package com.tugab.adspartners.service;
 
-import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.binding.ad.RatingBindingModel;
-import com.tugab.adspartners.domain.models.binding.youtuber.YoutuberFilterBindingModel;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,7 +22,7 @@ public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAu
 
     public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication);
 
-    public ResponseEntity<List<YoutuberInfoResponse>> getList(Integer size);
+    public ResponseEntity<List<YoutuberListResponse>> getList(Integer size);
 
     public ResponseEntity<?> getDetails(Long youtuberId, Boolean excludeApplications);
 }

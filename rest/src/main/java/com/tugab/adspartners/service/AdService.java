@@ -5,16 +5,16 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.ad.*;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
-import com.tugab.adspartners.domain.models.response.ad.list.FiltersResponse;
+import com.tugab.adspartners.domain.models.response.ad.filter.AdFiltersResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 
 public interface AdService {
 
-    public ResponseEntity<AdListResponse> getList(AdFilterBindingModel adFilterBindingModel, Authentication authentication);
+    public ResponseEntity<AdListResponse> getList(AdListFilterBindingModel adListFilterBindingModel, Authentication authentication);
 
-    public ResponseEntity<FiltersResponse> getFilters(FiltersBindingModel filtersBindingModel);
+    public ResponseEntity<AdFiltersResponse> getFilters(AdFiltersBindingModel adFiltersBindingModel);
 
     public ResponseEntity<?> getDetails(Long adId, Authentication authentication);
 

@@ -2,14 +2,16 @@ package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.User;
-import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
-import com.tugab.adspartners.domain.models.binding.LoginCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFilterBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyOfferBindingModel;
+import com.tugab.adspartners.domain.models.binding.admin.LoginAdminBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.LoginCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.RegisterCompanyBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.company.*;
+import com.tugab.adspartners.domain.models.response.company.filter.CompanyFiltersResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsListResponse;
+import com.tugab.adspartners.domain.models.response.company.list.CompanyInfoResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterHistoryResponse;
+import com.tugab.adspartners.domain.models.response.company.register.CompanyRegisterRequestResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.Errors;
@@ -38,7 +40,7 @@ public interface UserService extends UserDetailsService {
 
     public ResponseEntity<List<CompanyInfoResponse>> getCompaniesByRating(Integer size);
 
-    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFilterBindingModel companyFilterBindingModel);
+    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFiltersBindingModel companyFiltersBindingModel);
 
     public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters();
 }

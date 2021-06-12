@@ -1,5 +1,6 @@
 package com.tugab.adspartners.domain.models.response.youtuber;
 
+import com.tugab.adspartners.domain.models.response.application.YoutuberApplicationResponse;
 import lombok.Data;
 
 import java.util.Date;
@@ -29,8 +30,6 @@ public class YoutuberDetailsResponse {
     private Date updateDate;
 
     private String channelId;
-
-    private Double averageRating;
 
     private List<YoutuberApplicationResponse> adApplicationList;
 }

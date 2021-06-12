@@ -1,6 +1,7 @@
 package com.tugab.adspartners.config;
 
 import com.tugab.adspartners.security.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.tugab.adspartners.security.OAuth2AuthenticationFailureHandler;
 import com.tugab.adspartners.security.OAuth2AuthenticationSuccessHandler;
 import com.tugab.adspartners.security.jwt.AuthEntryPointJwt;
 import com.tugab.adspartners.security.jwt.AuthTokenFilter;
@@ -36,6 +37,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Autowired
     public SecurityConfig(AuthEntryPointJwt unauthorizedHandler,
@@ -87,6 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(this.youtubeService)
             .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler)
             .and()
                 .exceptionHandling()
                     .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

@@ -1,6 +1,6 @@
 package com.tugab.adspartners.web.controllers;
 
-import com.tugab.adspartners.domain.models.binding.LoginAdminBindingModel;
+import com.tugab.adspartners.domain.models.binding.admin.LoginAdminBindingModel;
 import com.tugab.adspartners.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

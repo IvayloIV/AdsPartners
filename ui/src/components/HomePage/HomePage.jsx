@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from 'react-router-dom';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Loader, Dimmer } from 'semantic-ui-react';
 import { googleRequestUrl } from '../../services/requester';
 import SliderBox from '../common/SliderBox';
 import CompanyBox from './CompanyBox';
@@ -25,7 +25,7 @@ export default () => {
     }, []);
 
     if (loading) {
-        return <div>{'Loading...'}</div>;
+        return <Loader active id="loader" size="large" inline="centered" content="Зареждане..."/>;
     }
 
     return (

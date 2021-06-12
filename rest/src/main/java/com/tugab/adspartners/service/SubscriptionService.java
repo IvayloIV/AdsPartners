@@ -2,8 +2,8 @@ package com.tugab.adspartners.service;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
+import com.tugab.adspartners.domain.models.binding.subscription.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.response.subscription.SubscriptionInfoResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

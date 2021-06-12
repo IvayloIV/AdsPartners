@@ -99,6 +99,10 @@ footer span {
     color: #ffc000;
 }
 
+#loader {
+    margin: 35vh auto 45vh;
+}
+
 /*** Menu ***/
 #menu-logo {
     margin: 10px 20px;

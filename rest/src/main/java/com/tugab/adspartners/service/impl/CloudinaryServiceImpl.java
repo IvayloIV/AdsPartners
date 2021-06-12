@@ -1,20 +1,18 @@
 package com.tugab.adspartners.service.impl;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tugab.adspartners.domain.entities.CloudinaryResource;
 import com.tugab.adspartners.repository.CloudinaryRepository;
 import com.tugab.adspartners.service.CloudinaryService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import static org.springframework.web.reactive.function.BodyInserters.FormInserter;
-
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -34,15 +32,18 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     @Value("${cloudinary.secret}")
     private String cloudinarySecret;
 
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
+    private final Gson gson;
     private final JsonParser jsonParser;
     private final CloudinaryRepository cloudinaryRepository;
 
     @Autowired
-    public CloudinaryServiceImpl(WebClient webClient,
-                            JsonParser jsonParser,
-                            CloudinaryRepository cloudinaryRepository) {
-        this.webClient = webClient;
+    public CloudinaryServiceImpl(RestTemplate restTemplate,
+                                Gson gson,
+                                JsonParser jsonParser,
+                                CloudinaryRepository cloudinaryRepository) {
+        this.restTemplate = restTemplate;
+        this.gson = gson;
         this.jsonParser = jsonParser;
         this.cloudinaryRepository = cloudinaryRepository;
     }
@@ -63,30 +64,37 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public CloudinaryResource uploadImage(String imageBase64) {
-        FormInserter<String> formInserter = this.createBody(null);
-        formInserter = formInserter.with("file", imageBase64);
+        Map<String, String> bodyMap = this.createBodyMap(null);
+        bodyMap.put("file", imageBase64);
+        String body = this.gson.toJson(bodyMap);
 
-        WebClient.RequestHeadersSpec<?> requestHeadersSpec = this.webClient
-                .method(HttpMethod.POST)
-                .uri(CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload")
-                .body(formInserter);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
 
-        String responseBody = requestHeadersSpec.exchangeToMono(e -> e.bodyToMono(String.class)).block();
-        JsonObject jsonData = this.jsonParser.parse(responseBody).getAsJsonObject();
+        ResponseEntity<String> responseEntity = this.restTemplate.postForEntity(
+            CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload",
+            httpEntity,
+            String.class
+        );
 
-        if (jsonData.has("asset_id")) {
-            Instant createdAtInstant = Instant.parse(jsonData.get("created_at").getAsString());
+        if (responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody() != null) {
+            JsonObject jsonData = this.jsonParser.parse(responseEntity.getBody()).getAsJsonObject();
 
-            CloudinaryResource cloudinaryResource = new CloudinaryResource();
-            cloudinaryResource.setId(jsonData.get("public_id").getAsString());
-            cloudinaryResource.setSize(jsonData.get("bytes").getAsLong());
-            cloudinaryResource.setFormat(jsonData.get("format").getAsString());
-            cloudinaryResource.setResourceType(jsonData.get("resource_type").getAsString());
-            cloudinaryResource.setCreatedAt(new Date(createdAtInstant.toEpochMilli()));
-            cloudinaryResource.setUrl(jsonData.get("url").getAsString());
+            if (jsonData.has("asset_id")) {
+                Instant createdAtInstant = Instant.parse(jsonData.get("created_at").getAsString());
 
-            this.cloudinaryRepository.save(cloudinaryResource);
-            return cloudinaryResource;
+                CloudinaryResource cloudinaryResource = new CloudinaryResource();
+                cloudinaryResource.setId(jsonData.get("public_id").getAsString());
+                cloudinaryResource.setSize(jsonData.get("bytes").getAsLong());
+                cloudinaryResource.setFormat(jsonData.get("format").getAsString());
+                cloudinaryResource.setResourceType(jsonData.get("resource_type").getAsString());
+                cloudinaryResource.setCreatedAt(new Date(createdAtInstant.toEpochMilli()));
+                cloudinaryResource.setUrl(jsonData.get("url").getAsString());
+
+                this.cloudinaryRepository.save(cloudinaryResource);
+                return cloudinaryResource;
+            }
         }
 
         return null;
@@ -124,33 +132,38 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         TreeMap<String, String> params = new TreeMap<>();
         params.put("public_id", image.getId());
 
-        FormInserter<String> formInserter = this.createBody(params);
-        formInserter.with("public_id", image.getId());
+        Map<String, String> bodyMap = this.createBodyMap(params);
+        bodyMap.put("public_id", image.getId());
+        String body = this.gson.toJson(bodyMap);
 
-        WebClient.RequestHeadersSpec<?> requestHeadersSpec = this.webClient
-                .method(HttpMethod.POST)
-                .uri(CLOUDINARY_BASE_URL + this.cloudinaryName + "/" + image.getResourceType() + "/destroy")
-                .body(formInserter);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
 
-        String responseBody = requestHeadersSpec.exchangeToMono(e -> e.bodyToMono(String.class)).block();
-        JsonObject jsonData = this.jsonParser.parse(responseBody).getAsJsonObject();
+        ResponseEntity<String> responseEntity = this.restTemplate.postForEntity(
+                CLOUDINARY_BASE_URL + this.cloudinaryName + "/" + image.getResourceType() + "/destroy",
+                httpEntity,
+                String.class
+        );
 
-        if (jsonData.has("result") && jsonData.get("result").getAsString().equals("ok")) {
-//            this.cloudinaryRepository.delete(image);
-            return true;
-        } else {
-            return false;
+        if (responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody() != null) {
+            JsonObject jsonData = this.jsonParser.parse(responseEntity.getBody()).getAsJsonObject();
+            return jsonData.has("result") && jsonData.get("result").getAsString().equals("ok");
         }
+
+        return false;
     }
 
-    private FormInserter<String> createBody(TreeMap<String, String> params) {
+    private Map<String, String> createBodyMap(TreeMap<String, String> params) {
         String timestamp = String.valueOf(Instant.now().getEpochSecond());
         String signature = this.generateSignature(params, timestamp);
 
-        return BodyInserters
-            .fromFormData("api_key", this.cloudinaryKey)
-            .with("timestamp", timestamp)
-            .with("signature", signature);
+        Map<String, String> jsonMap = new HashMap<>();
+        jsonMap.put("api_key", this.cloudinaryKey);
+        jsonMap.put("timestamp", timestamp);
+        jsonMap.put("signature", signature);
+
+        return jsonMap;
     }
 
     private String generateSignature(TreeMap<String, String> params, String timestamp) {

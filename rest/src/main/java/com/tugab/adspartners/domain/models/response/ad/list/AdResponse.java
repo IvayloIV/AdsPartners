@@ -1,7 +1,6 @@
 package com.tugab.adspartners.domain.models.response.ad.list;
 
-import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberRatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.AdRatingResponse;
 import lombok.Data;
 
 import java.util.Date;
@@ -25,7 +24,7 @@ public class AdResponse {
 
     private Long minViews;
 
-    private CompanyResponse company;
+    private AdCompanyResponse company;
 
     private String pictureUrl;
 
@@ -33,5 +32,5 @@ public class AdResponse {
 
     private Boolean isBlocked;
 
-    private RatingResponse ratingResponse;
+    private AdRatingResponse ratingResponse;
 }

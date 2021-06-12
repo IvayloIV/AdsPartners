@@ -6,7 +6,7 @@ export const title = value => {
     return '';
 };
 
-export const shortDescription = value => {
+export const description = value => {
     if (value.length > 1024) {
         return 'Описанието не трябва да надвищава 1024 символа.';
     }

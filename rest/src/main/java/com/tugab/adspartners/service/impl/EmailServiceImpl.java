@@ -129,7 +129,7 @@ public class EmailServiceImpl implements EmailService {
         variables.put("companyName", ad.getCompany().getUser().getName());
         variables.put("adPictureUrl", ad.getPicture().getUrl());
         variables.put("adTitle", ad.getTitle());
-        variables.put("adDescription", ad.getShortDescription()); //TODO: maybe i should reduce letters to 50
+        variables.put("adDescription", ad.getDescription()); //TODO: maybe i should reduce letters to 50
         variables.put("adReward", String.format("%.2f", ad.getReward()));
         variables.put("adValidTo", this.dateTimeFormatter.toDate(ad.getValidTo()));
         variables.put("adMinVideos", ad.getMinVideos());

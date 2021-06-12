@@ -20,7 +20,7 @@ public class User extends UserInfo implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "created_date")
+    @Column(name = "created_date", nullable = false)
     private Date createdDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -28,9 +28,6 @@ public class User extends UserInfo implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-
-//    @OneToOne(mappedBy = "user")
-//    private Company company;
 
     public void addRole(Role role) {
         this.roles.add(role);

@@ -106,7 +106,7 @@ export default props => {
                         <h3>Описание:</h3>
                         <TextArea
                             id="ad-details-description-textarea"
-                            value={ad.shortDescription}
+                            value={ad.description}
                             disabled={true} />
                     </div>
                     {ad.characteristics.length > 0 && 

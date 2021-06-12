@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `youtuber`
 (
     `id`               BIGINT UNSIGNED AUTO_INCREMENT,
     `email`            VARCHAR(255)    NOT NULL,
-    `name`             VARCHAR(255)    NOT NULL,
+    `name`             VARCHAR(511)    NOT NULL,
     `channel_id`       VARCHAR(255)    NOT NULL,
     `description`      VARCHAR(1023),
     `profile_picture`  VARCHAR(511)    NOT NULL,
@@ -49,13 +49,13 @@ CREATE TABLE IF NOT EXISTS `cloudinary_resource`
     `format`        VARCHAR(255),
     `resource_type` VARCHAR(255)    NOT NULL,
     `size`          BIGINT UNSIGNED NOT NULL,
-    `url`           VARCHAR(255)    NOT NULL,
+    `url`           VARCHAR(511)    NOT NULL,
     PRIMARY KEY (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `company`
 (
-    `id`                    BIGINT UNSIGNED AUTO_INCREMENT,
+    `id`                    BIGINT UNSIGNED NOT NULL,
     `workers_count`         INT UNSIGNED,
     `logo`                  VARCHAR(255)    NOT NULL,
     `company_creation_date` DATETIME        NOT NULL,
@@ -65,10 +65,9 @@ CREATE TABLE IF NOT EXISTS `company`
     `status`                VARCHAR(255)    NOT NULL,
     `status_modify_date`    DATETIME,
     `town`                  VARCHAR(255)    NOT NULL,
-    `user_id`               BIGINT UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`logo`) REFERENCES `cloudinary_resource` (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+    FOREIGN KEY (`id`) REFERENCES `user` (`id`)
 );
 
 CREATE TABLE IF NOT EXISTS `ad`
@@ -80,9 +79,9 @@ CREATE TABLE IF NOT EXISTS `ad`
     `min_videos`        BIGINT UNSIGNED,
     `min_views`         BIGINT UNSIGNED,
     `reward`            DECIMAL(9, 2)   NOT NULL,
-    `short_description` VARCHAR(1023),
+    `description`       VARCHAR(1023),
     `title`             VARCHAR(255)    NOT NULL,
-    `valid_to`          DATETIME        NOT NULL,
+    `valid_to`          DATE            NOT NULL,
     `creator_id`        BIGINT UNSIGNED NOT NULL,
     `picture_id`        VARCHAR(255)    NOT NULL,
     PRIMARY KEY (`id`),
@@ -106,8 +105,6 @@ CREATE TABLE IF NOT EXISTS `ad_application`
     `ad_id`            BIGINT UNSIGNED NOT NULL,
     `application_date` DATETIME        NOT NULL,
     `description`      VARCHAR(1023),
-    `mail_sent`        BIT(1)          NOT NULL,
-    `type`             VARCHAR(255)    NOT NULL,
     PRIMARY KEY (`ad_id`, `youtuber_id`),
     FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`),
     FOREIGN KEY (`youtuber_id`) REFERENCES `youtuber` (`id`)
@@ -123,18 +120,6 @@ CREATE TABLE IF NOT EXISTS `ad_rating`
     FOREIGN KEY (`youtuber_id`) REFERENCES `youtuber` (`id`),
     FOREIGN KEY (`ad_id`) REFERENCES `ad` (`id`)
 );
-
-CREATE TABLE IF NOT EXISTS `youtuber_rating`
-(
-    `youtuber_id`   BIGINT UNSIGNED  NOT NULL,
-    `company_id`    BIGINT UNSIGNED  NOT NULL,
-    `creation_date` DATETIME         NOT NULL,
-    `rating`        TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY (`company_id`, `youtuber_id`),
-    FOREIGN KEY (`youtuber_id`) REFERENCES `youtuber` (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES `company` (`id`)
-);
-
 
 CREATE TABLE IF NOT EXISTS `subscription`
 (

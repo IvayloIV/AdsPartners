@@ -4,10 +4,10 @@ import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Subscription;
 import com.tugab.adspartners.domain.entities.SubscriptionId;
 import com.tugab.adspartners.domain.entities.Youtuber;
-import com.tugab.adspartners.domain.models.binding.ad.SubscriberStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.MessageResponse;
-import com.tugab.adspartners.domain.models.response.MessagesResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.SubscriptionInfoResponse;
+import com.tugab.adspartners.domain.models.binding.subscription.SubscriberStatusBindingModel;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.subscription.SubscriptionInfoResponse;
 import com.tugab.adspartners.repository.CompanyRepository;
 import com.tugab.adspartners.repository.SubscriptionRepository;
 import com.tugab.adspartners.service.SubscriptionService;
@@ -58,13 +58,13 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Company company = this.companyRepository.findById(companyId).orElseThrow(null);
         if (company == null) {
             String wrongCompanyId = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongCompanyId), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongCompanyId), HttpStatus.NOT_FOUND);
         }
 
         Boolean isSubscriber = this.subscriptionRepository.existsById_Company_IdAndId_Youtuber_Id(companyId, youtuber.getId());
         if (isSubscriber) {
             String alreadySubscriberMessage = this.resourceBundleUtil.getMessage("companyProfile.alreadySubscriber");
-            return new ResponseEntity<>(new MessagesResponse(alreadySubscriberMessage), HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(new ErrorResponse(alreadySubscriberMessage), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         Subscription subscription = new Subscription();
@@ -86,7 +86,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .orElse(null);
         if (subscription == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("companySubscription.wrongId");
-            return new ResponseEntity<>(new MessagesResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
         subscription.setIsBlocked(subscriberStatusBindingModel.getIsBlocked());
@@ -103,7 +103,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         if (subscription == null) {
             String unsubscribeNotExist = this.resourceBundleUtil.getMessage("subscription.unsubscribeNotExist");
-            return new ResponseEntity<>(new MessagesResponse(unsubscribeNotExist), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse(unsubscribeNotExist), HttpStatus.NOT_FOUND);
         }
 
         this.subscriptionRepository.delete(subscription);

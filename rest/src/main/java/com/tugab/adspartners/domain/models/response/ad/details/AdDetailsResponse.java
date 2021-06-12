@@ -1,7 +1,7 @@
 package com.tugab.adspartners.domain.models.response.ad.details;
 
 import com.tugab.adspartners.domain.entities.Characteristic;
-import com.tugab.adspartners.domain.models.response.ad.rating.RatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.AdRatingResponse;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ public class AdDetailsResponse {
 
     private String title;
 
-    private String shortDescription;
+    private String description;
 
     private Double reward;
 
@@ -36,9 +36,9 @@ public class AdDetailsResponse {
 
     private Double averageRating;
 
-    private CompanySubscriptionResponse company;
+    private AdDetailsCompanyResponse company;
 
-    private RatingResponse ratingResponse;
+    private AdRatingResponse ratingResponse;
 
     private Integer applicationCount;
 }
