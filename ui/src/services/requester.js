@@ -25,7 +25,7 @@ function requester(endPoint, type, auth, data) {
         obj['headers']['Authorization'] = `Bearer ${getCookie('accessToken')}`;
     }
 
-    console.log(obj);
+    console.log(endPoint);
     return fetch(baseRemoteUrl + endPoint, obj) //TODO: swap to axios
         .then(async (res) => {
             if (!res.ok) {

@@ -55,7 +55,7 @@ export default props => {
         <div className="create-char-container">
             <div className={`new-char${isActiveChar ? '-active' : ''}`}>
                 <h4>Нова характеристика</h4>
-                <div className="ad-form-field">
+                <div className="ad-form-field" data-testid="charName-container">
                     <TextField
                         label="Име"
                         value={charName}
@@ -64,7 +64,7 @@ export default props => {
                     />
                     <span>{charNameValidation}</span>
                 </div>
-                <div className="ad-form-field">
+                <div className="ad-form-field" data-testid="charValue-container">
                     <TextField
                         label="Стойност"
                         value={charValue}

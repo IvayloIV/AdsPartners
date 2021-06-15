@@ -58,12 +58,13 @@ export default props => {
                 <form onSubmit={onSubmitHandler}>
                     <div className="login-field">
                         <TextField 
+                            type="text"
                             label="Мейл"
                             value={email}
                             name="email"
                             onChange={e => onChangeHandler(e, setEmail, setEmailValidation)}
                         />
-                        <span>{emailValidation}</span>
+                        <span data-testid="emailValidation">{emailValidation}</span>
                     </div>
                     <div className="login-field">
                         <TextField
