@@ -58,7 +58,7 @@ export default class Header extends Component {
                             {isEmployer && <li><NavLink to="/company/subscribers" activeClassName="active-tab">Абонати</NavLink></li>}
                             {isEmployer && <li><NavLink to="/company/profile" activeClassName="active-tab">Профил</NavLink></li>}
                             {isAdmin && <li><NavLink to="/company/requests" activeClassName="active-tab">Заявки на компаниите</NavLink></li>}
-                            {isAdmin && <li><NavLink to="/company/block" activeClassName="active-tab">Управление на обявите</NavLink></li>}
+                            {isAdmin && <li><NavLink to="/company/list" activeClassName="active-tab">Управление на обявите</NavLink></li>}
                             {isYoutuber && <li><NavLink to="/ad/list" activeClassName="active-tab">Списък на обявите</NavLink></li>}
                             {isYoutuber && <li><NavLink to="/youtuber/profile" activeClassName="active-tab">Профил</NavLink></li>}
                             {isAuthed() && <li><span onClick={onLogout}>Изход</span></li>}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon, Rating } from 'semantic-ui-react';
 
-const CompanyBox = ({ company: c }) => {
+export default ({ company: c }) => {
     return (
         <div className="company-home" key={c.id}>
             <img src={c.logoUrl} alt="company-logo"/>
@@ -21,5 +21,3 @@ const CompanyBox = ({ company: c }) => {
         </div>
     );
 };
-
-export default CompanyBox;

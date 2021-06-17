@@ -31,7 +31,7 @@ export default props => {
     
     const dispatch = useDispatch();
 
-    const onChangeHandler = (e, setValue, setValidation) => {
+    const onChangeInputHandler = (e, setValue, setValidation) => {
         const name = e.target.name;
         const value = e.target.value;
 
@@ -58,15 +58,13 @@ export default props => {
         setCharacteristics(copyCharacteristics);
     };
 
-    const onSubmitHandler = () => {
+    const onSubmitHandler = async () => {
         const params = { title, description, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics };
 
-        dispatch(createAdAction(params))
-            .then(json => {
-                if (json !== null) {
-                    props.history.push("/");
-                }
-            })
+        const json = await dispatch(createAdAction(params))
+        if (json !== null) {
+            props.history.push("/");
+        }
     };
 
     const checkForErrors = () => {
@@ -104,7 +102,7 @@ export default props => {
                             label="Заглавие"
                             value={title}
                             name="title"
-                            onChange={e => onChangeHandler(e, setTitle, setTitleValidation)}
+                            onChange={e => onChangeInputHandler(e, setTitle, setTitleValidation)}
                         />
                         <span>{titleValidation}</span>
                     </div>
@@ -117,7 +115,7 @@ export default props => {
                             label="Кратко описание"
                             value={description}
                             name="description"
-                            onChange={e => onChangeHandler(e, setDescription, setDescriptionValidation)}
+                            onChange={e => onChangeInputHandler(e, setDescription, setDescriptionValidation)}
                         />
                         <span>{descriptionValidation}</span>
                     </div>
@@ -128,7 +126,7 @@ export default props => {
                             label="Възнаграждение"
                             value={reward}
                             name="reward"
-                            onChange={e => onChangeHandler(e, setReward, setRewardValidation)}
+                            onChange={e => onChangeInputHandler(e, setReward, setRewardValidation)}
                         />
                         <p>&euro;</p>
                         <span>{rewardValidation}</span>
@@ -138,7 +136,7 @@ export default props => {
                             type="date"
                             label="Валидна до"
                             value={validTo}
-                            onChange={e => onChangeHandler(e, setValidTo, setValidToValidation)}
+                            onChange={e => onChangeInputHandler(e, setValidTo, setValidToValidation)}
                             name="validTo"
                             InputLabelProps={{
                                 shrink: true
@@ -152,7 +150,7 @@ export default props => {
                             label="Минимален брой видеа"
                             value={minVideos}
                             name="minVideos"
-                            onChange={e => onChangeHandler(e, setMinVideos, setMinVideosValidation)}
+                            onChange={e => onChangeInputHandler(e, setMinVideos, setMinVideosValidation)}
                         />
                         <span>{minVideosValidation}</span>
                     </div>
@@ -162,7 +160,7 @@ export default props => {
                             label="Минимален брой абонати"
                             value={minSubscribers}
                             name="minSubscribers"
-                            onChange={e => onChangeHandler(e, setMinSubscribers, setMinSubscribersValidation)}
+                            onChange={e => onChangeInputHandler(e, setMinSubscribers, setMinSubscribersValidation)}
                         />
                         <span>{minSubscribersValidation}</span>
                     </div>
@@ -172,7 +170,7 @@ export default props => {
                             label="Минимален брой зрители"
                             value={minViews}
                             name="minViews"
-                            onChange={e => onChangeHandler(e, setMinViews, setMinViewsValidation)}
+                            onChange={e => onChangeInputHandler(e, setMinViews, setMinViewsValidation)}
                         />
                         <span>{minViewsValidation}</span>
                     </div>
@@ -209,151 +207,3 @@ export default props => {
         </div>
     );
 };
-
-/*class CreateAd extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            title: '',
-            shortDescription: '',
-            reward: 0,
-            validTo: '',
-            minVideos: 0,
-            minSubscribers: 0,
-            minViews: 0,
-            picture: null,
-            characteristics: []
-        };
-
-        this.onChangeHandler = this.onChangeHandler.bind(this);
-        this.onChangeHandlerImage = this.onChangeHandlerImage.bind(this);
-        this.onSubmitHandler = this.onSubmitHandler.bind(this);
-        this.onSubmitCharHandler = this.onSubmitCharHandler.bind(this);
-    }
-
-    onChangeHandler(e) {
-        this.setState({ [e.target.name]: e.target.value });
-    }
-
-    onChangeHandlerImage(e) {
-        this.setState({ picture: e.target.files[0] });
-    }
-
-    onSubmitHandler(e) {
-        e.preventDefault();
-        const { title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics } = this.state;
-
-        // Validations
-        this.props.createAd(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics)
-            .then((json) => {
-                //TODO:
-                //if (!json.success) { 
-                //    toast.error(json.message);
-                //    return;
-                //}
-                    
-                //this.props.login(this.state.email, this.state.password, 'Register');
-                toast.success('Ad created successfully.');
-                this.props.history.push("/");
-            });
-    }
-
-    onSubmitCharHandler(e, name, value) {
-        e.preventDefault();
-        let characteristics = this.state.characteristics.slice();
-        characteristics.push({ name, value });
-        this.setState({ characteristics });
-    }
-
-    onClickRemoveChar(e, index) {
-        let characteristics = this.state.characteristics.slice();
-        characteristics.splice(index, 1);
-        this.setState({ characteristics });
-    }
-
-    render() {
-        console.log(this.state.characteristics);
-        return (
-            <div className="container">
-                <h1>Create ad</h1>
-                <form onSubmit={this.onSubmitHandler}>
-                    <Input
-                        name="title"
-                        value={this.state.title}
-                        onChange={this.onChangeHandler}
-                        label="Title"
-                    />
-                    <Input
-                        name="shortDescription"
-                        value={this.state.shortDescription}
-                        onChange={this.onChangeHandler}
-                        label="Short description"
-                    />
-                    <Input
-                        name="reward"
-                        type="number"
-                        value={this.state.reward}
-                        onChange={this.onChangeHandler}
-                        label="Reward"
-                    />
-                    <Input
-                        name="validTo"
-                        type="date"
-                        value={this.state.validTo}
-                        onChange={this.onChangeHandler}
-                        label="Valid to"
-                    />
-                    <Input
-                        name="minVideos"
-                        type="number"
-                        value={this.state.minVideos}
-                        onChange={this.onChangeHandler}
-                        label="Min videos"
-                    />
-                    <Input
-                        name="minSubscribers"
-                        type="number"
-                        value={this.state.minSubscribers}
-                        onChange={this.onChangeHandler}
-                        label="Min subscribers"
-                    />
-                    <Input
-                        name="minViews"
-                        type="number"
-                        value={this.state.minViews}
-                        onChange={this.onChangeHandler}
-                        label="Min views"
-                    />
-                    <Input
-                        name="picture"
-                        type="file"
-                        onChange={this.onChangeHandlerImage}
-                        label="Picture"
-                    />
-                    <div>
-                        {this.state.characteristics.map((c, i) =>
-                          <div key={i}>
-                            <span>{c.name + " - " + c.value}</span>
-                            <span onClick={e => this.onClickRemoveChar(e, i)}>Remove</span>
-                          </div>
-                        )}
-                    </div>
-                    <CreateCharacteristic
-                        onSubmitCharHandler={this.onSubmitCharHandler}
-                    />
-                    <input type="submit" value="Create" />
-                </form>
-            </div>
-        );
-    }
-}
-
-function mapDispatch(dispatch) {
-    return {
-        createAd: (title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics) => 
-            dispatch(createAdAction(title, shortDescription, reward, validTo, minVideos, minSubscribers, minViews, picture, characteristics))
-    };
-}
-
-export default withRouter(connect(null, mapDispatch)(CreateAd));*/

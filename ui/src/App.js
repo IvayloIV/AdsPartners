@@ -8,21 +8,21 @@ import Header from './components/common/Header';
 import Footer from './components/common/Footer';
 import RegisterCompanyPage from './components/Company/RegisterCompanyPage';
 import LoginCompanyPage from './components/Company/LoginCompanyPage';
-import LoginAdmin from './components/Admin/LoginAdmin';
+import LoginAdminPage from './components/Admin/LoginAdminPage';
 import OAuth2RedirectHandler from './components/Youtube/OAuth2RedirectHandler';
 import HomePage from './components/HomePage/HomePage';
-import ListAd from './components/Ad/ListAd';
+import ListAdPage from './components/Ad/list/ListAdPage';
 import AnonymousRoute from './components/common/AnonymousRoute';
 import PrivateRoute from './components/common/PrivateRoute';
 import CreateAd from './components/Ad/CreateAd';
 import AdDetails from './components/Ad/AdDetails';
-import SubscribersPage from './components/Company/SubscribersPage';
-import UnsubscribePage from './components/Youtube/UnsubscribePage';
-import CompanyDetailsPage from './components/Company/CompanyDetailsPage';
-import RegisterRequests from './components/Company/RegisterRequests';
-import CompanyBlockPage from './components/Company/CompanyBlockPage';
+import SubscribersPage from './components/Subscription/SubscribersPage';
+import UnsubscribePage from './components/Subscription/UnsubscribePage';
+import CompanyDetailsPage from './components/Company/details/CompanyDetailsPage';
+import RegisterRequests from './components/Company/registerRequests/RegisterRequests';
+import CompanyListPage from './components/Company/list/CompanyListPage';
 import EditAd from './components/Ad/EditAd';
-import YoutuberDetails from './components/Youtube/YoutuberDetails';
+import YoutuberDetailsPage from './components/Youtube/details/YoutuberDetailsPage';
 import { YOUTUBER, EMPLOYER, ADMIN } from './utils/Roles';
 
 class App extends Component {
@@ -48,12 +48,12 @@ class App extends Component {
                     <Route path="/home" component={HomePage} />
                     <AnonymousRoute path="/company/login" component={LoginCompanyPage} />
                     <AnonymousRoute path="/company/register" component={RegisterCompanyPage} />
-                    <AnonymousRoute path="/admin/login" component={LoginAdmin} />
+                    <AnonymousRoute path="/admin/login" component={LoginAdminPage} />
                     <AnonymousRoute path="/oauth2/redirect" component={OAuth2RedirectHandler} />
-                    <PrivateRoute authorities={[YOUTUBER]} path="/ad/list" component={ListAd} />
+                    <PrivateRoute authorities={[YOUTUBER]} path="/ad/list" component={ListAdPage} />
                     <PrivateRoute authorities={[YOUTUBER, EMPLOYER, ADMIN]} path="/ad/details/:adId" component={AdDetails} />
-                    <PrivateRoute authorities={[YOUTUBER]} path="/youtuber/profile" component={YoutuberDetails} />
-                    <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/details/:youtuberId" component={YoutuberDetails} />
+                    <PrivateRoute authorities={[YOUTUBER]} path="/youtuber/profile" component={YoutuberDetailsPage} />
+                    <PrivateRoute authorities={[EMPLOYER]} path="/youtuber/details/:youtuberId" component={YoutuberDetailsPage} />
                     <PrivateRoute authorities={[ADMIN, EMPLOYER]} path="/ad/create" component={CreateAd} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/ad/edit/:adId" component={EditAd} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/company/subscribers" component={SubscribersPage} />
@@ -61,7 +61,7 @@ class App extends Component {
                     <PrivateRoute authorities={[YOUTUBER, ADMIN]} path="/company/details/:companyId" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={[EMPLOYER]} path="/company/profile" component={CompanyDetailsPage} />
                     <PrivateRoute authorities={[ADMIN]} path="/company/requests" component={RegisterRequests} />
-                    <PrivateRoute authorities={[ADMIN]} path="/company/block" component={CompanyBlockPage} />
+                    <PrivateRoute authorities={[ADMIN]} path="/company/list" component={CompanyListPage} />
                 </Switch>
                 <Footer />
             </div>

@@ -14,7 +14,7 @@ export const registerCompanyAction = params => {
 
 export const loginCompanyAction = params => {
     return handleException(async () => {
-        const json = await companyService.loginCompany(params);
+        const json = await companyService.loginCompany(params); //TODO: can i return only accessToken???
         setCookie('accessToken', json.accessToken, 1);
         setCookie('username', json.username, 1);
         setCookie('roles', JSON.stringify(json.roles), 1);
