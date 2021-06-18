@@ -79,10 +79,10 @@ public class AdServiceImpl implements AdService {
         Page<Ad> pageAds = this.adRepository.findAllByFilters(adListFilterBindingModel, pageable);
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
-                .map(this::setAdsCountToCompany)
+                .map(this::setAdsCountToCompany)//TODO: why should i set it to every ad???
                 .map(this::setAdAverageRating)
                 .map(a -> this.modelMapper.map(a, AdResponse.class))
-                .map(a -> this.setYoutuberApplication(a, isYoutuber, authentication))
+                .map(a -> this.setAdRatingByYoutuber(a, isYoutuber, authentication))
                 .collect(Collectors.toList());
 
         AdListResponse adListResponse = new AdListResponse();
@@ -117,7 +117,7 @@ public class AdServiceImpl implements AdService {
         return ad;
     }
 
-    private AdResponse setYoutuberApplication(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
+    private AdResponse setAdRatingByYoutuber(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
         AdRatingResponse adRatingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
         adResponse.setRatingResponse(adRatingResponse);
         return adResponse;
@@ -212,7 +212,7 @@ public class AdServiceImpl implements AdService {
 
         CloudinaryResource oldAdPicture = null;
 
-        if (editAdBindingModel.getPictureBase64() != null) {
+        if (editAdBindingModel.getPictureBase64() != null) { //TODO maybe should be after characteristic validation
             CloudinaryResource newPicture = this.cloudinaryService
                     .updateImage(ad.getPicture(), editAdBindingModel.getPictureBase64());
 

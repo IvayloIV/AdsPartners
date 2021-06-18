@@ -39,7 +39,6 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     private final String BASE_YOUTUBE_URL = "https://youtube.googleapis.com/youtube/v3";
 
     private final YoutuberRepository youtuberRepository;
-    private final RoleRepository roleRepository;
     private final ResourceBundleUtil resourceBundleUtil;
     private final RestTemplate restTemplate;
     private final JsonParser jsonParser;
@@ -47,13 +46,11 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
     @Autowired
     public YoutubeServiceImpl(YoutuberRepository youtuberRepository,
-                              RoleRepository roleRepository,
                               ResourceBundleUtil resourceBundleUtil,
                               RestTemplate restTemplate,
                               JsonParser jsonParser,
                               ModelMapper modelMapper) {
         this.youtuberRepository = youtuberRepository;
-        this.roleRepository = roleRepository;
         this.resourceBundleUtil = resourceBundleUtil;
         this.restTemplate = restTemplate;
         this.jsonParser = jsonParser;

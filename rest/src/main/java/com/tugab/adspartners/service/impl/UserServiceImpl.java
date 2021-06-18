@@ -36,6 +36,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -110,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.existsByEmail(registerCompanyBindingModel.getUserEmail())) {
             return ResponseEntity.badRequest()
-                    .body(new ErrorResponse(this.resourceBundleUtil.getMessage("registerCompany.emailNotExist")));
+                    .body(new ErrorResponse(this.resourceBundleUtil.getMessage("registerCompany.emailExist")));
         }
 
         Company company = this.modelMapper.map(registerCompanyBindingModel, Company.class);
@@ -132,23 +133,17 @@ public class UserServiceImpl implements UserService {
 
         this.companyRepository.save(company);
         this.emailService.sendAfterCompanyRegistration(company, registerCompanyBindingModel.getAdminRedirectUrl());
-        return ResponseEntity.ok(new MessageResponse(this.resourceBundleUtil.getMessage("registerCompany.success")));
+
+        String companyRegisterSuccess = this.resourceBundleUtil.getMessage("registerCompany.success");
+        return new ResponseEntity<>(new MessageResponse(companyRegisterSuccess), HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel, Errors errors) {
         String companyEmail = loginCompanyBindingModel.getEmail();
         String companyPassword = loginCompanyBindingModel.getPassword();
         String badCredentialsKey = "companyLogin.badCredentials";
-        Function<String, ResponseEntity<?>> checkCompanyStatus = email -> {
-            Company company = this.companyRepository.findByUserEmail(email).orElse(null);
-            if (company != null && !RegistrationStatus.ALLOWED.equals(company.getStatus())) {
-                String badCompanyStatusMessage = this.resourceBundleUtil.getMessage("companyLogin.badCompanyStatus");
-                return new ResponseEntity<>(new ErrorResponse(badCompanyStatusMessage), HttpStatus.UNAUTHORIZED);
-            }
-            return null;
-        };
 
-        return this.authenticateUser(companyEmail, companyPassword, errors, badCredentialsKey, checkCompanyStatus);
+        return this.authenticateUser(companyEmail, companyPassword, errors, badCredentialsKey, Authority.EMPLOYER);
     }
 
     public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginAdminBindingModel, Errors errors) {
@@ -156,10 +151,10 @@ public class UserServiceImpl implements UserService {
         String adminPassword = loginAdminBindingModel.getPassword();
         String badCredentialsKey = "adminLogin.badCredentials";
 
-        return this.authenticateUser(adminEmail, adminPassword, errors, badCredentialsKey, null);
+        return this.authenticateUser(adminEmail, adminPassword, errors, badCredentialsKey, Authority.ADMIN);
     }
 
-    private ResponseEntity<?> authenticateUser(String username, String password, Errors errors, String badCredentialsKey, Function<String, ResponseEntity<?>> checkCompanyStatus) {
+    private ResponseEntity<?> authenticateUser(String username, String password, Errors errors, String badCredentialsKey, Authority requiredAuthority) {
         if (errors.hasErrors()) {
             List<String> errorMessages = errors.getAllErrors()
                     .stream()
@@ -173,15 +168,20 @@ public class UserServiceImpl implements UserService {
 
         try {
             authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals(requiredAuthority.name()))) {
+                String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
+                throw new BadCredentialsException(badCredentialsMessage);
+            }
         } catch (BadCredentialsException ex) {
-            String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
-            return new ResponseEntity<>(new ErrorResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
         }
 
-        if (checkCompanyStatus != null) {
-            ResponseEntity<?> responseEntity = checkCompanyStatus.apply(username);
-            if (responseEntity != null) {
-                return responseEntity;
+        if (requiredAuthority.equals(Authority.EMPLOYER)) {
+            Company company = this.companyRepository.findByUserEmail(username).orElse(null);
+
+            if (company != null && !RegistrationStatus.ALLOWED.equals(company.getStatus())) {
+                String badCompanyStatusMessage = this.resourceBundleUtil.getMessage("companyLogin.badCompanyStatus");
+                return new ResponseEntity<>(new ErrorResponse(badCompanyStatusMessage), HttpStatus.UNAUTHORIZED);
             }
         }
 
