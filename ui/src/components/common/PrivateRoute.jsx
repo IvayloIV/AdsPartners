@@ -11,7 +11,7 @@ export default props => {
 
     let authorities = props.authorities;
     if (!hasAnyRole(authorities)) {
-        toast.error('Нямате достатъчно правя за тази страница.');
+        toast.error('Нямате достатъчно права за тази страница.');
         return (<Redirect to="/" />);
     }
 

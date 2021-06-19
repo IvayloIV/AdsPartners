@@ -24,7 +24,7 @@ export default (state = adState, action) => {
             let adList = Object.assign({}, state.list);
             let adItems = adList.items;
             if (adItems !== undefined) {
-                let ad = adItems.filter(i => i.id == action.data.adId)[0];
+                let ad = adItems.filter(i => i.id === action.data.adId)[0];
                 ad.ratingResponse = action.data;
                 adList.items = adItems;
             }

@@ -1,17 +1,20 @@
 package com.tugab.adspartners.service.impl;
 
-import com.tugab.adspartners.domain.entities.*;
+import com.tugab.adspartners.domain.entities.CloudinaryResource;
+import com.tugab.adspartners.domain.entities.Company;
+import com.tugab.adspartners.domain.entities.Role;
+import com.tugab.adspartners.domain.entities.User;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.enums.RegistrationStatus;
 import com.tugab.adspartners.domain.models.binding.admin.LoginAdminBindingModel;
+import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.LoginCompanyBindingModel;
 import com.tugab.adspartners.domain.models.binding.company.RegisterCompanyBindingModel;
-import com.tugab.adspartners.domain.models.binding.company.CompanyFiltersBindingModel;
-import com.tugab.adspartners.domain.models.response.company.details.CompanyProfileResponse;
 import com.tugab.adspartners.domain.models.binding.company.UpdateStatusBindingModel;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
 import com.tugab.adspartners.domain.models.response.common.JwtResponse;
 import com.tugab.adspartners.domain.models.response.common.MessageResponse;
-import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.company.details.CompanyProfileResponse;
 import com.tugab.adspartners.domain.models.response.company.filter.CompanyFiltersResponse;
 import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsListResponse;
 import com.tugab.adspartners.domain.models.response.company.list.CompanyAdsResponse;
@@ -36,8 +39,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,7 +48,6 @@ import org.springframework.validation.ObjectError;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -165,15 +165,15 @@ public class UserServiceImpl implements UserService {
         }
 
         Authentication authentication;
+        String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
 
         try {
             authentication = this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             if (authentication.getAuthorities().stream().noneMatch(a -> a.getAuthority().equals(requiredAuthority.name()))) {
-                String badCredentialsMessage = this.resourceBundleUtil.getMessage(badCredentialsKey);
                 throw new BadCredentialsException(badCredentialsMessage);
             }
         } catch (BadCredentialsException ex) {
-            return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new ErrorResponse(badCredentialsMessage), HttpStatus.UNAUTHORIZED);
         }
 
         if (requiredAuthority.equals(Authority.EMPLOYER)) {
@@ -185,16 +185,8 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = this.jwtUtils.generateJwtToken(authentication);
-
-        User user = (User) authentication.getPrincipal();
-        List<String> roles = user.getRoles().stream()
-                .map(Role::getAuthority)
-                .collect(Collectors.toList());
-
-        JwtResponse jwtResponse = new JwtResponse(jwt, user.getId(), user.getName(), user.getEmail(), roles);
-        return ResponseEntity.ok(jwtResponse);
+        return ResponseEntity.ok(new JwtResponse(jwt));
     }
 
     @Override
@@ -256,7 +248,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<List<CompanyInfoResponse>> getCompaniesByRating(Integer size) {
         Pageable companyPageable = PageRequest.of(0, size);
-        Page<Object[]> companiesPage = this.companyRepository.findTopCompaniesByRating(companyPageable);
+        Page<Object[]> companiesPage = this.companyRepository
+                .findTopCompaniesByRating(RegistrationStatus.ALLOWED, companyPageable);
 
         List<CompanyInfoResponse> companyInfoResponses = companiesPage
                 .getContent()

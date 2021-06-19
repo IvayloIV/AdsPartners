@@ -5,7 +5,7 @@ import ApplicationTableRows from './ApplicationTableRows';
 import { getYoutuberProfileAction, refreshYoutuberDataAction, getYoutuberDetailsAction } from '../../../actions/youtubeActions';
 import { getApplicationsByYoutuberAction } from '../../../actions/applicationActions';
 import { hasRole } from '../../../utils/AuthUtil';
-import { YOUTUBER } from '../../../utils/Roles';
+import { YOUTUBER, ADMIN, EMPLOYER } from '../../../utils/Roles';
 
 export default props => {
     const [loading, setLoading] = useState(true);
@@ -17,6 +17,9 @@ export default props => {
         (async () => {
             if (hasRole(YOUTUBER)) {
                 await dispatch(getYoutuberProfileAction());
+            } else if (hasRole(ADMIN)) {
+                const youtuberId = props.match.params.youtuberId;
+                await dispatch(getYoutuberDetailsAction(youtuberId));
             } else {
                 const youtuberId = props.match.params.youtuberId;
                 await Promise.all([
@@ -31,20 +34,18 @@ export default props => {
 
     const updateYoutuberData = async () => {
         await dispatch(refreshYoutuberDataAction());
-        await dispatch(getYoutuberProfileAction());
+        dispatch(getYoutuberProfileAction());
     };
 
     if (loading) {
         return <Loader active id="loader" size="large" inline="centered" content="Зареждане..."/>;
     }
 
-    let isYoutuber = hasRole(YOUTUBER);
-
     return (
         <div className="youtuber-details">
             <div className="youtuber-details-info-container">
                 <div className="youtuber-details-img-container">
-                    <img src={youtuberDetails.profilePicture} alt="Youtuber picture" />
+                    <img src={youtuberDetails.profilePicture} alt="Youtuber img" />
                 </div>
                 <h2>{youtuberDetails.name}</h2>
                 <h3>{youtuberDetails.email}</h3>
@@ -63,7 +64,7 @@ export default props => {
                     <p>Обновен на {new Date(youtuberDetails.updateDate).toLocaleString()}</p>
                 </div>
                 <div className="youtuber-details-buttons">
-                    {isYoutuber && <Button color='orange'
+                    {hasRole(YOUTUBER) && <Button color='orange'
                         className="medium"
                         id="youtuber-details-refresh"
                         onClick={updateYoutuberData}>
@@ -79,7 +80,7 @@ export default props => {
                 </div>
             </div>
             <div className="youtuber-details-applications">
-                <h2>{`История на предложенията за партнюрства${!isYoutuber ? ' към Вас' : ''}`}</h2>
+                <h2>{`История на предложенията за партньорства${hasRole(EMPLOYER) ? ' към Вас' : ''}`}</h2>
                 <Table color="orange">
                     <Table.Header>
                         <Table.Row textAlign="center">

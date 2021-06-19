@@ -3,7 +3,7 @@ body {
     padding: 0 !important;
 }
 
-/*** New Menu ***/
+/*** Menu ***/
 
 .navigation {
     display: flex;
@@ -103,23 +103,11 @@ footer span {
     margin: 35vh auto 45vh;
 }
 
-/*** Menu ***/
-#menu-logo {
-    margin: 10px 20px;
-    color: #f1c575;
-}
-
-.menu-welcome {
-    align-self: center;
-    margin: 0;
-    color: white;
-}
-
 /*** Home page ***/
 
 .site-logo {
     padding: 240px 0;
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/pexels-photo-3184306.jpeg) no-repeat center;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(/images/home-background.jpeg) no-repeat center;
     background-size: cover;
     text-align: center;
     color: white;
@@ -208,7 +196,9 @@ footer span {
 
 .company-title hr, .youtuber-title hr {
     width: 700px;
-    border: 1px solid rgb(3, 174, 255);
+    border: none;
+    height: 2px;
+    background: rgb(3, 174, 255);
 }
 
 .company-title h2 span, .youtuber-title h2 span {
@@ -253,10 +243,13 @@ footer span {
     top: 40%;
     left: 2%;
     border: 1px solid black;
-    padding: 7px 16px 11px 14px;
+    padding: 6px 16px 11px 14px;
     font-size: 21px;
     border-radius: 50%;
     cursor: pointer;
+    color: black;
+    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 35%);
+    background-color: white;
 }
 
 .btn-next-slider {
@@ -264,20 +257,23 @@ footer span {
     top: 40%;
     right: 2%;
     border: 1px solid black;
-    padding: 7px 15px 11px 15px;
+    padding: 6px 15px 11px 15px;
     font-size: 21px;
     border-radius: 50%;
     cursor: pointer;
+    color: black;
+    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 35%);
+    background-color: white;
 }
 
 .alice-carousel__stage {
-    transition: transform 1000ms ease 0ms !important; /* TODO: not the best practice */
+    transition: transform 1000ms ease 0ms !important;
 }
 
 .about-you {
     text-align: center;
     padding: 100px 0;
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/home-how-work.jpg) no-repeat fixed;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(/images/home-how-work.jpg) no-repeat fixed;
     background-size: cover;
     color: white;
     text-shadow: 4px 3px 5px rgb(8, 8, 8, 0.4);
@@ -290,7 +286,9 @@ footer span {
 
 .about-you hr {
     width: 600px;
-    border: 1px solid #03aeff;
+    border: none;
+    height: 2px;
+    background-color: #03aeff;
 }
 
 .about-you p {
@@ -313,7 +311,7 @@ footer span {
 
 .register-info {
     width: 70%;
-    background: linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url(./images/register-info.jpg) no-repeat center;
+    background: linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url(/images/register-info.jpg) no-repeat center;
     background-size: cover;
     box-shadow: 17px 2px 10px -7px rgba(0,0,0,0.28);
     border-top-right-radius: 5px;
@@ -380,7 +378,7 @@ footer span {
 }
 
 #standard-multiline-static { 
-    height: 76px !important; /* TODO: not the best practice */
+    height: 76px !important;
 }
 
 /*** Admin/Company login ***/
@@ -391,12 +389,12 @@ footer span {
 }
 
 .admin-login {
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/admin-login-background.jpg) no-repeat center;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(/images/admin-login-background.jpg) no-repeat center;
     background-size: cover;
 }
 
 .company-login {
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/company-login-background.jpg) no-repeat center;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(/images/company-login-background.jpg) no-repeat center;
     background-size: cover;
 }
 
@@ -445,7 +443,7 @@ footer span {
 .ad-form-container {
     text-align: center;
     padding: 50px 0;
-    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(./images/create-ad-background.jpg) no-repeat fixed;
+    background: linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url(/images/create-ad-background.jpg) no-repeat fixed;
     background-size: cover;
 }
 
@@ -690,6 +688,7 @@ footer span {
 
 .company-block img {
     width: 450px;
+    height: 200px;
     border-radius: 10px;
 }
 
@@ -726,7 +725,6 @@ footer span {
 .company-ads-block-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     height: 0;
     overflow-y: hidden;
     padding: 0 17px;
@@ -738,8 +736,8 @@ footer span {
 
 .company-ad-block-container {
     width: 270px;
-    margin: 20px 0;
-    box-shadow: 0px 0px 25px -2px rgb(0 0 0 / 40%);
+    margin: 20px 11px;
+    box-shadow: 0px 0px 25px -4px rgb(0 0 0 / 30%);
     border-radius: 10px;
 }
 
@@ -1012,18 +1010,18 @@ footer span {
 }
 
 .subscribers-wrapper {
-    padding: 80px 0;
+    padding: 35px 0;
     position: relative;
     z-index: 1;
 }
 
 .subscribers-inner-wrapper {
-    width: 86%;
+    width: 95%;
     display: flex;
     flex-wrap: wrap;
     margin: 0 auto;
     background-color: white;
-    padding: 50px 80px;
+    padding: 30px 100px;
     border-radius: 10px;
 }
 
@@ -1039,7 +1037,7 @@ footer span {
     width: 300px;
     box-shadow: 0 0 15px 5px rgba(0,0,0,0.3);
     padding: 20px 40px;
-    margin: 40px;
+    margin: 40px 56px;
 }
 
 .subscription-youtuber-img img {
@@ -1169,8 +1167,13 @@ footer span {
     padding-bottom: 10px;
 }
 
-.ad-filter-container .rc-slider-mark {
+.ad-filter-container .rc-slider-mark,
+.company-filter-container .rc-slider-mark {
     display: none;
+}
+
+.slider-filter {
+    width: 100%;
 }
 
 .slider-filter-values {
@@ -1520,141 +1523,3 @@ footer span {
     text-align: center;
     margin: 15px 0px 5px 0;
 }
-
-/* body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-header {
-	padding: 1rem;
-	background-color: rgb(155, 160, 165);
-}
-
-header a {
-	text-decoration: none;
-	color: white;
-	padding: 1rem;
-}
-
-.active {
-	background-color: rgb(102, 104, 105);
-}
-
-.container {
-	text-align: center;
-}
-
-form label {
-	display: block;
-}
-
-form input {
-	border: 1px solid black;
-    padding: 0.4rem 0.5rem;
-    border-radius: 0.3rem;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    outline: none;
-}
-
-form input[type="submit"] {
-	border: none;
-    color: white;
-    background: #9dbdba;
-    padding: 0.6rem 2rem;
-    font-size: 1.1rem;
-    margin-top: 0.5rem;
-	cursor: pointer;
-}
-
-form input[type="submit"]:hover {
-    background: #6b8f8b;
-}
-
-form input::placeholder {
-	text-transform: capitalize;
-}
-
-header h2 {
-	display: inline;
-    font-size: 1.4rem;
-    color: #fff7f5;
-    margin-right: 1rem;
-}
-
-.slider-boxes {
-    position: relative;
-    overflow: hidden;
-}
-
-.slider-button-left {
-    position: absolute;
-    left: 0;
-    z-index: 1;
-    height: 222px;
-    top: 0;
-    background-color: rgba(0, 0, 0, .1);
-    border: none;
-    border-radius: 7px;
-    outline: none;
-    cursor: pointer;
-    transition: background-color 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
-}
-
-.slider-button-left:hover {
-    background-color: rgba(0, 0, 0, .3);
-}
-
-.slider-button-right {
-    position: absolute;
-    right: 0;
-    z-index: 1;
-    height: 222px;
-    top: 0;
-    background-color: rgba(0, 0, 0, .1);
-    border: none;
-    border-radius: 7px;
-    outline: none;
-    cursor: pointer;
-    transition: background-color 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
-}
-
-.slider-button-right:hover {
-    background-color: rgba(0, 0, 0, .3);
-}
-
-.boxes-wrapper {
-    width: 230px;
-    height: 222px;
-    margin: 0 auto;
-    bottom: -117px;
-}
-
-.boxes {
-    display: flex;
-    position: absolute;
-    transition: transform 300ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
-}
-
-.box {
-    flex: 1;
-    padding: 35px 0;
-    min-width: 200px;
-    border: 2px solid blue;
-    margin: 0 15px;
-    transform: scale(.8);
-    opacity: 0.5;
-    transition: transform 300ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
-}
-
-.box-active {
-    transform: scale(1);
-    opacity: 1;
-}
-
-.slider-container {
-    width: 300px;
-    padding: 20px;
-} */

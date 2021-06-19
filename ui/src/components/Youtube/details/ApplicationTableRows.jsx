@@ -3,16 +3,16 @@ import { useSelector } from "react-redux";
 import { NavLink } from 'react-router-dom';
 import { Table, Button } from 'semantic-ui-react';
 import { hasRole } from '../../../utils/AuthUtil';
-import { YOUTUBER } from '../../../utils/Roles';
+import { EMPLOYER } from '../../../utils/Roles';
 
 export default () => {
     let applications;
 
-    if (hasRole(YOUTUBER)) {
+    if (hasRole(EMPLOYER)) {
+        applications = useSelector(state => state.application.list);
+    } else {
         const youtuberDetails = useSelector(state => state.youtube.details);
         applications = youtuberDetails.adApplicationList;
-    } else {
-        applications = useSelector(state => state.application.list);
     }
 
     return (
@@ -21,7 +21,7 @@ export default () => {
                 <Table.Row key={a.ad.id} textAlign="left">
                     <Table.Cell textAlign="center">
                         <span className="youtuber-details-application-img">
-                            <img src={a.ad.pictureUrl} alt="Ad picture" />
+                            <img src={a.ad.pictureUrl} alt="Ad img" />
                         </span>
                     </Table.Cell>
                     <Table.Cell>{a.ad.title}</Table.Cell>

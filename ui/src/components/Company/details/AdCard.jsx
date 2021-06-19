@@ -12,8 +12,8 @@ export default ({ ad: a, isOwner, validToText, isHidden }) => {
     return (
         <div key={a.id} className="company-ad-block-container">
             <div className="company-ad-img">
-                <img src={a.pictureUrl} id={(outOfDate || a.isBlocked) && !isHidden ? 'company-ad-out-of-date' : ''} alt="Ad picture"/>
-                {outOfDate && !isHidden && <span className="company-ad-out-of-date-text">Обявата е изтекла</span>}
+                <img src={a.pictureUrl} id={(outOfDate || a.isBlocked) && !isHidden ? 'company-ad-out-of-date' : ''} alt="Ad img"/>
+                {!a.isBlocked && outOfDate && !isHidden && <span className="company-ad-out-of-date-text">Обявата е изтекла</span>}
                 {a.isBlocked && !isHidden && <span className="company-blocked-ad-icon"><Icon name="ban" color="red" size="massive"/></span>}
             </div>
             <div className="company-ad-block-info">

@@ -1,15 +1,11 @@
 {
-  "name": "exam-prep-live",
+  "name": "ads-partners",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
-    "@testing-library/react": "^11.2.7",
-    "axios": "0.21.1",
-    "bootstrap": "4",
-    "jest": "23.6.0",
     "rc-slider": "^9.7.2",
     "react": "16.8.3",
     "react-alice-carousel": "^2.5.1",
@@ -18,16 +14,16 @@
     "react-router": "4.3.1",
     "react-router-dom": "4.3.1",
     "react-semantic-ui-datepickers": "^2.13.1",
-    "react-test-renderer": "^17.0.2",
     "react-toastify": "4.5.2",
     "redux": "4.0.1",
     "redux-thunk": "2.3.0",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "^2.0.3",
-    "traverson": "7.0.1",
-    "traverson-hal": "7.0.2"
+    "semantic-ui-react": "^2.0.3"
   },
   "devDependencies": {
+    "@testing-library/react": "^11.2.7",
+    "jest": "23.6.0",
+    "babel-core": "^7.0.0-bridge.0",
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "react-scripts": "2.1.5"
   },

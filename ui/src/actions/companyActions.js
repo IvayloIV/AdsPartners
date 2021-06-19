@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import * as types from '../actions/actionTypes';
 import * as companyService from '../services/companyService';
 import { handleException } from './commonActions';
-import { setCookie } from '../utils/CookiesUtil';
+import { setJWTCookies } from '../utils/CookiesUtil';
 
 export const registerCompanyAction = params => {
     return handleException(async () => {
@@ -14,10 +14,8 @@ export const registerCompanyAction = params => {
 
 export const loginCompanyAction = params => {
     return handleException(async () => {
-        const json = await companyService.loginCompany(params); //TODO: can i return only accessToken???
-        setCookie('accessToken', json.accessToken, 1);
-        setCookie('username', json.username, 1);
-        setCookie('roles', JSON.stringify(json.roles), 1);
+        const json = await companyService.loginCompany(params);
+        setJWTCookies(json.token);
 
         toast.success(`Успешно влязохте като компания в системата.`);
         return json;

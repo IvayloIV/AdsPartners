@@ -205,7 +205,7 @@ export default props => {
                             type="file"
                         />
                         <h3 className="edit-curr-text">Запазена снимка:</h3>
-                        <img src={currPicture} alt="Current ad image" className="edit-curr-img" />
+                        <img src={currPicture} alt="Current ad img" className="edit-curr-img" />
                         <label htmlFor="ad-form-picture" className="ad-form-picture-label">
                             <IconButton color="primary" aria-label="upload picture" component="span">
                                 <PhotoCamera />

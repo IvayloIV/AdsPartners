@@ -10,10 +10,10 @@ export const isAuthed = () => {
 
 export const hasRole = (role) => {
     const roles = getRoles();
-    return roles != null && roles.some(e => e == role);
+    return roles !== null && roles.some(e => e === role);
 };
 
 export const hasAnyRole = (roles) => {
     const currRoles = getRoles();
-    return currRoles != null && currRoles.some(r => roles.indexOf(r) != -1);
+    return currRoles !== null && currRoles.some(r => roles.indexOf(r) !== -1);
 };

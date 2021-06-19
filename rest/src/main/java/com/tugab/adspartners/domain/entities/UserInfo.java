@@ -1,8 +1,10 @@
 package com.tugab.adspartners.domain.entities;
 
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Data
 @MappedSuperclass
@@ -20,4 +22,6 @@ public abstract class UserInfo {
 
     @Transient
     private String token;
+
+    public abstract Collection<? extends GrantedAuthority> getAuthorities();
 }

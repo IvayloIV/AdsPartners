@@ -17,7 +17,7 @@ export default () => {
     const [videosRange, setVideosRange] = useState([]);
     const [subscribersRange, setSubscribersRange] = useState([]);
     const [viewsRange, setViewsRange] = useState([]);
-    const [size, setSize] = useState(6);
+    const [size] = useState(6);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [initAdRender, setInitAdRender] = useState(true);
@@ -147,28 +147,28 @@ export default () => {
                     <span>Възнаграждение/&euro;:</span>
                     <FilterSlider
                         range={rewards}
-                        onAfterChange={values => setRewardsRange(values)} />
+                        onAfterChange={values => onChangeHandler(values, setRewardsRange)} />
                 </div>}
                 {minVideos.length > 1 && 
                 <div className="ad-filter-container">
                     <span>Брой видеа:</span>
                     <FilterSlider
                         range={minVideos}
-                        onAfterChange={values => setVideosRange(values)} />
+                        onAfterChange={values => onChangeHandler(values, setVideosRange)} />
                 </div>}
                 {minSubscribers.length > 1 && 
                 <div className="ad-filter-container">
                     <span>Брой абонати:</span>
                     <FilterSlider
                         range={minSubscribers}
-                        onAfterChange={values => setSubscribersRange(values)} />
+                        onAfterChange={values => onChangeHandler(values, setSubscribersRange)} />
                 </div>}
                 {minViews.length > 1 && 
                 <div className="ad-filter-container">
                     <span>Брой показвания:</span>
                     <FilterSlider
                         range={minViews}
-                        onAfterChange={values => setViewsRange(values)} />
+                        onAfterChange={values => onChangeHandler(values, setViewsRange)} />
                 </div>}
                 <div className="ad-filter-container">
                     <span>Дата на създаване:</span>
@@ -198,7 +198,7 @@ export default () => {
             <div className="ad-list-container">
                 <div className="ad-list-title">
                     <h2>Рекламни обяви</h2>
-                    <span>({ads.totalElements} предложения за партнюрство)</span>
+                    <span>({ads.totalElements} предложения за партньорство)</span>
                 </div>
                 <AdsContainer refreshAds={refreshAds} />
                 {ads.totalElements > 0 && <div className="ad-list-pagination">

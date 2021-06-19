@@ -4,8 +4,8 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import { render, screen, fireEvent } from '@testing-library/react';
 import reducers from './reducers/reducers';
-import LoginCompany from './components/Company/LoginCompanyPage';
-import CreateAd from './components/Ad/CreateAd';
+import LoginCompanyPage from './components/Company/LoginCompanyPage';
+import CreateAdPage from './components/Ad/CreateAdPage';
 
 const store = createStore(
   combineReducers(reducers),
@@ -15,7 +15,7 @@ const store = createStore(
 test('Login email validation', () => {
   render(
     <Provider store={store}>
-        <LoginCompany />
+        <LoginCompanyPage />
     </Provider>);
 
   const emailInput = screen.getByRole('textbox');
@@ -29,7 +29,7 @@ test('Login email validation', () => {
 test('Test ad characteristic', () => {
   render(
     <Provider store={store}>
-        <CreateAd />
+        <CreateAdPage />
     </Provider>);
 
   const characteristicButton = screen.getByText('Добави своя характеристика');

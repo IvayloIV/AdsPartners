@@ -31,18 +31,12 @@ public class YoutubeController {
     @GetMapping("/profile")
     public ResponseEntity<?> profile(Authentication authentication) {
         Long youtuberId = ((Youtuber) authentication.getPrincipal()).getId();
-        return this.youtubeService.getDetails(youtuberId, false);
-    }
-
-    @GetMapping("/profile/info") //TODO
-    @PreAuthorize("hasAuthority('YOUTUBER')")
-    public ResponseEntity<?> userInfo(Authentication authentication) {
-        return this.youtubeService.convertAuthenticationToUserInfo(authentication);
+        return this.youtubeService.getDetails(youtuberId, authentication.getAuthorities());
     }
 
     @GetMapping("/details/{youtuberId}")
-    public ResponseEntity<?> details(@PathVariable Long youtuberId) {
-        return this.youtubeService.getDetails(youtuberId, true);
+    public ResponseEntity<?> details(@PathVariable Long youtuberId, Authentication authentication) {
+        return this.youtubeService.getDetails(youtuberId, authentication.getAuthorities());
     }
 
     @PatchMapping("/profile/update")

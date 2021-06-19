@@ -4,7 +4,7 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 const YoutuberBox = ({ youtuber: y }) => {
     return (
         <div className="youtuber-home" key={y.channelId}>
-            <img src={y.profilePicture} alt="youtuber-picture"/>
+            <img src={y.profilePicture} alt="Youtuber img"/>
             <div className="youtuber-home-description">
                 <h3>{y.name}</h3>
                 <Button as='div' labelPosition='right'>

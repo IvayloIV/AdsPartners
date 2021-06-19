@@ -1,7 +1,6 @@
 import { toast } from 'react-toastify';
 import * as types from '../actions/actionTypes';
 import * as youtubeService from '../services/youtubeService';
-import { setCookie } from '../utils/CookiesUtil';
 import { handleException } from './commonActions';
 
 export const getYoutubersBySubsAction = pageSize => {
@@ -17,14 +16,6 @@ export const getYoutuberProfileAction = () => {
         const json = await youtubeService.getProfile();
         dispatch({ type: types.YOUTUBER_PROFILE, data: json });
     });
-};
-
-export const loadUserInfoAction = () => {
-    return async () => {
-        const json = await youtubeService.getYoutuberInfo();
-        setCookie('username', json.name, 1);
-        setCookie('roles', JSON.stringify(json.authorities), 1);
-    };
 };
 
 export const getYoutuberDetailsAction = youtuberId => {

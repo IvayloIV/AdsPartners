@@ -7,7 +7,7 @@ export default ({ subscriber : s, onChangeStatus }) => {
     return (
         <div className="subscription-youtuber-container">
             <div className="subscription-youtuber-img">
-                <img src={s.youtuber.profilePicture} alt="Youtuber picture" />
+                <img src={s.youtuber.profilePicture} alt="Youtuber img" />
             </div>
             <div className="subscription-youtuber-info">
                 <h2>{s.youtuber.name}</h2>

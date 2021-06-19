@@ -1,5 +1,5 @@
 import requester, { baseUrl } from './requester';
-import toBase64 from './fileConverter';
+import { toBase64, createQueryParams } from './commonService';
 
 export const registerCompany = async (params) => {
     let logoBase64 = null;
@@ -28,7 +28,7 @@ export const loginCompany = async (params) => {
 };
 
 export const getList = async (params) => {
-    let query = addQueryParams(params);
+    let query = createQueryParams(params);
     return await requester(`/company/list${query}`, 'GET', true);
 };
 
@@ -59,21 +59,3 @@ export const getRegisterHistory = async () => {
 export const updateRegisterStatus = async (companyId, status) => {
     return await requester(`/company/register/status/${companyId}`, 'PATCH', true, { status });
 };
-
-function addQueryParams(params) { //TODO: clear code
-    let query = '?';
-
-    for (let key in params) {
-        let value = params[key];
-
-        if (value != undefined && ((typeof value === 'object' && value.length !== 0) || 
-                (typeof value === 'string' && value != '') || typeof value === 'number')) {
-            if (query.length !== 1) {
-                query += '&';
-            }
-            query += `${key}=${value}`;
-        }
-    }
-
-    return query;
-}

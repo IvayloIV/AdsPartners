@@ -8,10 +8,6 @@ export const getProfile = async () => {
     return await requester('/youtube/profile', 'GET', true);
 };
 
-export const getYoutuberInfo = async () => {
-    return await requester('/youtube/profile/info', 'GET', true);
-};
-
 export const getYoutuberDetails = async (youtuberId) => {
     return await requester(`/youtube/details/${youtuberId}`, 'GET', true);
 };

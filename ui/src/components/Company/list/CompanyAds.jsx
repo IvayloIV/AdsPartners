@@ -14,7 +14,7 @@ export default props => {
     return (
         <div key={a.id} className="company-ad-block-container">
             <div className="company-ad-img">
-                <img src={a.pictureUrl} id={outOfDate ? 'company-ad-out-of-date' : ''} alt="Ad picture"/>
+                <img src={a.pictureUrl} id={outOfDate ? 'company-ad-out-of-date' : ''} alt="Ad img"/>
                 {outOfDate && <span className="company-ad-out-of-date-text">Обявата е изтекла</span>}
             </div>
             <div className="company-ad-block-info">

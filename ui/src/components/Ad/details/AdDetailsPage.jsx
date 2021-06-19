@@ -59,8 +59,8 @@ export default props => {
             <div className="ad-details-container">
                 <div className="ad-details-left-container">
                     <div className="ad-details-img">
-                        <img src={ad.pictureUrl} id={outOfDate || ad.isBlocked ? 'ad-details-out-of-date' : ''} alt="Ad picture"/>
-                        {outOfDate && <span className="ad-details-out-of-date-text">Обявата е изтекла</span>}
+                        <img src={ad.pictureUrl} id={outOfDate || ad.isBlocked ? 'ad-details-out-of-date' : ''} alt="Ad img"/>
+                        {!ad.isBlocked && outOfDate && <span className="ad-details-out-of-date-text">Обявата е изтекла</span>}
                         {ad.isBlocked && <span className="ad-details-blocked-icon">
                             <Icon name="ban" color="red" id="ad-details-blocked-ban-icon" size="massive"/>
                         </span>}

@@ -1,8 +1,8 @@
 import requester, { baseUrl } from './requester';
-import toBase64 from './fileConverter';
+import { toBase64, createQueryParams } from './commonService';
 
 export const getAds = async (params) => {
-    let query = addQueryParams(params);
+    let query = createQueryParams(params);
     return await requester(`/ad/list${query}`, 'GET', true);
 };
 
@@ -15,7 +15,7 @@ export const getCompanyAdsById = async (companyId) => {
 };
 
 export const getFilters = async (params) => {
-    let query = addQueryParams(params);
+    let query = createQueryParams(params);
     return await requester(`/ad/filters${query}`, 'GET', true);
 };
 
@@ -74,20 +74,3 @@ export const blockAd = async (adId) => {
 export const unblockAd = async (adId) => {
     return await requester(`/ad/unblock/${adId}`, 'PATCH', true);
 };
-
-function addQueryParams(params) {
-    let query = '?';
-
-    for (let key in params) {
-        let value = params[key];
-
-        if (value !== undefined && ((typeof value === 'object' && value.length !== 0) || value !== '')) {
-            if (query.length !== 1) {
-                query += '&';
-            }
-            query += `${key}=${value}`;
-        }
-    }
-
-    return query;
-}

@@ -141,7 +141,7 @@ export default props => {
             </div>}
             {(hasRole(YOUTUBER) && applications.length > 0) && <div className="youtuber-applications-to-company">
                 <div className="company-details-title">
-                    <h2>Кандидатствания за партнюрствa - {applications.length}</h2>
+                    <h2>Кандидатствания за партньорствa - {applications.length}</h2>
                     <hr />
                 </div>
                 <div className="company-details-ads-container">

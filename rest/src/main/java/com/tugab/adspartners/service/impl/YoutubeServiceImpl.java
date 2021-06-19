@@ -5,12 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.tugab.adspartners.domain.entities.Youtuber;
+import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
 import com.tugab.adspartners.domain.models.response.common.MessageResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.YoutuberDetailsResponse;
-import com.tugab.adspartners.domain.models.response.youtuber.YoutuberInfoResponse;
 import com.tugab.adspartners.domain.models.response.youtuber.YoutuberListResponse;
-import com.tugab.adspartners.repository.RoleRepository;
 import com.tugab.adspartners.repository.YoutuberRepository;
 import com.tugab.adspartners.service.YoutubeService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
@@ -20,7 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -29,8 +28,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -142,14 +144,6 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
         return ResponseEntity.ok(new MessageResponse(successUpdatedMessage));
     }
 
-    public ResponseEntity<?> convertAuthenticationToUserInfo(Authentication authentication) {
-        Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-        YoutuberInfoResponse userInfo = this.modelMapper.map(youtuber, YoutuberInfoResponse.class);
-        userInfo.getAuthorities().clear();
-        youtuber.getAuthorities().forEach(r -> userInfo.addAuthority(r.getAuthority()));
-        return ResponseEntity.ok(userInfo);
-    }
-
     @Override
     public Youtuber findByEmail(String email) {
         return this.youtuberRepository.findByEmail(email);
@@ -169,7 +163,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public ResponseEntity<?> getDetails(Long youtuberId, Boolean excludeApplications) {
+    public ResponseEntity<?> getDetails(Long youtuberId, Collection<? extends GrantedAuthority> authorities) {
         Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElseThrow(null);
 
         if (youtuber == null) {
@@ -178,7 +172,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
         }
 
         YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper.map(youtuber, YoutuberDetailsResponse.class);
-        if (excludeApplications) {
+        if (authorities.stream().anyMatch(a -> a.getAuthority().equals(Authority.EMPLOYER.name()))) {
             youtuberDetailsResponse.setAdApplicationList(null);
         }
 

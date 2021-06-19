@@ -21,7 +21,7 @@ export default ({ outOfDate,  haveEnoughtVideos, haveEnoughtSubs, haveEnoughtVie
         <div className="ad-details-apply-for">
             <h2>Изпрати предложение за партньорство:</h2>
             {ad.isBlocked && <p className="ad-details-apply-for-validation">Рекламната обява е блокирана.</p>}
-            {outOfDate && <p className="ad-details-apply-for-validation">Рекламната обява е изтекла.</p>}
+            {!ad.isBlocked && outOfDate && <p className="ad-details-apply-for-validation">Рекламната обява е изтекла.</p>}
             {(!haveEnoughtVideos || !haveEnoughtSubs || !haveEnoughtViews) && 
                 <p className="ad-details-apply-for-validation">Не отговаряте на изискванията на обявата (в червено).</p>}
             {!ad.isBlocked &&  !outOfDate &&  haveEnoughtVideos &&  haveEnoughtSubs &&  haveEnoughtViews &&

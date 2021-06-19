@@ -16,14 +16,14 @@ export default () => {
     return (
         <div className="youtuber-applications-to-ad">
             <div className="ad-details-applicatoins-title">
-                <h2>Кандидатствания за партнюрствa</h2>
+                <h2>Кандидатствания за партньорствa</h2>
             </div>
             <div className="ad-details-applicatoins-container">
                 <SliderBox
                     moveGap={2}
                     items={applications.map(a => 
                         <div className="ad-details-applicatoins-wrapper" key={a.id}>
-                            <img src={a.youtuber.profilePicture} alt="Youtuber image" />
+                            <img src={a.youtuber.profilePicture} alt="Youtuber img" />
                             <div className="ad-details-application-info">
                                 <h3>{a.youtuber.name}</h3>
                                 <div><Icon name="clock outline" /> Дата за заявяване - {new Date(a.applicationDate).toLocaleDateString()}</div>
