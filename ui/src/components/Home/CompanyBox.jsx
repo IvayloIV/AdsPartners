@@ -14,7 +14,7 @@ export default ({ company: c }) => {
                         disabled={true} 
                         icon='star'
                         size="huge"
-                    /> <span className="company-home-rating">({c.averageRating})</span>
+                    /> <span className="company-home-rating">({c.averageRating.toFixed(2)})</span>
                     <p><Icon className='building'/> {c.town}</p>
                 </div>
             </div>

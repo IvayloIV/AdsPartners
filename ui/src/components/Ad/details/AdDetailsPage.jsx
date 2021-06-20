@@ -74,7 +74,7 @@ export default props => {
                             onRate={(e, v) => voteForAdHandler(ad.id, v.rating)}
                             icon='star'
                             size="huge"
-                        /> <span className="ad-list-rating-text">({Number(ad.averageRating.toFixed(2))})</span>
+                        /> <span className="ad-list-rating-text">({ad.averageRating.toFixed(2)})</span>
                     </div>
                     <h3>Възнаграждение: {ad.reward} &euro;</h3>
                     <h3>Брой кандидати за обявата до сега: {ad.applicationCount}</h3>

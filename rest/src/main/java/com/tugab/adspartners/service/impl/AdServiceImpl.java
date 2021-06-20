@@ -3,13 +3,13 @@ package com.tugab.adspartners.service.impl;
 import com.tugab.adspartners.domain.entities.*;
 import com.tugab.adspartners.domain.enums.Authority;
 import com.tugab.adspartners.domain.models.binding.ad.*;
-import com.tugab.adspartners.domain.models.response.common.MessageResponse;
-import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
-import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
 import com.tugab.adspartners.domain.models.response.ad.AdRatingResponse;
+import com.tugab.adspartners.domain.models.response.ad.details.AdDetailsResponse;
+import com.tugab.adspartners.domain.models.response.ad.filter.AdFiltersResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdListResponse;
 import com.tugab.adspartners.domain.models.response.ad.list.AdResponse;
-import com.tugab.adspartners.domain.models.response.ad.filter.AdFiltersResponse;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
 import com.tugab.adspartners.repository.AdRatingRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.repository.CharacteristicRepository;
@@ -79,7 +79,7 @@ public class AdServiceImpl implements AdService {
         Page<Ad> pageAds = this.adRepository.findAllByFilters(adListFilterBindingModel, pageable);
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
-                .map(this::setAdsCountToCompany)//TODO: why should i set it to every ad???
+                .map(this::setAdsCountToCompany)
                 .map(this::setAdAverageRating)
                 .map(a -> this.modelMapper.map(a, AdResponse.class))
                 .map(a -> this.setAdRatingByYoutuber(a, isYoutuber, authentication))
@@ -92,49 +92,6 @@ public class AdServiceImpl implements AdService {
         adListResponse.setTotalElements(pageAds.getTotalElements());
 
         return ResponseEntity.ok(adListResponse);
-    }
-
-    private Boolean checkYoutuberRole(Authentication authentication) {
-        return authentication.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
-    }
-
-    private Ad setAdsCountToCompany(Ad ad) {
-        Integer adsCount = ad.getCompany().getAds().size();
-        ad.getCompany().setAdsCount(adsCount);
-        return ad;
-    }
-
-    @Override
-    public Ad setAdAverageRating(Ad ad) {
-        ad.getRatingList()
-            .stream()
-            .mapToInt(AdRating::getRating)
-            .average()
-            .ifPresent(ad::setAverageRating);
-
-        return ad;
-    }
-
-    private AdResponse setAdRatingByYoutuber(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
-        AdRatingResponse adRatingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
-        adResponse.setRatingResponse(adRatingResponse);
-        return adResponse;
-    }
-
-    private AdRatingResponse getRatingResponse(Boolean isYoutuber, Authentication authentication, Long adId) {
-        if (isYoutuber) {
-            Youtuber youtuber = (Youtuber) authentication.getPrincipal();
-            AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId())
-                    .orElse(null);
-
-            if (adRating != null) {
-                return this.modelMapper.map(adRating, AdRatingResponse.class);
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -151,7 +108,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public ResponseEntity<?> getDetails(Long adId, Authentication authentication) {
-        Ad ad = this.adRepository.findById(adId).orElseThrow(null);
+        Ad ad = this.adRepository.findById(adId).orElse(null);
         if (ad == null) {
             String wrongIdMessage = this.resourceBundleUtil.getMessage("adDetails.wrongId");
             return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
@@ -168,6 +125,7 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(adResponse);
     }
 
+    @Override
     public ResponseEntity<?> createAd(CreateAdBindingModel createAdBindingModel, Errors errors) {
         ResponseEntity<?> errorResponseEntity = this.checkForErrors(errors);
         if (errorResponseEntity != null) {
@@ -184,17 +142,18 @@ public class AdServiceImpl implements AdService {
         this.adRepository.save(ad);
 
         this.subscriptionRepository.findById_CompanyAndIsBlocked(ad.getCompany(),false)
-            .forEach(s -> {
-                String unsubscribeCompanyUrl = String.format("%s/company/%d/unsubscribe",
-                        createAdBindingModel.getRemoteUrl(), ad.getCompany().getUser().getId());
-                String youtuberEmail = s.getId().getYoutuber().getEmail();
-                this.emailService.sendAdSubscription(ad, youtuberEmail, unsubscribeCompanyUrl);
-            });
+                .forEach(s -> {
+                    String unsubscribeCompanyUrl = String.format("%s/company/%d/unsubscribe",
+                            createAdBindingModel.getRemoteUrl(), ad.getCompany().getUser().getId());
+                    String youtuberEmail = s.getId().getYoutuber().getEmail();
+                    this.emailService.sendAdSubscription(ad, youtuberEmail, unsubscribeCompanyUrl);
+                });
 
         MessageResponse responseMessage = new MessageResponse(this.resourceBundleUtil.getMessage("createAd.success"));
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
+    @Override
     public ResponseEntity<?> editAd(EditAdBindingModel editAdBindingModel, Errors errors) {
         ResponseEntity<?> errorResponseEntity = this.checkForErrors(errors);
         if (errorResponseEntity != null) {
@@ -210,28 +169,7 @@ public class AdServiceImpl implements AdService {
             return new ResponseEntity<>(new ErrorResponse(wrongCompanyMessage), HttpStatus.FORBIDDEN);
         }
 
-        CloudinaryResource oldAdPicture = null;
-
-        if (editAdBindingModel.getPictureBase64() != null) { //TODO maybe should be after characteristic validation
-            CloudinaryResource newPicture = this.cloudinaryService
-                    .updateImage(ad.getPicture(), editAdBindingModel.getPictureBase64());
-
-            if (newPicture != null) {
-                oldAdPicture = ad.getPicture();
-                ad.setPicture(newPicture);
-            }
-        }
-
-        ad.setTitle(editAdBindingModel.getTitle());
-        ad.setDescription(editAdBindingModel.getDescription());
-        ad.setReward(editAdBindingModel.getReward());
-        ad.setValidTo(editAdBindingModel.getValidTo());
-        ad.setMinVideos(editAdBindingModel.getMinVideos());
-        ad.setMinSubscribers(editAdBindingModel.getMinSubscribers());
-        ad.setMinViews(editAdBindingModel.getMinViews());
-
         List<String> errorCharMessages = new ArrayList<>();
-        ad.getCharacteristics().clear();
         editAdBindingModel.getCharacteristics().forEach(c -> {
             if (c.getId() != null) {
                 Characteristic savedChar = this.characteristicRepository.findById(c.getId()).orElse(null);
@@ -243,18 +181,41 @@ public class AdServiceImpl implements AdService {
                     errorCharMessages.add(charBelongToOtherAd);
                 }
             }
+        });
 
+        if (errorCharMessages.size() != 0) {
+            List<String> errorCharDistinctMessages = errorCharMessages.stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(new ErrorResponse(errorCharDistinctMessages), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        CloudinaryResource oldAdPicture = null;
+
+        if (editAdBindingModel.getPictureBase64() != null) {
+            CloudinaryResource newPicture = this.cloudinaryService
+                    .updateImage(ad.getPicture(), editAdBindingModel.getPictureBase64());
+
+            if (newPicture != null) {
+                oldAdPicture = ad.getPicture();
+                ad.setPicture(newPicture);
+            }
+        }
+
+        ad.getCharacteristics().clear();
+        editAdBindingModel.getCharacteristics().forEach(c -> {
             Characteristic characteristic = this.modelMapper.map(c, Characteristic.class);
             characteristic.setAd(ad);
             ad.getCharacteristics().add(characteristic);
         });
 
-        if (errorCharMessages.size() != 0) {
-            List<String> errorCharDistinctMessages = errorCharMessages.stream()
-                .distinct()
-                .collect(Collectors.toList());
-            return new ResponseEntity<>(new ErrorResponse(errorCharDistinctMessages), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        ad.setTitle(editAdBindingModel.getTitle());
+        ad.setDescription(editAdBindingModel.getDescription());
+        ad.setReward(editAdBindingModel.getReward());
+        ad.setValidTo(editAdBindingModel.getValidTo());
+        ad.setMinVideos(editAdBindingModel.getMinVideos());
+        ad.setMinSubscribers(editAdBindingModel.getMinSubscribers());
+        ad.setMinViews(editAdBindingModel.getMinViews());
 
         this.adRepository.save(ad);
         if (oldAdPicture != null) {
@@ -283,6 +244,7 @@ public class AdServiceImpl implements AdService {
         return ResponseEntity.ok(new MessageResponse(successMessage));
     }
 
+    @Override
     public ResponseEntity<?> vote(Long adId, RatingBindingModel ratingBindingModel, Youtuber youtuber) {
         Boolean alreadyVote = this.adRatingRepository.existsById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId());
         if (alreadyVote) {
@@ -306,7 +268,7 @@ public class AdServiceImpl implements AdService {
         adRating.setId(new AdRatingId(ad, youtuber));
         adRating.setRating(ratingBindingModel.getRating());
         adRating.setCreationDate(new Date());
-        adRating = this.adRatingRepository.save(adRating);
+        this.adRatingRepository.save(adRating);
 
         AdRatingResponse rating = this.modelMapper.map(adRating, AdRatingResponse.class);
         return new ResponseEntity<>(rating, HttpStatus.CREATED);
@@ -330,6 +292,49 @@ public class AdServiceImpl implements AdService {
 
         String successMessage = this.resourceBundleUtil.getMessage("adStatus.success");
         return ResponseEntity.ok(new MessageResponse(successMessage));
+    }
+
+    @Override
+    public Ad setAdAverageRating(Ad ad) {
+        ad.getRatingList()
+                .stream()
+                .mapToInt(AdRating::getRating)
+                .average()
+                .ifPresent(ad::setAverageRating);
+
+        return ad;
+    }
+
+    private Boolean checkYoutuberRole(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
+    }
+
+    private Ad setAdsCountToCompany(Ad ad) {
+        Integer adsCount = ad.getCompany().getAds().size();
+        ad.getCompany().setAdsCount(adsCount);
+        return ad;
+    }
+
+    private AdResponse setAdRatingByYoutuber(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {
+        AdRatingResponse adRatingResponse = this.getRatingResponse(isYoutuber, authentication, adResponse.getId());
+        adResponse.setRatingResponse(adRatingResponse);
+        return adResponse;
+    }
+
+    private AdRatingResponse getRatingResponse(Boolean isYoutuber, Authentication authentication, Long adId) {
+        if (isYoutuber) {
+            Youtuber youtuber = (Youtuber) authentication.getPrincipal();
+            AdRating adRating = this.adRatingRepository.findAllById_Ad_IdAndId_Youtuber_Id(adId, youtuber.getId())
+                    .orElse(null);
+
+            if (adRating != null) {
+                return this.modelMapper.map(adRating, AdRatingResponse.class);
+            }
+        }
+
+        return null;
     }
 
     private ResponseEntity<?> checkForErrors(Errors errors) {

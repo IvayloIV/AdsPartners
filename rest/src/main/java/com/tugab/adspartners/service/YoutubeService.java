@@ -16,13 +16,11 @@ import java.util.List;
 @Repository
 public interface YoutubeService extends OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest);
-
-    public Youtuber findByEmail(String email);
-
-    public ResponseEntity<?> updateYoutubeDetails(Youtuber youtuber);
-
     public ResponseEntity<List<YoutuberListResponse>> getList(Integer size);
 
     public ResponseEntity<?> getDetails(Long youtuberId, Collection<? extends GrantedAuthority> authorities);
+
+    public ResponseEntity<?> updateYoutubeDetails(Youtuber youtuber);
+
+    public Youtuber findByEmail(String email);
 }

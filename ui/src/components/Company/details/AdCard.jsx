@@ -24,7 +24,7 @@ export default ({ ad: a, isOwner, validToText, isHidden }) => {
                         size='huge'
                         defaultRating={Math.round(a.averageRating)}
                         maxRating={5} /> 
-                    <span className="rating-info">({a.averageRating})</span>
+                    <span className="rating-info">({a.averageRating.toFixed(2)})</span>
                 </span>
                 <div className="company-ad-valid-to">
                     {validToText || `Валидна до: ${new Date(a.validTo).toLocaleDateString()}`}

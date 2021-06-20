@@ -25,7 +25,7 @@ export default props => {
                         size='huge'
                         defaultRating={Math.round(a.averageRating)}
                         maxRating={5} /> 
-                    <span className="rating-info">({a.averageRating})</span>
+                    <span className="rating-info">({a.averageRating.toFixed(2)})</span>
                 </span>
                 <div>Възнаграждение: {a.reward} &euro;</div>
                 <div>Валидна до: {new Date(a.validTo).toLocaleDateString()}</div>

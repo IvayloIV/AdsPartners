@@ -13,6 +13,4 @@ public interface ApplicationService {
     public ResponseEntity<List<AdApplicationResponse>> getList(Long youtuberId, Long companyId);
 
     public ResponseEntity<?> applyFor(AdApplicationBindingModel adApplicationBindingModel);
-
-//    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId);
 }

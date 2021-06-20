@@ -12,16 +12,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
 
     private static final String CLOUDINARY_BASE_URL = "https://api.cloudinary.com/v1_1/";
+
+    private final RestTemplate restTemplate;
+    private final Gson gson;
+    private final JsonParser jsonParser;
+    private final CloudinaryRepository cloudinaryRepository;
 
     @Value("${cloudinary.name}")
     private String cloudinaryName;
@@ -32,11 +38,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     @Value("${cloudinary.secret}")
     private String cloudinarySecret;
 
-    private final RestTemplate restTemplate;
-    private final Gson gson;
-    private final JsonParser jsonParser;
-    private final CloudinaryRepository cloudinaryRepository;
-
     @Autowired
     public CloudinaryServiceImpl(RestTemplate restTemplate,
                                 Gson gson,
@@ -46,20 +47,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         this.gson = gson;
         this.jsonParser = jsonParser;
         this.cloudinaryRepository = cloudinaryRepository;
-    }
-
-    @Override
-    public CloudinaryResource uploadImage(MultipartFile image) {
-        try {
-            byte[] imageBytes = image.getBytes();
-            String imageBase64 = Base64.getEncoder().encodeToString(imageBytes);
-            String imageString = String.format("data:%s;base64,%s", image.getContentType(), imageBase64);
-            return this.uploadImage(imageString);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     @Override
@@ -112,22 +99,6 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public CloudinaryResource updateImage(CloudinaryResource oldImage, MultipartFile newImage) {
-        CloudinaryResource newCloudinaryResource = this.uploadImage(newImage);
-        if (newCloudinaryResource != null) {
-            this.deleteImageResource(oldImage);
-            return newCloudinaryResource;
-        }
-
-        return null;
-    }
-
-    @Override
-    public void deleteImage(CloudinaryResource image) {
-        this.cloudinaryRepository.delete(image);
-    }
-
-    @Override
     public boolean deleteImageResource(CloudinaryResource image) {
         TreeMap<String, String> params = new TreeMap<>();
         params.put("public_id", image.getId());
@@ -152,6 +123,11 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
 
         return false;
+    }
+
+    @Override
+    public void deleteImage(CloudinaryResource image) {
+        this.cloudinaryRepository.delete(image);
     }
 
     private Map<String, String> createBodyMap(TreeMap<String, String> params) {

@@ -9,10 +9,6 @@ import java.util.Map;
 
 public interface EmailService {
 
-    public void sendMail(String template, String to, String subject);
-
-    public String createTemplate(String templateName, Map<String, Object> variables);
-
     public void sendAfterCompanyRegistration(Company company, String adminRedirectUrl);
 
     public void sendCompanyStatusChanged(String companyEmail, RegistrationStatus status);

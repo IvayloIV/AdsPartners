@@ -21,7 +21,6 @@ export default async (endPoint, type, auth, data) => {
         obj['headers']['Authorization'] = `Bearer ${getCookie('accessToken')}`;
     }
 
-    console.log(endPoint);
     const response = await fetch(baseRemoteUrl + endPoint, obj);
     let json = await response.json();
 

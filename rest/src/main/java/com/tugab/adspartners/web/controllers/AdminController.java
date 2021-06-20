@@ -1,7 +1,7 @@
 package com.tugab.adspartners.web.controllers;
 
 import com.tugab.adspartners.domain.models.binding.admin.LoginAdminBindingModel;
-import com.tugab.adspartners.service.UserService;
+import com.tugab.adspartners.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -14,16 +14,16 @@ import javax.validation.Valid;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private final UserService userService;
+    private final AdminService adminService;
 
     @Autowired
-    public AdminController(UserService userService) {
-        this.userService = userService;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginAdmin(@Valid @RequestBody LoginAdminBindingModel loginAdminBindingModel,
                                         Errors errors) {
-        return this.userService.loginAdmin(loginAdminBindingModel, errors);
+        return this.adminService.login(loginAdminBindingModel, errors);
     }
 }

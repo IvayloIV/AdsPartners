@@ -1,15 +1,17 @@
 package com.tugab.adspartners.security.jwt;
 
 import com.tugab.adspartners.domain.entities.Company;
-import com.tugab.adspartners.domain.entities.User;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.enums.Authority;
-import com.tugab.adspartners.service.UserService;
+import com.tugab.adspartners.service.AuthenticationService;
+import com.tugab.adspartners.service.CompanyService;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,15 +28,18 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final YoutubeService youtubeService;
-
-    @Autowired
-    private UserService userService;
+    private final CompanyService companyService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
     public AuthTokenFilter(JwtUtils jwtUtils,
-                           YoutubeService youtubeService) {
+                           YoutubeService youtubeService,
+                           CompanyService companyService,
+                           AuthenticationService authenticationService) {
         this.jwtUtils = jwtUtils;
         this.youtubeService = youtubeService;
+        this.companyService = companyService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -51,9 +56,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     youtuber.setToken(userToken);
                     authentication = new UsernamePasswordAuthenticationToken(youtuber, null, youtuber.getAuthorities());
                 } else {
-                    User user = this.userService.findByEmail(email);
+                    UserDetails user = this.authenticationService.loadUserByUsername(email);
                     if (user.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> a.equals(Authority.EMPLOYER.name()))) {
-                        Company company = this.userService.findCompanyByEmail(email);
+                        Company company = this.companyService.findByEmail(email);
                         authentication = new UsernamePasswordAuthenticationToken(company, null, user.getAuthorities());
                     } else {
                         authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

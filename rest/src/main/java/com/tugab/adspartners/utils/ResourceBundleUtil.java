@@ -11,8 +11,12 @@ import java.util.ResourceBundle;
 @Component
 public class ResourceBundleUtil {
 
+    private final MessageSource messageSource;
+
     @Autowired
-    private MessageSource messageSource;
+    public ResourceBundleUtil(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     private String getMessage(String key, Object[] params) {
         Locale locale = LocaleContextHolder.getLocale();

@@ -22,7 +22,6 @@ import org.springframework.http.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,8 +30,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,29 +57,33 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
-        String email = oAuth2User.getAttribute("email");
-        Youtuber youtuber;
+    public ResponseEntity<List<YoutuberListResponse>> getList(Integer size) {
+        Pageable youtuberPageable = PageRequest.of(0, size);
+        Page<Youtuber> youtuberPage = this.youtuberRepository
+                .findAllByOrderBySubscriberCountDesc(youtuberPageable);
 
-        if (youtuberRepository.existsByEmail(email)) {
-            youtuber = this.youtuberRepository.findByEmail(email);
-        } else {
-            youtuber = new Youtuber();
-            youtuber.setEmail(email);
-            youtuber.setName(oAuth2User.getAttribute("name"));
+        List<YoutuberListResponse> youtubersInfo = youtuberPage
+                .getContent()
+                .stream().map(y -> this.modelMapper.map(y, YoutuberListResponse.class))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(youtubersInfo);
+    }
+
+    @Override
+    public ResponseEntity<?> getDetails(Long youtuberId, Collection<? extends GrantedAuthority> authorities) {
+        Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElse(null);
+
+        if (youtuber == null) {
+            String wrongIdMessage = this.resourceBundleUtil.getMessage("youtuberProfile.wrongId");
+            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
         }
 
-        final String token = oAuth2UserRequest.getAccessToken().getTokenValue();
-        youtuber.setToken(token);
-        youtuber.setAttributes(oAuth2User.getAttributes());
-
-        ResponseEntity<?> responseEntity = this.updateYoutubeDetails(youtuber);
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            this.youtuberRepository.save(youtuber);
+        YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper.map(youtuber, YoutuberDetailsResponse.class);
+        if (authorities.stream().anyMatch(a -> a.getAuthority().equals(Authority.EMPLOYER.name()))) {
+            youtuberDetailsResponse.setAdApplicationList(null);
         }
 
-        return youtuber;
+        return ResponseEntity.ok(youtuberDetailsResponse);
     }
 
     @Override
@@ -150,32 +151,28 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
     }
 
     @Override
-    public ResponseEntity<List<YoutuberListResponse>> getList(Integer size) {
-        Pageable youtuberPageable = PageRequest.of(0, size);
-        Page<Youtuber> youtuberPage = this.youtuberRepository
-                .findAllByOrderBySubscriberCountDesc(youtuberPageable);
+    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) {
+        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
+        String email = oAuth2User.getAttribute("email");
+        Youtuber youtuber;
 
-        List<YoutuberListResponse> youtubersInfo = youtuberPage
-                .getContent()
-                .stream().map(y -> this.modelMapper.map(y, YoutuberListResponse.class))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(youtubersInfo);
-    }
-
-    @Override
-    public ResponseEntity<?> getDetails(Long youtuberId, Collection<? extends GrantedAuthority> authorities) {
-        Youtuber youtuber = this.youtuberRepository.findById(youtuberId).orElseThrow(null);
-
-        if (youtuber == null) {
-            String wrongIdMessage = this.resourceBundleUtil.getMessage("youtuberProfile.wrongId");
-            return new ResponseEntity<>(new ErrorResponse(wrongIdMessage), HttpStatus.NOT_FOUND);
+        if (youtuberRepository.existsByEmail(email)) {
+            youtuber = this.youtuberRepository.findByEmail(email);
+        } else {
+            youtuber = new Youtuber();
+            youtuber.setEmail(email);
+            youtuber.setName(oAuth2User.getAttribute("name"));
         }
 
-        YoutuberDetailsResponse youtuberDetailsResponse = this.modelMapper.map(youtuber, YoutuberDetailsResponse.class);
-        if (authorities.stream().anyMatch(a -> a.getAuthority().equals(Authority.EMPLOYER.name()))) {
-            youtuberDetailsResponse.setAdApplicationList(null);
+        final String token = oAuth2UserRequest.getAccessToken().getTokenValue();
+        youtuber.setToken(token);
+        youtuber.setAttributes(oAuth2User.getAttributes());
+
+        ResponseEntity<?> responseEntity = this.updateYoutubeDetails(youtuber);
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            this.youtuberRepository.save(youtuber);
         }
 
-        return ResponseEntity.ok(youtuberDetailsResponse);
+        return youtuber;
     }
 }

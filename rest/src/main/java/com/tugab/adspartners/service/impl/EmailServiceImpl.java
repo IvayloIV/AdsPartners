@@ -44,29 +44,6 @@ public class EmailServiceImpl implements EmailService {
         this.resourceBundleUtil = resourceBundleUtil;
     }
 
-    public void sendMail(String template, String to, String subject) {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        try {
-            helper.setText(template, true);
-            helper.setSubject(subject);
-            helper.setTo(to);
-        } catch (MessagingException e) {
-            e.printStackTrace(); //TODO: do something with that exception
-        }
-        javaMailSender.send(mimeMessage);
-    }
-
-    public String createTemplate(String templateName, Map<String, Object> variables) {
-        Context context = new Context();
-        if (variables != null) {
-            variables.forEach(context::setVariable);
-        }
-
-        String template = String.format("mails/%s", templateName);
-        return templateEngine.process(template, context);
-    }
-
     @Override
     public void sendAfterCompanyRegistration(Company company, String adminRedirectUrl) {
         final String mailSubject = this.resourceBundleUtil.getMessage("registerCompany.requestMailSubject");
@@ -99,6 +76,29 @@ public class EmailServiceImpl implements EmailService {
         final String companyEmail = adApplication.getId().getAd().getCompany().getUser().getEmail();
         String template = this.createAdApplicationTemplate(adApplication);
         this.sendMail(template, companyEmail, mailSubject);
+    }
+
+    private void sendMail(String template, String to, String subject) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        try {
+            helper.setText(template, true);
+            helper.setSubject(subject);
+            helper.setTo(to);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        javaMailSender.send(mimeMessage);
+    }
+
+    private String createTemplate(String templateName, Map<String, Object> variables) {
+        Context context = new Context();
+        if (variables != null) {
+            variables.forEach(context::setVariable);
+        }
+
+        String template = String.format("mails/%s", templateName);
+        return templateEngine.process(template, context);
     }
 
     private String createCompanyStatusChangedTemplate(RegistrationStatus status) {

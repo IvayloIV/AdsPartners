@@ -5,9 +5,9 @@ import com.tugab.adspartners.domain.entities.AdApplication;
 import com.tugab.adspartners.domain.entities.AdApplicationId;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.application.AdApplicationBindingModel;
-import com.tugab.adspartners.domain.models.response.common.MessageResponse;
-import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
 import com.tugab.adspartners.domain.models.response.application.AdApplicationResponse;
+import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
 import com.tugab.adspartners.repository.AdApplicationRepository;
 import com.tugab.adspartners.repository.AdRepository;
 import com.tugab.adspartners.service.ApplicationService;
@@ -112,20 +112,4 @@ public class ApplicationServiceImpl implements ApplicationService {
         String applyForSuccessMessage = this.resourceBundleUtil.getMessage("adDetails.applyForSuccess");
         return ResponseEntity.ok(new MessageResponse(applyForSuccessMessage));
     }
-
-//    @Override
-//    public ResponseEntity<List<AdYoutuberApplicationResponse>> getApplicationsByYoutuberId(Long youtuberId) {
-//        List<AdApplication> applications = this.adApplicationRepository.findById_Youtuber_Id(youtuberId);
-//        List<AdYoutuberApplicationResponse> adsResponse = applications
-//                .stream()
-//                .map(a -> {
-//                    AdYoutuberApplicationResponse adApplication =
-//                            this.modelMapper.map(a.getId().getAd(), AdYoutuberApplicationResponse.class);
-//                    adApplication.setType(a.getType().name());
-//                    return adApplication;
-//                }) //TODO: not the best way for AdYoutuberApplicationResponse
-//                .collect(Collectors.toList());
-//
-//        return ResponseEntity.ok(adsResponse);
-//    }
 }

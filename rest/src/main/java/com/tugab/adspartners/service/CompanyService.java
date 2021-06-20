@@ -18,29 +18,25 @@ import org.springframework.validation.Errors;
 
 import java.util.List;
 
-public interface UserService extends UserDetailsService {
+public interface CompanyService {
 
-    public ResponseEntity<?> registerCompany(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors);
+    public ResponseEntity<?> register(RegisterCompanyBindingModel registerCompanyBindingModel, Errors errors);
 
-    public ResponseEntity<?> loginCompany(LoginCompanyBindingModel loginCompanyBindingModel, Errors errors);
+    public ResponseEntity<?> login(LoginCompanyBindingModel loginCompanyBindingModel, Errors errors);
 
-    public User findByEmail(String email);
+    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFiltersBindingModel companyFiltersBindingModel);
 
-    public Company findCompanyByEmail(String email);
+    public ResponseEntity<List<CompanyInfoResponse>> getListByRating(Integer size);
 
-    public ResponseEntity<?> loginAdmin(LoginAdminBindingModel loginCompanyBindingModel, Errors errors);
+    public ResponseEntity<CompanyFiltersResponse> getFilters();
 
-    public ResponseEntity<?> getCompanyById(Long id);
+    public ResponseEntity<?> getById(Long id);
 
     public ResponseEntity<List<CompanyRegisterRequestResponse>> getRegisterRequests();
 
     public ResponseEntity<List<CompanyRegisterHistoryResponse>> getRegisterHistory();
 
-    public ResponseEntity<?> updateCompanyStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
+    public ResponseEntity<?> updateStatus(Long companyId, UpdateStatusBindingModel updateStatusBindingModel);
 
-    public ResponseEntity<List<CompanyInfoResponse>> getCompaniesByRating(Integer size);
-
-    public ResponseEntity<CompanyAdsListResponse> getList(CompanyFiltersBindingModel companyFiltersBindingModel);
-
-    public ResponseEntity<CompanyFiltersResponse> getCompaniesFilters();
+    public Company findByEmail(String email);
 }

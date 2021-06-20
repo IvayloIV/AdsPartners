@@ -5,11 +5,12 @@ import com.tugab.adspartners.security.OAuth2AuthenticationFailureHandler;
 import com.tugab.adspartners.security.OAuth2AuthenticationSuccessHandler;
 import com.tugab.adspartners.security.jwt.AuthEntryPointJwt;
 import com.tugab.adspartners.security.jwt.AuthTokenFilter;
-import com.tugab.adspartners.service.UserService;
+import com.tugab.adspartners.service.AuthenticationService;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,23 +32,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthEntryPointJwt unauthorizedHandler;
     private final YoutubeService youtubeService;
     private final AuthTokenFilter authTokenFilter;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    @Autowired
-    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final AuthenticationService authenticationService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Autowired
     public SecurityConfig(AuthEntryPointJwt unauthorizedHandler,
                           YoutubeService youtubeService,
-                          AuthTokenFilter authTokenFilter) {
+                          AuthTokenFilter authTokenFilter,
+                          AuthenticationService authenticationService,
+                    @Lazy OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+                    @Lazy OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.youtubeService = youtubeService;
         this.authTokenFilter = authTokenFilter;
+        this.authenticationService = authenticationService;
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
     }
 
     @Bean
@@ -57,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        authenticationManagerBuilder.userDetailsService(authenticationService).passwordEncoder(passwordEncoder());
     }
 
     @Bean

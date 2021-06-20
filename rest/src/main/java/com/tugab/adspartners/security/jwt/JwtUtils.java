@@ -3,6 +3,7 @@ package com.tugab.adspartners.security.jwt;
 import com.google.gson.Gson;
 import com.tugab.adspartners.domain.entities.UserInfo;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +16,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    private final Gson gson;
 
-    @Value("${jwt.app.secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.app.expidationMs}")
+    @Value("${jwt.expirationMs}")
     private int jwtExpirationMs;
 
     @Autowired
-    private Gson gson;
+    public JwtUtils(Gson gson) {
+        this.gson = gson;
+    }
 
     public String generateJwtToken(Authentication authentication) {
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
@@ -44,9 +48,10 @@ public class JwtUtils {
             jwtBuilder = jwtBuilder.claim("token", userInfo.getToken());
         }
 
+        Date issuedAt = new Date();
         return jwtBuilder.setSubject(userInfo.getEmail())
-            .setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .setIssuedAt(issuedAt)
+            .setExpiration(new Date(issuedAt.getTime() + jwtExpirationMs))
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
     }
@@ -64,15 +69,11 @@ public class JwtUtils {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
-            logger.error("Invalid JWT signature: {}", e.getMessage());
+            log.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
+            log.error("Invalid JWT token: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            logger.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims string is empty: {}", e.getMessage());
+            log.error("JWT token is expired: {}", e.getMessage());
         }
 
         return false;

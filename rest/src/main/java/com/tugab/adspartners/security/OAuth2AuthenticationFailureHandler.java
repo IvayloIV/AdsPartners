@@ -18,8 +18,12 @@ import static com.tugab.adspartners.security.HttpCookieOAuth2AuthorizationReques
 @Component
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2Repository;
+
     @Autowired
-    HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    public OAuth2AuthenticationFailureHandler(HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2Repository) {
+        this.httpCookieOAuth2Repository = httpCookieOAuth2Repository;
+    }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -31,7 +35,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
                 .queryParam("error", exception.getLocalizedMessage())
                 .build().toUriString();
 
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+        httpCookieOAuth2Repository.removeAuthorizationRequestCookies(request, response);
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

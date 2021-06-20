@@ -5,8 +5,8 @@ import com.tugab.adspartners.domain.entities.Subscription;
 import com.tugab.adspartners.domain.entities.SubscriptionId;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.models.binding.subscription.SubscriberStatusBindingModel;
-import com.tugab.adspartners.domain.models.response.common.MessageResponse;
 import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
+import com.tugab.adspartners.domain.models.response.common.MessageResponse;
 import com.tugab.adspartners.domain.models.response.subscription.SubscriptionInfoResponse;
 import com.tugab.adspartners.repository.CompanyRepository;
 import com.tugab.adspartners.repository.SubscriptionRepository;
@@ -55,7 +55,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public ResponseEntity<?> subscribe(Youtuber youtuber, Long companyId) {
-        Company company = this.companyRepository.findById(companyId).orElseThrow(null);
+        Company company = this.companyRepository.findById(companyId).orElse(null);
         if (company == null) {
             String wrongCompanyId = this.resourceBundleUtil.getMessage("companyProfile.wrongId");
             return new ResponseEntity<>(new ErrorResponse(wrongCompanyId), HttpStatus.NOT_FOUND);

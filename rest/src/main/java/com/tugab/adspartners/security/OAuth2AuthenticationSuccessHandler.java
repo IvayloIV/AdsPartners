@@ -20,11 +20,15 @@ import static com.tugab.adspartners.security.HttpCookieOAuth2AuthorizationReques
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Autowired
-    private JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2Repository;
 
     @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    public OAuth2AuthenticationSuccessHandler(JwtUtils jwtUtils,
+            HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2Repository) {
+        this.jwtUtils = jwtUtils;
+        this.httpCookieOAuth2Repository = httpCookieOAuth2Repository;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -38,7 +42,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .build().toUriString();
 
         super.clearAuthenticationAttributes(request);
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+        httpCookieOAuth2Repository.removeAuthorizationRequestCookies(request, response);
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

@@ -100,7 +100,7 @@ public class AdRepositoryCustomImpl implements AdRepositoryCustom {
         }
 
         query.where(predicates.toArray(new Predicate[0]));
-        query.orderBy(cb.desc(ad.get("creationDate")));
+        query.orderBy(cb.desc(ad.get("validTo")));
 
         List<Ad> ads = this.entityManager
                 .createQuery(query)
