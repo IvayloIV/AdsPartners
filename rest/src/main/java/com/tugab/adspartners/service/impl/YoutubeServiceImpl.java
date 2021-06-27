@@ -93,11 +93,17 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
         HttpEntity entity = new HttpEntity(headers);
         final String getYoutuberDataUrl = BASE_YOUTUBE_URL + "/channels?part=snippet,contentDetails,statistics&mine=true";
-        ResponseEntity<String> responseEntity = this.restTemplate
-                .exchange(getYoutuberDataUrl, HttpMethod.GET, entity, String.class);
+        String unavailableServiceMessage = this.resourceBundleUtil.getMessage("youtuberProfile.unavailableService");
+        ResponseEntity<String> responseEntity;
+
+        try {
+            responseEntity = this.restTemplate
+                    .exchange(getYoutuberDataUrl, HttpMethod.GET, entity, String.class);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(new ErrorResponse(unavailableServiceMessage), HttpStatus.SERVICE_UNAVAILABLE);
+        }
 
         if (responseEntity.getStatusCode() != HttpStatus.OK || responseEntity.getBody() == null) {
-            String unavailableServiceMessage = this.resourceBundleUtil.getMessage("youtuberProfile.unavailableService");
             return new ResponseEntity<>(new ErrorResponse(unavailableServiceMessage), HttpStatus.SERVICE_UNAVAILABLE);
         }
 
@@ -170,7 +176,7 @@ public class YoutubeServiceImpl extends DefaultOAuth2UserService implements Yout
 
         ResponseEntity<?> responseEntity = this.updateYoutubeDetails(youtuber);
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            this.youtuberRepository.save(youtuber);
+            youtuber.setToken(null);
         }
 
         return youtuber;

@@ -95,9 +95,14 @@ public class CompanyServiceImpl implements CompanyService {
                     .body(new ErrorResponse(this.resourceBundleUtil.getMessage("registerCompany.emailExist")));
         }
 
+        CloudinaryResource cloudinaryResource = this.cloudinaryService.uploadImage(registerCompanyBindingModel.getLogoBase64());
+        if (cloudinaryResource == null) {
+            String cloudUnavailableMessage = this.resourceBundleUtil.getMessage("registerCompany.unavailableCloud");
+            return new ResponseEntity<>(new ErrorResponse(cloudUnavailableMessage), HttpStatus.SERVICE_UNAVAILABLE);
+        }
+
         Company company = this.modelMapper.map(registerCompanyBindingModel, Company.class);
         company.setWorkersCount(registerCompanyBindingModel.getWorkersCount());
-        CloudinaryResource cloudinaryResource = this.cloudinaryService.uploadImage(registerCompanyBindingModel.getLogoBase64());
         company.setLogo(cloudinaryResource);
         company.setStatus(RegistrationStatus.UNRESOLVED);
 

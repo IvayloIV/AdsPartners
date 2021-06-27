@@ -3,15 +3,22 @@ server:
 
 spring:
   datasource:
-    url: dburl
-    username: dbuser
-    password: dbpass
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: dbUrl
+    username: dbUser
+    password: dbPass
+    initialization-mode: always
+    schema:
+      - classpath:sql/schema.sql
+#    data:
+#      - classpath:sql/data.sql
   jpa:
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: none #update
+    open-in-view: true
   mail:
-    username: youremail
-    password: yourpass
+    username: mailUser
+    password: mailPass
     host: smtp.gmail.com
     port: 587
     protocol: smtp
@@ -35,9 +42,8 @@ spring:
 
 # JWT configuration
 jwt:
-  app:
-    secret: jwtSecret
-    expidationMs: 86400000
+  secret: jwtSecret
+  expirationMs: 86400000
 
 # Default admin user
 default:

@@ -1,11 +1,9 @@
-package com.tugab.adspartners.security.jwt;
+package com.tugab.adspartners.utils;
 
 import com.google.gson.Gson;
 import com.tugab.adspartners.domain.entities.UserInfo;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -20,13 +18,13 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtils {
 
-    private final Gson gson;
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Value("${jwt.expirationMs}")
     private int jwtExpirationMs;
+
+    private final Gson gson;
 
     @Autowired
     public JwtUtils(Gson gson) {
@@ -57,16 +55,16 @@ public class JwtUtils {
     }
 
     public String getUserEmailFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return this.getJwtToken(token).getBody().getSubject();
     }
 
     public String getUserTokenFromJwtToken(String token) {
-        return (String) Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().get("token");
+        return (String) this.getJwtToken(token).getBody().get("token");
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            this.getJwtToken(authToken);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
@@ -77,5 +75,9 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    private Jws<Claims> getJwtToken(String authToken) {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
     }
 }

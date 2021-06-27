@@ -7,7 +7,7 @@ import com.tugab.adspartners.domain.models.response.common.ErrorResponse;
 import com.tugab.adspartners.domain.models.response.common.JwtResponse;
 import com.tugab.adspartners.repository.CompanyRepository;
 import com.tugab.adspartners.repository.UserRepository;
-import com.tugab.adspartners.security.jwt.JwtUtils;
+import com.tugab.adspartners.utils.JwtUtils;
 import com.tugab.adspartners.service.AuthenticationService;
 import com.tugab.adspartners.utils.ResourceBundleUtil;
 import org.springframework.beans.factory.annotation.Autowired;

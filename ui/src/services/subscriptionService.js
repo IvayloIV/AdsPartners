@@ -5,7 +5,7 @@ export const getSubscribers = async () => {
 };
 
 export const subscribe = async (companyId) => {
-    return await requester(`/subscription/${companyId}`, 'POST', true);
+    return await requester(`/subscription/subscribe/${companyId}`, 'POST', true);
 };
 
 export const updateSubscriberStatus = async (youtuberId, newStatus) => {
@@ -16,7 +16,7 @@ export const updateSubscriberStatus = async (youtuberId, newStatus) => {
 };
 
 export const unsubscribe = async (companyId) => {
-    return await requester(`/subscription/${companyId}`, 'DELETE', true);
+    return await requester(`/subscription/unsubscribe/${companyId}`, 'DELETE', true);
 };
 
 export const checkSubscription = async (companyId) => {

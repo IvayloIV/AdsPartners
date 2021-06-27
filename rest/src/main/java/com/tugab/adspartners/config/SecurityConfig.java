@@ -1,11 +1,10 @@
 package com.tugab.adspartners.config;
 
-import com.tugab.adspartners.security.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.tugab.adspartners.security.OAuth2AuthenticationFailureHandler;
-import com.tugab.adspartners.security.OAuth2AuthenticationSuccessHandler;
-import com.tugab.adspartners.security.jwt.AuthEntryPointJwt;
-import com.tugab.adspartners.security.jwt.AuthTokenFilter;
-import com.tugab.adspartners.service.AuthenticationService;
+import com.tugab.adspartners.domain.enums.Authority;
+import com.tugab.adspartners.security.OAuth2CookieRequestRepository;
+import com.tugab.adspartners.security.OAuth2FailureHandler;
+import com.tugab.adspartners.security.OAuth2SuccessHandler;
+import com.tugab.adspartners.security.AuthTokenFilter;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,39 +23,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AuthEntryPointJwt unauthorizedHandler;
-    private final YoutubeService youtubeService;
     private final AuthTokenFilter authTokenFilter;
-    private final AuthenticationService authenticationService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final YoutubeService youtubeService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Autowired
-    public SecurityConfig(AuthEntryPointJwt unauthorizedHandler,
+    public SecurityConfig(AuthTokenFilter authTokenFilter,
                           YoutubeService youtubeService,
-                          AuthTokenFilter authTokenFilter,
-                          AuthenticationService authenticationService,
-                    @Lazy OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
-                    @Lazy OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
-        this.unauthorizedHandler = unauthorizedHandler;
-        this.youtubeService = youtubeService;
+                    @Lazy OAuth2SuccessHandler oAuth2SuccessHandler,
+                    @Lazy OAuth2FailureHandler oAuth2FailureHandler) {
         this.authTokenFilter = authTokenFilter;
-        this.authenticationService = authenticationService;
-        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
-        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+        this.youtubeService = youtubeService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.oAuth2FailureHandler = oAuth2FailureHandler;
     }
 
     @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(authenticationService).passwordEncoder(passwordEncoder());
+    public OAuth2CookieRequestRepository oAuth2CookieRepository() {
+        return new OAuth2CookieRequestRepository();
     }
 
     @Bean
@@ -75,30 +60,44 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors()
-            .and()
-            .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .addFilterBefore(this.authTokenFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
-                .antMatchers("/youtube/**", "/company/**", "/company/register", "/company/login", "/api/test/**", "/admin/login", "/ad/**").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/youtube/list", "/admin/login", "/company/register", "/company/login", "/company/list/rating")
+                    .permitAll()
+                .antMatchers("/ad/block/*", "/ad/unblock/*", "/company/list", "/company/filters",
+                        "/company/register/requests", "/company/register/history", "/company/register/status/*")
+                    .hasAuthority(Authority.ADMIN.name())
+                .antMatchers("/ad/list", "/ad/filters", "/ad/vote/*", "/youtube/profile", "/youtube/profile/update", "/application/company/*",
+                        "/application/applyfor/*", "/subscription/subscribe/*", "/subscription/unsubscribe/*", "/subscription/check/*")
+                    .hasAuthority(Authority.YOUTUBER.name())
+                .antMatchers("/ad/list/company", "/ad/create", "/ad/edit/*", "/ad/delete/*",
+                        "/application/youtuber/*", "/company/profile", "/subscription/list", "/subscription")
+                    .hasAuthority(Authority.EMPLOYER.name())
+                .antMatchers("/youtube/details/*", "/application/ad/*")
+                    .hasAnyAuthority(Authority.ADMIN.name(), Authority.EMPLOYER.name())
+                .antMatchers("/company/details/*")
+                    .hasAnyAuthority(Authority.ADMIN.name(), Authority.YOUTUBER.name())
+                .anyRequest()
+                    .authenticated()
             .and()
-            .oauth2Login()
-                .authorizationEndpoint()
-                .authorizationRequestRepository(this.httpCookieOAuth2AuthorizationRequestRepository())
-            .and()
-                .userInfoEndpoint()
-                .userService(this.youtubeService)
-            .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(oAuth2AuthenticationFailureHandler)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             .and()
-                .logout().logoutUrl("/logout").logoutSuccessUrl("/"); //TODO: logout...
-
-        http.addFilterBefore(this.authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2Login()
+                    .authorizationEndpoint()
+                    .authorizationRequestRepository(this.oAuth2CookieRepository())
+                .and()
+                    .userInfoEndpoint()
+                    .userService(this.youtubeService)
+                .and()
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureHandler(oAuth2FailureHandler)
+            .and()
+                .cors()
+            .and()
+                .csrf()
+                    .disable();
     }
 }

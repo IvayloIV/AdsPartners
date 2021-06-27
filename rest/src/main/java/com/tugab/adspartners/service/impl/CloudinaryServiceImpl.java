@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.tugab.adspartners.domain.entities.CloudinaryResource;
 import com.tugab.adspartners.repository.CloudinaryRepository;
 import com.tugab.adspartners.service.CloudinaryService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Slf4j
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
 
@@ -59,11 +61,17 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> responseEntity = this.restTemplate.postForEntity(
-            CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload",
-            httpEntity,
-            String.class
-        );
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = this.restTemplate.postForEntity(
+                CLOUDINARY_BASE_URL + this.cloudinaryName + "/image/upload",
+                httpEntity,
+                String.class
+            );
+        } catch (Exception ex) {
+            log.error("Cloudinary is unavailable.");
+            return null;
+        }
 
         if (responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody() != null) {
             JsonObject jsonData = this.jsonParser.parse(responseEntity.getBody()).getAsJsonObject();
@@ -111,11 +119,17 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> responseEntity = this.restTemplate.postForEntity(
+        ResponseEntity<String> responseEntity;
+        try {
+            responseEntity = this.restTemplate.postForEntity(
                 CLOUDINARY_BASE_URL + this.cloudinaryName + "/" + image.getResourceType() + "/destroy",
                 httpEntity,
                 String.class
-        );
+            );
+        } catch (Exception ex) {
+            log.error("Cloudinary is unavailable.");
+            return false;
+        }
 
         if (responseEntity.getStatusCode().equals(HttpStatus.OK) && responseEntity.getBody() != null) {
             JsonObject jsonData = this.jsonParser.parse(responseEntity.getBody()).getAsJsonObject();

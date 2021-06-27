@@ -19,20 +19,18 @@ export default props => {
         const name = e.target.name;
         const value = e.target.value;
 
-        if (setValidation !== null) {
-            setValidation(validations[name](value));
-        }
+        setValidation(validations[name](value));
         setValue(value);
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        let haveError = false;
+        let hasError = false;
 
-        haveError = validateField('email', email, setEmailValidation) || haveError;
-        haveError = validateField('password', password, setPasswordValidation) || haveError;
+        hasError = validateField('email', email, setEmailValidation) || hasError;
+        hasError = validateField('password', password, setPasswordValidation) || hasError;
 
-        if (haveError) {
+        if (hasError) {
             toast.error('Поправете грешките в полетата.');
             return;
         }

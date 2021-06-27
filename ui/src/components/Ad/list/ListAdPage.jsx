@@ -87,7 +87,7 @@ export default () => {
         setPage(1);
     };
 
-    const onChangeDatepicker = (e, d, setValue) => {
+    const onChangeDatepicker = (d, setValue) => {
         if (d == null || d.value == null) {
             setValue(null);
         } else {
@@ -177,7 +177,7 @@ export default () => {
                         format="DD.MM.YYYY"
                         placeholder="От - До"
                         pointing="left"
-                        onChange={(e, d) => onChangeDatepicker(e, d, setCreationDateRange)}
+                        onChange={(e, d) => onChangeDatepicker(d, setCreationDateRange)}
                         type="range"
                         className="ad-filter-date"
                     />
@@ -189,7 +189,7 @@ export default () => {
                         format="DD.MM.YYYY"
                         placeholder="От - До"
                         pointing="left"
-                        onChange={(e, d) => onChangeDatepicker(e, d, setValidToDateRange)}
+                        onChange={(e, d) => onChangeDatepicker(d, setValidToDateRange)}
                         type="range"
                         className="ad-filter-date"
                     />

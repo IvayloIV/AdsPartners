@@ -17,11 +17,11 @@ export default (state = adState, action) => {
             return Object.assign({}, state, { details: action.data });
         case types.DELETE_AD:
             let items = state.list.items.filter(a => a.id !== action.data);
-            let list = Object.assign({}, state.list);
+            let list = state.list;
             list.items = items;
             return Object.assign({}, state, { list });
         case types.VOTE_FOR_AD:
-            let adList = Object.assign({}, state.list);
+            let adList = state.list;
             let adItems = adList.items;
             if (adItems !== undefined) {
                 let ad = adItems.filter(i => i.id === action.data.adId)[0];

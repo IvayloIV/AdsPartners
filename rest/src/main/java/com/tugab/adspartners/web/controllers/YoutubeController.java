@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/youtube")
+@RequestMapping(path = "/youtube")
+@CrossOrigin(origins = "*")
 public class YoutubeController {
 
     private final YoutubeService youtubeService;
@@ -40,9 +40,9 @@ public class YoutubeController {
     }
 
     @PatchMapping("/profile/update")
-    @PreAuthorize("hasAuthority('YOUTUBER')")
     public ResponseEntity<?> updateProfile(Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
         return this.youtubeService.updateYoutubeDetails(youtuber);
     }
 }
+

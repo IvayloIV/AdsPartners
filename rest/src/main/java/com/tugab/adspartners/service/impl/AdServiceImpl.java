@@ -79,7 +79,6 @@ public class AdServiceImpl implements AdService {
         Page<Ad> pageAds = this.adRepository.findAllByFilters(adListFilterBindingModel, pageable);
 
         List<AdResponse> adsResponse = pageAds.getContent().stream()
-                .map(this::setAdsCountToCompany)
                 .map(this::setAdAverageRating)
                 .map(a -> this.modelMapper.map(a, AdResponse.class))
                 .map(a -> this.setAdRatingByYoutuber(a, isYoutuber, authentication))
@@ -133,6 +132,10 @@ public class AdServiceImpl implements AdService {
         }
 
         CloudinaryResource picture = this.cloudinaryService.uploadImage(createAdBindingModel.getPictureBase64());
+        if (picture == null) {
+            String cloudUnavailableMessage = this.resourceBundleUtil.getMessage("createAd.unavailableCloud");
+            return new ResponseEntity<>(new ErrorResponse(cloudUnavailableMessage), HttpStatus.SERVICE_UNAVAILABLE);
+        }
 
         Ad ad = this.modelMapper.map(createAdBindingModel, Ad.class);
         ad.setCreationDate(new Date());
@@ -196,10 +199,13 @@ public class AdServiceImpl implements AdService {
             CloudinaryResource newPicture = this.cloudinaryService
                     .updateImage(ad.getPicture(), editAdBindingModel.getPictureBase64());
 
-            if (newPicture != null) {
-                oldAdPicture = ad.getPicture();
-                ad.setPicture(newPicture);
+            if (newPicture == null) {
+                String cloudUnavailableMessage = this.resourceBundleUtil.getMessage("editAd.unavailableCloud");
+                return new ResponseEntity<>(new ErrorResponse(cloudUnavailableMessage), HttpStatus.SERVICE_UNAVAILABLE);
             }
+
+            oldAdPicture = ad.getPicture();
+            ad.setPicture(newPicture);
         }
 
         ad.getCharacteristics().clear();
@@ -309,12 +315,6 @@ public class AdServiceImpl implements AdService {
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(a -> a.equals(Authority.YOUTUBER.name()));
-    }
-
-    private Ad setAdsCountToCompany(Ad ad) {
-        Integer adsCount = ad.getCompany().getAds().size();
-        ad.getCompany().setAdsCount(adsCount);
-        return ad;
     }
 
     private AdResponse setAdRatingByYoutuber(AdResponse adResponse, Boolean isYoutuber, Authentication authentication) {

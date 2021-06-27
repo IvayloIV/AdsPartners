@@ -1,13 +1,13 @@
-package com.tugab.adspartners.security.jwt;
+package com.tugab.adspartners.security;
 
 import com.tugab.adspartners.domain.entities.Company;
 import com.tugab.adspartners.domain.entities.Youtuber;
 import com.tugab.adspartners.domain.enums.Authority;
+import com.tugab.adspartners.utils.JwtUtils;
 import com.tugab.adspartners.service.AuthenticationService;
 import com.tugab.adspartners.service.CompanyService;
 import com.tugab.adspartners.service.YoutubeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +45,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String jwt = parseJwt(request);
+            String jwt = this.parseJwt(request);
+
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String email = jwtUtils.getUserEmailFromJwtToken(jwt);
                 String userToken = jwtUtils.getUserTokenFromJwtToken(jwt);
@@ -79,7 +80,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
+            return headerAuth.substring(7);
         }
 
         return null;

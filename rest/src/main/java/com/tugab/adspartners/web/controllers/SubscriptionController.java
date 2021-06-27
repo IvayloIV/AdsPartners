@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/subscription")
+@RequestMapping(path = "/subscription")
+@CrossOrigin(origins = "*")
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
@@ -30,7 +30,7 @@ public class SubscriptionController {
         return this.subscriptionService.getList(company);
     }
 
-    @PostMapping(path = "/{companyId}")
+    @PostMapping(path = "/subscribe/{companyId}")
     public ResponseEntity<?> subscribe(@PathVariable Long companyId,
                                        Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
@@ -45,7 +45,7 @@ public class SubscriptionController {
         return this.subscriptionService.updateStatus(subscriberStatusBindingModel);
     }
 
-    @DeleteMapping(path = "/{companyId}")
+    @DeleteMapping(path = "/unsubscribe/{companyId}")
     public ResponseEntity<?> unsubscribe(@PathVariable Long companyId,
                                          Authentication authentication) {
         Youtuber youtuber = (Youtuber) authentication.getPrincipal();
