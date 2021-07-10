@@ -180,7 +180,7 @@ export default props => {
                     <div className="register-company-field">
                         <TextField
                             type="number"
-                            label="Брой работещи"
+                            label="Брой работници"
                             value={workersCount}
                             name="workersCount"
                             onChange={e => onChangeHandler(e, setWorkersCount, null)}

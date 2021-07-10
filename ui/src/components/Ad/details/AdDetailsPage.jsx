@@ -77,7 +77,7 @@ export default props => {
                         /> <span className="ad-list-rating-text">({ad.averageRating.toFixed(2)})</span>
                     </div>
                     <h3>Възнаграждение: {ad.reward} &euro;</h3>
-                    <h3>Брой кандидати за обявата до сега: {ad.applicationCount}</h3>
+                    <h3>Брой кандидати за обявата досега: {ad.applicationCount}</h3>
                     <div className="ad-details-requirements">
                         <h4>Минимален брой:</h4>
                         <ul>

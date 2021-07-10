@@ -36,7 +36,7 @@
                     Брой показвания - <span th:text="${youtuberViews} ?: '0'"></span>
                 </p>
             </div>
-            <div style="margin-top: 25px">
+            <div th:if="${adAppDescription != ''}" style="margin-top: 25px">
                 <h3>Съобщение:</h3>
                 <textarea disabled style="display:block; border: 1px solid #1A91E7; padding: 10px 15px; width: 310px; height: 100px; resize: none; border-radius: 5px" th:text="${adAppDescription}"></textarea>
             </div>

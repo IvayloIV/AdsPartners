@@ -26,7 +26,7 @@ import Footer from './components/common/Footer';
 export default props => {
     return (
         <div className="App">
-            <ToastContainer autoClose={2500} closeButton={false} />
+            <ToastContainer autoClose={2000} closeButton={false} pauseOnFocusLoss={false} />
             <Header history={props.history} />
             <Switch>
                 <Route exact path="/" component={HomePage} />

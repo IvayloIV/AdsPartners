@@ -63,7 +63,7 @@ export default props => {
 
         const json = await dispatch(createAdAction(params))
         if (json !== null) {
-            props.history.push("/");
+            props.history.push("/company/profile");
         }
     };
 

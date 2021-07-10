@@ -25,7 +25,7 @@ export default () => {
 
     return (
         <div className="company-requests">
-            <h2 id="company-requests-title">Заявни на компаниите</h2>
+            <h2 id="company-requests-title">Заявки на компаниите</h2>
             <Table id="company-register-table" color='blue' key='company-register-table'>
                 <Table.Header>
                     <Table.Row textAlign="center">
